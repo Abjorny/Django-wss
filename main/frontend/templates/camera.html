@@ -1,0 +1,81 @@
+<style>
+    * {
+        padding: none;
+    }
+
+    .container-camera {
+        display: flex;
+        flex-direction: column;
+        max-width: 640px;
+    }
+
+    #webcam-feed{
+        width: 640px;
+    }
+    .utilis-webcam{
+        display: flex;
+        flex-direction: row;
+        justify-content: start; 
+        margin-top: 20px; 
+        gap:20px;      
+    
+    }
+</style>
+
+<div class="container-camera">
+    <img id="webcam-feed" alt="Webcam Feed" />
+    <div class="utilis-webcam">
+        <button id="button-connect-camera" type="button" class="btn btn-success">On</button>
+        <button id="button-disconnect-camera" type="button" class="btn btn-danger">Off</button>
+        <button id="button-download-camera" type="button" class="btn btn-warning">Download</button>
+    </div>
+</div>
+
+<script>
+    let camera = null;
+    const imgElement = $('#webcam-feed');
+    function connectCamera() {
+        camera = new WebSocket(
+            'ws://'
+            + window.location.host
+            + '/ws/api/get_image'
+        );
+        camera.onmessage = function (event) {
+            const data = JSON.parse(event.data);
+            if (data.message.image) {
+                imgElement.attr('src', `data:image/jpeg;base64,${data.message.image}`);
+
+            }
+        };
+
+        camera.onclose = function (e) {
+            console.error('Chat socket closed unexpectedly');
+        };
+    }
+    function saveUrlAsFile(url, fileName) {    
+        var link = document.createElement("a");    
+        link.setAttribute("href", url);
+        link.setAttribute("download", fileName);
+        link.click();
+    }
+
+    $("#button-disconnect-camera").click(() => {
+        if (camera !== null){
+            imgElement.hide();
+            camera.close();
+            camera = null;
+        }
+    });
+    $("#button-connect-camera").click(() => {
+        if (camera == null){
+            imgElement.show()
+            connectCamera();
+        }
+    });
+    $('#button-download-camera').click(()=>{
+        if (camera !== null){
+            saveUrlAsFile(imgElement.attr('src'), 'image.jpg');
+        }
+    });
+    connectCamera();
+</script>
