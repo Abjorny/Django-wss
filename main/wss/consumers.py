@@ -89,8 +89,7 @@ async def send_periodic_messages():
                 frame0 = cv2.warpPerspective(frame0, M0, output_size)
                 frame2 = cv2.warpPerspective(frame2, M2, output_size)
 
-                frame0 = resize_frame(frame0)
-                frame2 = resize_frame(frame2)
+
                 combined_frame = cv2.hconcat([frame0, frame2])
 
                 _, buffer = cv2.imencode('.jpg', combined_frame, [int(cv2.IMWRITE_JPEG_QUALITY), 40])
