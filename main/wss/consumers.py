@@ -24,23 +24,11 @@ first_left = Sensor(
 FIXED_WIDTH = 640
 FIXED_HEIGHT = 480
 
-def fit_frame_to_fixed_size(frame, width=FIXED_WIDTH, height=FIXED_HEIGHT):
-    black_bg = np.zeros((height, width, 3), dtype=np.uint8)
-    if len(frame.shape) == 2:
-        frame = cv2.cvtColor(frame, cv2.COLOR_GRAY2BGR)
 
-    h, w = frame.shape[:2]
-    if h > height:
-        frame = frame[:height, :, :]
-        h = height
-    if w > width:
-        frame = frame[:, :width, :]
-        w = width
 
-    black_bg[0:h, 0:w] = frame
 
-    return black_bg
-
+def resize_frame(frame, width=FIXED_WIDTH, height=FIXED_HEIGHT):
+    return cv2.resize(frame, (width, height))
 
 async def send_periodic_messages():
     channel_layer = get_channel_layer()
@@ -67,18 +55,12 @@ async def send_periodic_messages():
                     await asyncio.sleep(0.05)
                     continue
 
-                # Получаем ROI
                 frame0 = first_left.get_roi(frame0, False).roi_frame
 
-                # Вписываем оба кадра в фиксированный размер с черным фоном
-                frame0 = fit_frame_to_fixed_size(frame0)
-                frame2 = fit_frame_to_fixed_size(frame2)
+                frame0 = resize_frame(frame0)
+                frame2 = resize_frame(frame2)
 
-                # Приводим к uint8, если нужно
-                if frame0.dtype != frame2.dtype:
-                    frame2 = frame2.astype(frame0.dtype)
-
-                # Делать массивы C-континуальными — обязательно
+                # Делать массивы C-континуальными (для hconcat)
                 frame0 = np.ascontiguousarray(frame0)
                 frame2 = np.ascontiguousarray(frame2)
 
