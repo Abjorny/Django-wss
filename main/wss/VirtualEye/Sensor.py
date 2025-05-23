@@ -30,8 +30,8 @@ class LibaryHSV:
         self.min_red_two = np.array([170, 100, 100])
         self.max_red_two = np.array([180, 255, 255])
 
-        self.min_blue = np.array([75, 50, 50])   # меньше hue, меньше насыщенности и яркости
-        self.max_blue = np.array([135, 255, 255])  
+        self.min_blue = np.array([96, 38, 77])  
+        self.max_blue = np.array( [136, 146, 189])  
 
         self.min_green = np.array([35, 150, 100])  
         self.max_green = np.array([85, 255, 255])
