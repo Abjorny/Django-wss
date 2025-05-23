@@ -2,7 +2,7 @@ import asyncio
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.layers import get_channel_layer
 import json
-from .VirtualEye.Sensor import Sensor
+from .VirtualEye.Sensor import Sensor, RedSensor
 from .VirtualEye.FrameUtilis import FrameUtilis
 import numpy as np
 import cv2
@@ -55,6 +55,12 @@ sensor_center_two =  Sensor(
     np.array([[340, 30], [630, 30], [660, 160], [300, 160]]), 
     (0, 0, 255) 
 )
+
+red_front_border = RedSensor(
+    np.array([[340, 250], [540, 240], [540, 270], [340, 280]]),
+    (0, 0, 255)
+)
+
 
 FIXED_WIDTH = 640
 FIXED_HEIGHT = 480
@@ -132,6 +138,7 @@ async def send_periodic_messages():
                     [sensor_left_one, sensor_right_one, sensor_center_one, 
                     sensor_left_two, sensor_right_two, sensor_center_two], 
                     combined_frame)
+                FrameUtilis.display_all_roi_sensors([red_front_border], frameRed)
                 _, buffer = cv2.imencode('.jpg', frameRed, [int(cv2.IMWRITE_JPEG_QUALITY),40])
                 image_data = base64.b64encode(buffer).decode('utf-8')
 
