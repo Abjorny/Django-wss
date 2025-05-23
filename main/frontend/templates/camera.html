@@ -53,15 +53,30 @@
         cameraContainer.append(block);
     }
 
-    function connectToCamera(cameraId) {
-        $(`#camera-feed-${cameraId}`).show();
-        cameraSockets[cameraId] = true; // Просто помечаем как активную
-    }
+function connectToCamera(cameraId) {
+    if (!mainSocket || mainSocket.readyState !== WebSocket.OPEN) return;
 
-    function disconnectCamera(cameraId) {
-        delete cameraSockets[cameraId];
-        $(`#camera-feed-${cameraId}`).hide();
-    }
+    cameraSockets[cameraId] = true;
+    $(`#camera-feed-${cameraId}`).show();
+
+    mainSocket.send(JSON.stringify({
+        action: "subscribe",
+        camera: cameraId
+    }));
+}
+
+function disconnectCamera(cameraId) {
+    if (!mainSocket || mainSocket.readyState !== WebSocket.OPEN) return;
+
+    cameraSockets[cameraId] = false;
+    $(`#camera-feed-${cameraId}`).hide();
+
+    mainSocket.send(JSON.stringify({
+        action: "unsubscribe",
+        camera: cameraId
+    }));
+}
+
 
     function downloadCameraImage(cameraId) {
         const src = $(`#camera-feed-${cameraId}`).attr('src');
