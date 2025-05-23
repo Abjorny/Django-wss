@@ -7,34 +7,43 @@ import asyncio
 import base64
 from channels.layers import get_channel_layer
 task_started = False
-async def send_periodic_messages():
+
+def get_available_cameras(max_cameras=5):
+    available = []
+    for i in range(max_cameras):
+        cap = cv2.VideoCapture(i)
+        if cap.isOpened():
+            available.append(i)
+            cap.release()
+    return available
+
+
+
+async def send_periodic_messages(camera_indexes):
     channel_layer = get_channel_layer()
-    cap = cv2.VideoCapture(0) 
-    if not cap.isOpened():
-        return
+    caps = [cv2.VideoCapture(idx) for idx in camera_indexes]
 
     try:
         while True:
-            ret, frame = cap.read()
+            for cap_idx, cap in zip(camera_indexes, caps):
+                ret, frame = cap.read()
+                if ret:
+                    _, buffer = cv2.imencode('.jpg', frame)
+                    image_data = base64.b64encode(buffer).decode('utf-8')
+                    await channel_layer.group_send(
+                        "broadcast_group",
+                        {
+                            "type": "broadcast_message",
+                            "message": {"camera": cap_idx, "image": image_data},
+                        }
+                    )
 
-            if not ret:
-                continue
-            
-
-            _, buffer = cv2.imencode('.jpg', frame)
-
-            image_data = base64.b64encode(buffer).decode('utf-8')
-            await channel_layer.group_send(
-                "broadcast_group",
-                {
-                    "type": "broadcast_message",
-                    "message": {"image": image_data},
-                }
-            )
-
-            await asyncio.sleep(0.01)  
+            await asyncio.sleep(0.1)
     finally:
-        cap.release()
+        for cap in caps:
+            cap.release()
+
+
 
 class MyConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -44,10 +53,15 @@ class MyConsumer(AsyncWebsocketConsumer):
             self.group_name,
             self.channel_name
         )
+        await self.send(text_data=json.dumps({
+            "type": "camera_list",
+            "cameras": self.cameras
+        }))
         await self.accept()
         if not task_started:
             task_started = True
-            asyncio.create_task(send_periodic_messages())
+            cameras = get_available_cameras(3)
+            asyncio.create_task(send_periodic_messages(cameras))
 
     async def disconnect(self, close_code):
         await self.channel_layer.group_discard(
