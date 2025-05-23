@@ -279,7 +279,7 @@ class Sensor:
                 elif red_result.w < red_result.h and not isTwo:
                     value = 21
                 
-                elif red_result.w - 20 <= red_result.h <= red_result.w + 20 and isTwo:
+                elif red_result.w  <= red_result.h <= red_result.w  and isTwo:
                     value = 23
                 
                 elif  isTwo :
