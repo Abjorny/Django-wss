@@ -53,7 +53,7 @@ async def send_periodic_messages():
                 _, buffer = cv2.imencode('.jpg', combined_frame, [int(cv2.IMWRITE_JPEG_QUALITY), 40])
                 buffer_bytes = np.frombuffer(buffer, dtype=np.uint8)
                 frame = cv2.imdecode(buffer_bytes, cv2.IMREAD_COLOR)
-                data = first_left.get_roi(frame, False)
+                data = first_left.get_roi(frame, False).roi_frame
                 image_data = base64.b64encode(data).decode('utf-8')
 
                 await channel_layer.group_send(
