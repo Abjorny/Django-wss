@@ -74,7 +74,8 @@ async def send_periodic_messages():
                 # Делать массивы C-континуальными (для hconcat)
                 frame0 = np.ascontiguousarray(frame0)
                 frame2 = np.ascontiguousarray(frame2)
-
+                cv2.imwrite("frame0.jpg", frame0)
+                cv2.imwrite("frame2.jpg", frame2)
                 combined_frame = cv2.hconcat([frame0, frame2])
 
                 _, buffer = cv2.imencode('.jpg', combined_frame, [int(cv2.IMWRITE_JPEG_QUALITY), 40])
