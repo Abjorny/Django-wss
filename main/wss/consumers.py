@@ -67,7 +67,7 @@ red_right_border = RedSensor(
 )
 
 red_left_border = RedSensor(
-    np.array([[245, 420], [275, 420], [275, 470], [245, 470]]),
+    np.array([[205, 420], [235, 420], [235, 470], [205, 470]]),
     (0, 0, 255)
 )
 FIXED_WIDTH = 640
