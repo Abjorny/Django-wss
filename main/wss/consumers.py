@@ -51,6 +51,7 @@ async def send_periodic_messages():
                 combined_frame = cv2.hconcat([frame0, frame2])
 
                 _, buffer = cv2.imencode('.jpg', combined_frame, [int(cv2.IMWRITE_JPEG_QUALITY), 40])
+                print(buffer.shape)
                 data = first_left.get_roi(buffer, False)
                 image_data = base64.b64encode(data).decode('utf-8')
 
