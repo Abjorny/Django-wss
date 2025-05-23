@@ -81,6 +81,8 @@ async def send_periodic_messages():
         while True:
             try:
                 ret0, frame0 = cap2.read()
+                frameRed = frame0.copy()
+
                 ret2, frame2 = cap0.read()
 
                 if not ret0 or not ret2:
@@ -89,7 +91,6 @@ async def send_periodic_messages():
                     continue
 
                 frame0 = first_left.get_roi(frame0, False).roi_frame
-                frameRed = frame0.copy()
                 frame2 = first_right.get_roi(frame2, False).roi_frame 
 
 
