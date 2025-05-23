@@ -1,120 +1,81 @@
 <style>
+    * {
+        padding: none;
+    }
+
     .container-camera {
         display: flex;
         flex-direction: column;
-        align-items: center;
-        gap: 30px;
-        padding: 20px;
-    }
-
-    .camera-block {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        border: 2px solid #ccc;
-        padding: 15px;
-        border-radius: 12px;
         max-width: 640px;
     }
 
-    .camera-block img {
+    #webcam-feed{
         width: 640px;
-        height: auto;
-        border-radius: 8px;
     }
-
-    .utilis-webcam {
+    .utilis-webcam{
         display: flex;
-        gap: 15px;
-        margin-top: 10px;
+        flex-direction: row;
+        justify-content: start; 
+        margin-top: 20px; 
+        gap:20px;      
+    
     }
 </style>
 
-<div class="container-camera" id="camera-container"></div>
+<div class="container-camera">
+    <img id="webcam-feed" alt="Webcam Feed" />
+    <div class="utilis-webcam">
+        <button id="button-connect-camera" type="button" class="btn btn-success">On</button>
+        <button id="button-disconnect-camera" type="button" class="btn btn-danger">Off</button>
+        <button id="button-download-camera" type="button" class="btn btn-warning">Download</button>
+    </div>
+</div>
 
 <script>
-    const cameraContainer = $('#camera-container');
-    const cameraSockets = {};
-    let mainSocket = null;
-
-    function createCameraBlock(cameraId) {
-        if ($(`#camera-block-${cameraId}`).length > 0) return;
-
-        const block = $(`
-            <div class="camera-block" id="camera-block-${cameraId}">
-                <img id="camera-feed-${cameraId}" alt="Camera ${cameraId}" style="display: none;" />
-                <div class="utilis-webcam">
-                    <button class="btn btn-success" data-id="${cameraId}" data-action="connect">On</button>
-                    <button class="btn btn-danger" data-id="${cameraId}" data-action="disconnect">Off</button>
-                    <button class="btn btn-warning" data-id="${cameraId}" data-action="download">Download</button>
-                </div>
-            </div>
-        `);
-        cameraContainer.append(block);
-    }
-
-function connectToCamera(cameraId) {
-    if (!mainSocket || mainSocket.readyState !== WebSocket.OPEN) return;
-
-    cameraSockets[cameraId] = true;
-    $(`#camera-feed-${cameraId}`).show();
-
-    mainSocket.send(JSON.stringify({
-        action: "subscribe",
-        camera: cameraId
-    }));
-}
-
-function disconnectCamera(cameraId) {
-    if (!mainSocket || mainSocket.readyState !== WebSocket.OPEN) return;
-
-    cameraSockets[cameraId] = false;
-    $(`#camera-feed-${cameraId}`).hide();
-
-    mainSocket.send(JSON.stringify({
-        action: "unsubscribe",
-        camera: cameraId
-    }));
-}
-
-
-    function downloadCameraImage(cameraId) {
-        const src = $(`#camera-feed-${cameraId}`).attr('src');
-        const a = document.createElement('a');
-        a.href = src;
-        a.download = `camera-${cameraId}.jpg`;
-        a.click();
-    }
-
-    $(document).on('click', '.utilis-webcam button', function () {
-        const cameraId = $(this).data('id');
-        const action = $(this).data('action');
-
-        if (action === 'connect') connectToCamera(cameraId);
-        else if (action === 'disconnect') disconnectCamera(cameraId);
-        else if (action === 'download') downloadCameraImage(cameraId);
-    });
-
-    function startMainSocket() {
-        mainSocket = new WebSocket(
-            'ws://' + window.location.host + '/ws/api/get_image'
+    let camera = null;
+    const imgElement = $('#webcam-feed');
+    function connectCamera() {
+        camera = new WebSocket(
+            'ws://'
+            + window.location.host
+            + '/ws/api/get_image'
         );
-
-        mainSocket.onmessage = function (event) {
+        camera.onmessage = function (event) {
             const data = JSON.parse(event.data);
+            if (data.message.image) {
+                imgElement.attr('src', `data:image/jpeg;base64,${data.message.image}`);
 
-            if (data.type === 'camera_list') {
-                data.cameras.forEach(id => createCameraBlock(id));
-            } else if (data.message && data.message.camera !== undefined) {
-                const camId = data.message.camera;
-                if (cameraSockets[camId]) {
-                    $(`#camera-feed-${camId}`).attr('src', `data:image/jpeg;base64,${data.message.image}`);
-                }
             }
         };
 
-        mainSocket.onclose = () => console.warn('Main socket closed');
+        camera.onclose = function (e) {
+            console.error('Chat socket closed unexpectedly');
+        };
+    }
+    function saveUrlAsFile(url, fileName) {    
+        var link = document.createElement("a");    
+        link.setAttribute("href", url);
+        link.setAttribute("download", fileName);
+        link.click();
     }
 
-    startMainSocket();
+    $("#button-disconnect-camera").click(() => {
+        if (camera !== null){
+            imgElement.hide();
+            camera.close();
+            camera = null;
+        }
+    });
+    $("#button-connect-camera").click(() => {
+        if (camera == null){
+            imgElement.show()
+            connectCamera();
+        }
+    });
+    $('#button-download-camera').click(()=>{
+        if (camera !== null){
+            saveUrlAsFile(imgElement.attr('src'), 'image.jpg');
+        }
+    });
+    connectCamera();
 </script>
