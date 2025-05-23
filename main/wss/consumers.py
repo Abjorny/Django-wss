@@ -25,7 +25,7 @@ first_right = Sensor(
 
 
 sensor_right_one =  Sensor(
-    np.array([[40, 270], [310, 260], [300, 460], [60, 460]]), 
+    np.array([[30, 270], [280, 260], [270, 480], [40, 480]]), 
     (0, 0, 255) 
 )
 
@@ -88,7 +88,7 @@ async def send_periodic_messages():
 
                 combined_frame = cv2.hconcat([frame0, frame2])
                 FrameUtilis.display_all_roi_sensors([sensor_right_one], combined_frame)
-                _, buffer = cv2.imencode('.jpg', combined_frame, [int(cv2.IMWRITE_JPEG_QUALITY),100])
+                _, buffer = cv2.imencode('.jpg', combined_frame, [int(cv2.IMWRITE_JPEG_QUALITY),40])
                 image_data = base64.b64encode(buffer).decode('utf-8')
 
                 await channel_layer.group_send(
