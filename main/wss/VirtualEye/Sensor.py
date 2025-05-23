@@ -226,6 +226,8 @@ class Sensor:
     def readObject(self, frame_copy, frame):
 
         roi = self.get_roi(frame_copy, False)
+        isTwo = self.checkIsTwo(frame_copy)
+
         red_result_first: Result = self.get_red(roi, frame)
         blue_result_first: Result = self.get_blue(roi, frame)
 
@@ -238,7 +240,7 @@ class Sensor:
 
         if green_result.noblack != 0 :
             green_x, green_y = green_result.x2_absolute, green_result.y2_absolute
-            x, y = self.calculate_centroid(False)
+            x, y = self.calculate_centroid(isTwo)
             
             if green_x > x and green_y > y:
                 value = 32
@@ -269,7 +271,7 @@ class Sensor:
                         value = 54
             
             elif red_result.noblack !=0 and blue_result.noblack == 0:
-                red_result = self.get_red(roi_comress, frame_copy)
+                red_result = self.get_red(roi, frame_copy)
                 if red_result.w > red_result.h and not isTwo:
                         value = 22
                 
@@ -285,7 +287,7 @@ class Sensor:
             elif isTwo:
                 value = 41
 
-        return value
+        return value, isTwo
 
 class RedSensor(Sensor):
     def get_red(self, roi: Roi, frame_3d):
