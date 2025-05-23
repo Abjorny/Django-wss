@@ -68,11 +68,12 @@ async def send_periodic_messages():
                 frame0 = first_left.get_roi(frame0, False).roi_frame
                 frame2 = first_right.get_roi(frame2, False).roi_frame 
 
+                frame0 = resize_frame(frame0)
+                frame2 = resize_frame(frame2)
 
-
-                # Делать массивы C-континуальными (для hconcat)
-                frame0 = np.ascontiguousarray(frame0)
-                frame2 = np.ascontiguousarray(frame2)
+                # # Делать массивы C-континуальными (для hconcat)
+                # frame0 = np.ascontiguousarray(frame0)
+                # frame2 = np.ascontiguousarray(frame2)
 
                 M0 = np.array([
                     [ 1.92535667e+00,  1.05309564e+00, -4.11909317e+02],
