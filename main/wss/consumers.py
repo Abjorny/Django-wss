@@ -115,7 +115,7 @@ async def send_periodic_messages():
 
                 combined_frame = cv2.hconcat([frame0, frame2])
                 copyFrame = combined_frame.copy()
-                value_left_one, isTwo = sensor_left_one.readObject(copyFrame, combined_frame)
+                value_left_one = sensor_left_one.readObject(copyFrame, combined_frame)
                 print(value_left_one)
                 FrameUtilis.display_all_roi_sensors(
                     [sensor_left_one, sensor_right_one, sensor_center_one, 
