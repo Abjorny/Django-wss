@@ -2,6 +2,9 @@ import asyncio
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.layers import get_channel_layer
 import json
+from VirtualEye.Sensor import Sensor
+from VirtualEye.FrameUtilis import FrameUtilis
+import numpy as np
 import cv2
 import base64
 import logging
@@ -9,7 +12,14 @@ import logging
 logger = logging.getLogger(__name__)
 
 task = None
-
+first_left = Sensor(
+    np.array([[140, 265], [300, 270], [270, 450], [60, 380]]), 
+    np.array([[0, 0], [0, 0], [0, 0], [0, 0]]), 
+    np.array([[0, 0], [0, 0], [0, 0], [0, 0]]), 
+    np.array([[0, 0], [0, 0], [0, 0], [0, 0]]), 
+    np.array([[0, 0], [0, 0], [0, 0], [0, 0]]), 
+    (0, 0, 255) 
+)
 async def send_periodic_messages():
     channel_layer = get_channel_layer()
 
@@ -42,12 +52,12 @@ async def send_periodic_messages():
 
                 _, buffer = cv2.imencode('.jpg', combined_frame, [int(cv2.IMWRITE_JPEG_QUALITY), 40])
                 image_data = base64.b64encode(buffer).decode('utf-8')
-
+                data = first_left.get_roi(image_data, False)
                 await channel_layer.group_send(
                     "broadcast_group",
                     {
                         "type": "broadcast_message",
-                        "message": {"image": image_data},
+                        "message": {"image": data},
                     }
                 )
             except Exception as e:
