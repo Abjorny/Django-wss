@@ -45,9 +45,9 @@
     <img id="webcam-feed" alt="Webcam Feed" />
     <div class="utilis-row-data">
         <div class="row-data">
-            <span>255</span>
-            <span>255</span>
-            <span>255</span>
+            <span id="value-left-two">255</span>
+            <span  id="value-center-two">255</span>
+            <span id="value-right-two">255</span>
         </div>
         <div class="row-data">
             <span id="value-left">255</span>
@@ -83,6 +83,10 @@
                 document.getElementById('value-left').textContent = data.message.valueLeftOne;
                 document.getElementById('value-center').textContent = data.message.valueCenterOne;
                 document.getElementById('value-right').textContent = data.message.valueRightOne;
+
+                document.getElementById('value-left-two').textContent = data.message.valueLeftTwo;
+                document.getElementById('value-center-two').textContent = data.message.valueCenterTwo;
+                document.getElementById('value-right-two').textContent = data.message.valueRightTwo;
                 imgElement.attr('src', `data:image/jpeg;base64,${data.message.image}`);
             }
         };image
