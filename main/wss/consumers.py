@@ -51,13 +51,14 @@ async def send_periodic_messages():
                 combined_frame = cv2.hconcat([frame0, frame2])
 
                 _, buffer = cv2.imencode('.jpg', combined_frame, [int(cv2.IMWRITE_JPEG_QUALITY), 40])
-                image_data = base64.b64encode(buffer).decode('utf-8')
-                data = first_left.get_roi(image_data, False)
+                data = first_left.get_roi(buffer, False)
+                image_data = base64.b64encode(data).decode('utf-8')
+
                 await channel_layer.group_send(
                     "broadcast_group",
                     {
                         "type": "broadcast_message",
-                        "message": {"image": data},
+                        "message": {"image": image_data},
                     }
                 )
             except Exception as e:
