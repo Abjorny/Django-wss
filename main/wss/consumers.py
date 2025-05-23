@@ -57,8 +57,8 @@ async def send_periodic_messages():
     try:
         while True:
             try:
-                ret0, frame0 = cap0.read()
-                ret2, frame2 = cap2.read()
+                ret0, frame0 = cap2.read()
+                ret2, frame2 = cap0.read()
 
                 if not ret0 or not ret2:
                     logger.warning("Failed to read from one of the cameras")
