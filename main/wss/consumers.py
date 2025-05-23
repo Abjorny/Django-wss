@@ -89,7 +89,9 @@ async def send_periodic_messages():
                     continue
 
                 frame0 = first_left.get_roi(frame0, False).roi_frame
+                frameRed = frame0.copy()
                 frame2 = first_right.get_roi(frame2, False).roi_frame 
+
 
                 frame0 = resize_frame(frame0)
                 frame2 = resize_frame(frame2)
@@ -129,7 +131,7 @@ async def send_periodic_messages():
                     [sensor_left_one, sensor_right_one, sensor_center_one, 
                     sensor_left_two, sensor_right_two, sensor_center_two], 
                     combined_frame)
-                _, buffer = cv2.imencode('.jpg', combined_frame, [int(cv2.IMWRITE_JPEG_QUALITY),40])
+                _, buffer = cv2.imencode('.jpg', frameRed, [int(cv2.IMWRITE_JPEG_QUALITY),40])
                 image_data = base64.b64encode(buffer).decode('utf-8')
 
                 await channel_layer.group_send(
