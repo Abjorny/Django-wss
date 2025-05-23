@@ -1,4 +1,4 @@
-from Sensor import Sensor, Roi
+from .Sensor import Sensor, Roi
 import cv2
 
 class FrameUtilis:
