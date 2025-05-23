@@ -4,17 +4,21 @@ from channels.layers import get_channel_layer
 import json
 import cv2
 import base64
+import logging
+
+logger = logging.getLogger(__name__)
 
 active_connections = 0
-task = None 
+task = None
 
 async def send_periodic_messages():
     channel_layer = get_channel_layer()
+
     cap0 = cv2.VideoCapture(0)
     cap2 = cv2.VideoCapture(2)
-    
+
     if not cap0.isOpened() or not cap2.isOpened():
-        print("One of the cameras did not open")
+        logger.error(f"Cameras not opened: cap0 {cap0.isOpened()}, cap2 {cap2.isOpened()}")
         if cap0.isOpened():
             cap0.release()
         if cap2.isOpened():
@@ -27,33 +31,42 @@ async def send_periodic_messages():
                 await asyncio.sleep(1)
                 continue
 
-            ret0, frame0 = cap2.read()
-            ret2, frame2 = cap0.read()
+            try:
+                ret0, frame0 = cap2.read()
+                ret2, frame2 = cap0.read()
 
-            if not ret0 or not ret2:
-                await asyncio.sleep(0.05)
-                continue
-            
-            if frame0.shape != frame2.shape:
-                frame2 = cv2.resize(frame2, (frame0.shape[1], frame0.shape[0]))
-            
-            combined_frame = cv2.hconcat([frame0, frame2])
-            
-            _, buffer = cv2.imencode('.jpg', combined_frame, [int(cv2.IMWRITE_JPEG_QUALITY), 40])
-            image_data = base64.b64encode(buffer).decode('utf-8')
+                if not ret0 or not ret2:
+                    logger.warning("Failed to read from one of the cameras")
+                    await asyncio.sleep(0.05)
+                    continue
 
-            await channel_layer.group_send(
-                "broadcast_group",
-                {
-                    "type": "broadcast_message",
-                    "message": {"image": image_data},
-                }
-            )
+                if frame0.shape != frame2.shape:
+                    frame2 = cv2.resize(frame2, (frame0.shape[1], frame0.shape[0]))
+
+                combined_frame = cv2.hconcat([frame0, frame2])
+
+                _, buffer = cv2.imencode('.jpg', combined_frame, [int(cv2.IMWRITE_JPEG_QUALITY), 40])
+                image_data = base64.b64encode(buffer).decode('utf-8')
+
+                await channel_layer.group_send(
+                    "broadcast_group",
+                    {
+                        "type": "broadcast_message",
+                        "message": {"image": image_data},
+                    }
+                )
+            except Exception as e:
+                logger.error(f"Error inside send_periodic_messages loop: {e}")
 
             await asyncio.sleep(1/15)
+    except asyncio.CancelledError:
+        logger.info("send_periodic_messages task was cancelled")
+    except Exception as e:
+        logger.error(f"send_periodic_messages task crashed: {e}")
     finally:
         cap0.release()
         cap2.release()
+        logger.info("Cameras released")
 
 class MyConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -63,14 +76,15 @@ class MyConsumer(AsyncWebsocketConsumer):
         active_connections += 1
         await self.accept()
 
-        # Запускаем задачу, если она ещё не запущена
         if task is None or task.done():
+            logger.info("Starting send_periodic_messages task")
             task = asyncio.create_task(send_periodic_messages())
 
     async def disconnect(self, close_code):
         global active_connections
         await self.channel_layer.group_discard(self.group_name, self.channel_name)
-        active_connections -= 1
+        active_connections = max(active_connections - 1, 0)  # не уходим в минус
+        logger.info(f"Disconnected, active_connections={active_connections}")
 
     async def broadcast_message(self, event):
         message = event["message"]
