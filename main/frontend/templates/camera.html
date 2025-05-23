@@ -21,15 +21,40 @@
         gap: 20px;
 
     }
+
+    .utilis-row-data{
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+        color: black;
+        font-size: 21px;
+        font-weight: 400;
+    }
+
+    .utilis-row-data .row{
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 20px;
+    }
 </style>
 
 <div class="container-camera">
     <img id="webcam-feed" alt="Webcam Feed" />
+    <div class="utilis-row-data">
+        <div class="row">
+            <span>255</span>
+            <span>255</span>
+            <span>255</span>
+        </div>
+    </div>
     <div class="utilis-webcam">
         <button id="button-connect-camera" type="button" class="btn btn-success">On</button>
         <button id="button-disconnect-camera" type="button" class="btn btn-danger">Off</button>
         <button id="button-download-camera" type="button" class="btn btn-warning">Download</button>
     </div>
+
 </div>
 
 <script>
@@ -37,7 +62,7 @@
     const imgElement = $('#webcam-feed');
     let reconnectAttempts = 0;
     const maxReconnectAttempts = 10;
-    const reconnectDelayMs = 2000; 
+    const reconnectDelayMs = 2000;
 
     function connectCamera() {
         camera = new WebSocket(
