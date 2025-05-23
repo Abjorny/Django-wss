@@ -40,6 +40,22 @@ sensor_center_one =  Sensor(
     (0, 0, 255) 
 )
 
+sensor_left_two =  Sensor(
+    np.array([[50, 50], [300, 50], [300, 265], [50, 265]]), 
+    (0, 0, 255) 
+)
+
+
+sensor_right_two =  Sensor(
+    np.array([[665, 270], [920, 280], [900, 480], [665, 480]]), 
+    (0, 0, 255) 
+)
+
+sensor_center_two =  Sensor(
+    np.array([[340, 265], [630, 270], [630, 480], [340, 480]]), 
+    (0, 0, 255) 
+)
+
 FIXED_WIDTH = 640
 FIXED_HEIGHT = 480
 
@@ -98,7 +114,10 @@ async def send_periodic_messages():
 
 
                 combined_frame = cv2.hconcat([frame0, frame2])
-                FrameUtilis.display_all_roi_sensors([sensor_left_one, sensor_right_one, sensor_center_one], combined_frame)
+                FrameUtilis.display_all_roi_sensors(
+                    [sensor_left_one, sensor_right_one, sensor_center_one], 
+                    [sensor_left_two, sensor_right_two, sensor_center_two], 
+                    combined_frame)
                 _, buffer = cv2.imencode('.jpg', combined_frame, [int(cv2.IMWRITE_JPEG_QUALITY),40])
                 image_data = base64.b64encode(buffer).decode('utf-8')
 
@@ -115,8 +134,10 @@ async def send_periodic_messages():
             await asyncio.sleep(1/15)
     except asyncio.CancelledError:
         logger.info("send_periodic_messages task was cancelled")
+    
     except Exception as e:
         logger.error(f"send_periodic_messages task crashed: {e}")
+    
     finally:
         cap0.release()
         cap2.release()
