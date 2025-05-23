@@ -6,7 +6,7 @@ import cv2
 import base64
 
 active_connections = 0
-task = None  # Чтобы хранить ссылку на задачу
+task = None 
 
 async def send_periodic_messages():
     channel_layer = get_channel_layer()
@@ -24,7 +24,6 @@ async def send_periodic_messages():
     try:
         while True:
             if active_connections == 0:
-                # Нет клиентов, ждем и не читаем камеры
                 await asyncio.sleep(1)
                 continue
 
@@ -40,7 +39,6 @@ async def send_periodic_messages():
             
             combined_frame = cv2.hconcat([frame0, frame2])
             
-            # Снизим качество JPEG для уменьшения нагрузки и размера
             _, buffer = cv2.imencode('.jpg', combined_frame, [int(cv2.IMWRITE_JPEG_QUALITY), 40])
             image_data = base64.b64encode(buffer).decode('utf-8')
 
@@ -52,7 +50,7 @@ async def send_periodic_messages():
                 }
             )
 
-            await asyncio.sleep(1/15)  # 15 FPS
+            await asyncio.sleep(1/15)
     finally:
         cap0.release()
         cap2.release()

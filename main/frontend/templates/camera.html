@@ -9,16 +9,17 @@
         max-width: 640px;
     }
 
-    #webcam-feed{
+    #webcam-feed {
         width: 640px;
     }
-    .utilis-webcam{
+
+    .utilis-webcam {
         display: flex;
         flex-direction: row;
-        justify-content: start; 
-        margin-top: 20px; 
-        gap:20px;      
-    
+        justify-content: start;
+        margin-top: 20px;
+        gap: 20px;
+
     }
 </style>
 
@@ -34,48 +35,82 @@
 <script>
     let camera = null;
     const imgElement = $('#webcam-feed');
+    let reconnectAttempts = 0;
+    const maxReconnectAttempts = 10;
+    const reconnectDelayMs = 2000; 
+
     function connectCamera() {
         camera = new WebSocket(
             'ws://'
             + window.location.host
             + '/ws/api/get_image'
         );
+
         camera.onmessage = function (event) {
             const data = JSON.parse(event.data);
             if (data.message.image) {
                 imgElement.attr('src', `data:image/jpeg;base64,${data.message.image}`);
-
             }
         };
 
         camera.onclose = function (e) {
-            console.error('Chat socket closed unexpectedly');
+            console.error('WebSocket closed unexpectedly', e);
+            imgElement.hide();
+            camera = null;
+
+            if (reconnectAttempts < maxReconnectAttempts) {
+                reconnectAttempts++;
+                console.log(`Reconnect attempt #${reconnectAttempts} in ${reconnectDelayMs / 1000} seconds...`);
+                setTimeout(() => {
+                    imgElement.show();
+                    connectCamera();
+                }, reconnectDelayMs);
+            } else {
+                console.warn('Max reconnect attempts reached. Stopping reconnect attempts.');
+            }
+        };
+
+        camera.onerror = function (error) {
+            console.error('WebSocket error observed:', error);
+            camera.close();
+        };
+
+        camera.onopen = function () {
+            console.log('WebSocket connected');
+            reconnectAttempts = 0;
+            imgElement.show();
         };
     }
-    function saveUrlAsFile(url, fileName) {    
-        var link = document.createElement("a");    
+
+    function saveUrlAsFile(url, fileName) {
+        var link = document.createElement("a");
         link.setAttribute("href", url);
         link.setAttribute("download", fileName);
         link.click();
     }
 
     $("#button-disconnect-camera").click(() => {
-        if (camera !== null){
+        if (camera !== null) {
             imgElement.hide();
             camera.close();
             camera = null;
+            reconnectAttempts = maxReconnectAttempts;
         }
     });
+
     $("#button-connect-camera").click(() => {
-        if (camera == null){
-            imgElement.show()
+        if (camera == null) {
+            reconnectAttempts = 0;
+            imgElement.show();
             connectCamera();
         }
     });
-    $('#button-download-camera').click(()=>{
-        if (camera !== null){
+
+    $('#button-download-camera').click(() => {
+        if (camera !== null) {
             saveUrlAsFile(imgElement.attr('src'), 'image.jpg');
         }
     });
+
     connectCamera();
 </script>
