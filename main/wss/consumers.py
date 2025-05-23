@@ -57,7 +57,7 @@ sensor_center_two =  Sensor(
 )
 
 red_front_border = RedSensor(
-    np.array([[290, 410], [410, 410], [410, 440], [290, 440]]),
+    np.array([[310, 410], [410, 410], [410, 440], [310, 440]]),
     (0, 0, 255)
 )
 
@@ -66,6 +66,10 @@ red_right_border = RedSensor(
     (0, 0, 255)
 )
 
+red_left_border = RedSensor(
+    np.array([[245, 420], [275, 420], [275, 470], [245, 470]]),
+    (0, 0, 255)
+)
 FIXED_WIDTH = 640
 FIXED_HEIGHT = 480
 
@@ -142,7 +146,7 @@ async def send_periodic_messages():
                     [sensor_left_one, sensor_right_one, sensor_center_one, 
                     sensor_left_two, sensor_right_two, sensor_center_two], 
                     combined_frame)
-                FrameUtilis.display_all_roi_sensors([red_front_border, red_right_border], frameRed)
+                FrameUtilis.display_all_roi_sensors([red_front_border, red_right_border, red_left_border], frameRed)
                 _, buffer = cv2.imencode('.jpg', frameRed, [int(cv2.IMWRITE_JPEG_QUALITY),40])
                 image_data = base64.b64encode(buffer).decode('utf-8')
 
