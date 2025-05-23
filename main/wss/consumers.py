@@ -47,14 +47,11 @@ async def send_periodic_messages():
 
                 if frame0.shape != frame2.shape:
                     frame2 = cv2.resize(frame2, (frame0.shape[1], frame0.shape[0]))
-
+                frame0 = first_left.get_roi(frame0, False).roi_frame
                 combined_frame = cv2.hconcat([frame0, frame2])
-
                 _, buffer = cv2.imencode('.jpg', combined_frame, [int(cv2.IMWRITE_JPEG_QUALITY), 40])
                 buffer_bytes = np.frombuffer(buffer, dtype=np.uint8)
-                frame = cv2.imdecode(buffer_bytes, cv2.IMREAD_COLOR)
-                data = first_left.get_roi(frame, False).roi_frame
-                image_data = base64.b64encode(data).decode('utf-8')
+                image_data = base64.b64encode(buffer_bytes).decode('utf-8')
 
                 await channel_layer.group_send(
                     "broadcast_group",
