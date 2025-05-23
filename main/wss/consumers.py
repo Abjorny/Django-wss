@@ -47,7 +47,7 @@ sensor_left_two =  Sensor(
 
 
 sensor_right_two =  Sensor(
-    np.array([[630, 30], [910, 30], [910, 160], [660, 160]]), 
+    np.array([[640, 30], [930, 40], [950, 170], [660, 160]]), 
     (0, 0, 255) 
 )
 
