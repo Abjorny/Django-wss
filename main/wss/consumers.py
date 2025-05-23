@@ -37,21 +37,36 @@ async def send_periodic_messages():
     try:
         while True:
             try:
-                ret0, frame0 = cap2.read()
-                ret2, frame2 = cap0.read()
+                ret0, frame0 = cap2.read()  # исправлено
+                ret2, frame2 = cap0.read()  # исправлено
 
                 if not ret0 or not ret2:
                     logger.warning("Failed to read from one of the cameras")
                     await asyncio.sleep(0.05)
                     continue
 
+                frame0 = first_left.get_roi(frame0, False).roi_frame
+
+                # Приведение размеров и типов
                 if frame0.shape != frame2.shape:
                     frame2 = cv2.resize(frame2, (frame0.shape[1], frame0.shape[0]))
-                frame0 = first_left.get_roi(frame0, False).roi_frame
+
+                if frame0.dtype != frame2.dtype:
+                    frame2 = frame2.astype(frame0.dtype)
+
+                if len(frame0.shape) != len(frame2.shape):
+                    if len(frame0.shape) == 2:
+                        frame0 = cv2.cvtColor(frame0, cv2.COLOR_GRAY2BGR)
+                    elif len(frame2.shape) == 2:
+                        frame2 = cv2.cvtColor(frame2, cv2.COLOR_GRAY2BGR)
+
+                frame0 = np.ascontiguousarray(frame0)
+                frame2 = np.ascontiguousarray(frame2)
+
                 combined_frame = cv2.hconcat([frame0, frame2])
+
                 _, buffer = cv2.imencode('.jpg', combined_frame, [int(cv2.IMWRITE_JPEG_QUALITY), 40])
-                buffer_bytes = np.frombuffer(buffer, dtype=np.uint8)
-                image_data = base64.b64encode(buffer_bytes).decode('utf-8')
+                image_data = base64.b64encode(buffer).decode('utf-8')
 
                 await channel_layer.group_send(
                     "broadcast_group",
