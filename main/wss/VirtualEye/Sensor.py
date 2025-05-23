@@ -182,7 +182,7 @@ class Sensor:
         roi = roi[y:y+h, x:x+w]
 
         black_pixels = np.all(roi == [0, 0, 0], axis=-1)  
-        roi[black_pixels] = [255, 255, 255]  
+        roi[black_pixels] = [0, 0, 0]  
         roi = Roi([roi, x, y, w, h])
         return roi
     
