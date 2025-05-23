@@ -40,16 +40,11 @@ class LibaryHSV:
 
 class Sensor:
     
-    def __init__(self, mass, massTwo, massThree, massCompress, massForCheck, color):
+    def __init__(self, mass,  color):
         self.mass = mass
-        self.massTwo = massTwo
-        self.massThree = massThree
-        self.massCompress = massCompress
-        self.massForCheck = massForCheck
-
+        self.mass_display = mass
         self.color = color
         self.hsv = LibaryHSV()
-        self.mass_display = mass
         self.posRobot = 1
         self.show = True
     
@@ -167,12 +162,7 @@ class Sensor:
         return result
 
     def get_roi(self, frame, isTwo):
-        if self.posRobot == 2:
-            box = self.massThree
-        elif isTwo == False:
-            box = self.mass
-        else:
-            box = self.massTwo
+        box = self.mass
 
         mask = np.zeros(frame.shape[:2], dtype=np.uint8)
         cv2.fillPoly(mask, [box], 255)  
@@ -187,7 +177,7 @@ class Sensor:
         return roi
     
     def get_roi_compress(self, frame):
-        box = self.massCompress
+        box = self.mass
         mask = np.zeros(frame.shape[:2], dtype=np.uint8)
         cv2.fillPoly(mask, [box], 255)  
         roi = cv2.bitwise_and(frame, frame, mask=mask)
@@ -201,7 +191,7 @@ class Sensor:
         return roi
     
     def get_roi_check(self, frame):
-        box = self.massForCheck
+        box = self.mass
         mask = np.zeros(frame.shape[:2], dtype=np.uint8)
         cv2.fillPoly(mask, [box], 255)  
         roi = cv2.bitwise_and(frame, frame, mask=mask)
@@ -215,13 +205,7 @@ class Sensor:
         return roi
     
     def calculate_centroid(self, isTwo):
-        if self.posRobot == 2:
-            points = np.vstack([self.massThree, self.massThree[0]])
-        elif isTwo is True:
-            points = np.vstack([self.massTwo, self.massTwo[0]])
-        
-        else:
-            points = np.vstack([self.mass, self.mass[0]])
+        points = np.vstack([self.mass, self.mass[0]])
 
         def polygon_area(points):
             x = points[:, 0]
@@ -237,15 +221,7 @@ class Sensor:
 
         return int(C_x), int(C_y)
     
-    def change_mass_display(self, isTwo):
-        if self.posRobot == 2:
-            self.mass_display = self.massThree
-        
-        elif isTwo:
-            self.mass_display = self.massTwo
-        
-        else:
-            self.mass_display = self.mass
+
 
     def readObject(self, frame_copy, frame):
 

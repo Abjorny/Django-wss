@@ -12,29 +12,25 @@ import logging
 logger = logging.getLogger(__name__)
 
 task = None
+
 first_left = Sensor(
     np.array([[165, 160], [330, 150], [360, 420], [75, 370]]), 
-    np.array([[0, 0], [0, 0], [0, 0], [0, 0]]), 
-    np.array([[0, 0], [0, 0], [0, 0], [0, 0]]), 
-    np.array([[0, 0], [0, 0], [0, 0], [0, 0]]), 
-    np.array([[0, 0], [0, 0], [0, 0], [0, 0]]), 
     (0, 0, 255) 
 )
 
 first_right = Sensor(
     np.array([[285, 150], [450, 150], [560, 360], [260, 430]]), 
-    np.array([[0, 0], [0, 0], [0, 0], [0, 0]]), 
-    np.array([[0, 0], [0, 0], [0, 0], [0, 0]]), 
-    np.array([[0, 0], [0, 0], [0, 0], [0, 0]]), 
-    np.array([[0, 0], [0, 0], [0, 0], [0, 0]]), 
     (0, 0, 255) 
 )
 
 
+sensor_right_one =  Sensor(
+    np.array([[165, 160], [330, 150], [360, 420], [75, 370]]), 
+    (0, 0, 255) 
+)
+
 FIXED_WIDTH = 640
 FIXED_HEIGHT = 480
-
-
 
 
 def resize_frame(frame, width=FIXED_WIDTH, height=FIXED_HEIGHT):
@@ -91,7 +87,7 @@ async def send_periodic_messages():
 
 
                 combined_frame = cv2.hconcat([frame0, frame2])
-
+                FrameUtilis.display_all_roi_sensors([sensor_right_one], combined_frame)
                 _, buffer = cv2.imencode('.jpg', combined_frame, [int(cv2.IMWRITE_JPEG_QUALITY), 40])
                 image_data = base64.b64encode(buffer).decode('utf-8')
 
