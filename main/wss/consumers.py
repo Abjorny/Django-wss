@@ -8,7 +8,6 @@ import logging
 
 logger = logging.getLogger(__name__)
 
-active_connections = 0
 task = None
 
 async def send_periodic_messages():
@@ -27,10 +26,6 @@ async def send_periodic_messages():
 
     try:
         while True:
-            if active_connections == 0:
-                await asyncio.sleep(1)
-                continue
-
             try:
                 ret0, frame0 = cap2.read()
                 ret2, frame2 = cap0.read()
@@ -70,10 +65,9 @@ async def send_periodic_messages():
 
 class MyConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        global active_connections, task
+        global  task
         self.group_name = "broadcast_group"
         await self.channel_layer.group_add(self.group_name, self.channel_name)
-        active_connections += 1
         await self.accept()
 
         if task is None or task.done():
@@ -81,10 +75,7 @@ class MyConsumer(AsyncWebsocketConsumer):
             task = asyncio.create_task(send_periodic_messages())
 
     async def disconnect(self, close_code):
-        global active_connections
         await self.channel_layer.group_discard(self.group_name, self.channel_name)
-        active_connections = max(active_connections - 1, 0)  # не уходим в минус
-        logger.info(f"Disconnected, active_connections={active_connections}")
 
     async def broadcast_message(self, event):
         message = event["message"]
