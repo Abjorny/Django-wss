@@ -20,6 +20,28 @@ first_left = Sensor(
     np.array([[0, 0], [0, 0], [0, 0], [0, 0]]), 
     (0, 0, 255) 
 )
+
+FIXED_WIDTH = 640
+FIXED_HEIGHT = 480
+
+def fit_frame_to_fixed_size(frame, width=FIXED_WIDTH, height=FIXED_HEIGHT):
+    black_bg = np.zeros((height, width, 3), dtype=np.uint8)
+    if len(frame.shape) == 2:
+        frame = cv2.cvtColor(frame, cv2.COLOR_GRAY2BGR)
+
+    h, w = frame.shape[:2]
+    if h > height:
+        frame = frame[:height, :, :]
+        h = height
+    if w > width:
+        frame = frame[:, :width, :]
+        w = width
+
+    black_bg[0:h, 0:w] = frame
+
+    return black_bg
+
+
 async def send_periodic_messages():
     channel_layer = get_channel_layer()
 
@@ -37,29 +59,26 @@ async def send_periodic_messages():
     try:
         while True:
             try:
-                ret0, frame0 = cap2.read()  # исправлено
-                ret2, frame2 = cap0.read()  # исправлено
+                ret0, frame0 = cap0.read()
+                ret2, frame2 = cap2.read()
 
                 if not ret0 or not ret2:
                     logger.warning("Failed to read from one of the cameras")
                     await asyncio.sleep(0.05)
                     continue
 
+                # Получаем ROI
                 frame0 = first_left.get_roi(frame0, False).roi_frame
 
-                # Приведение размеров и типов
-                if frame0.shape != frame2.shape:
-                    frame2 = cv2.resize(frame2, (frame0.shape[1], frame0.shape[0]))
+                # Вписываем оба кадра в фиксированный размер с черным фоном
+                frame0 = fit_frame_to_fixed_size(frame0)
+                frame2 = fit_frame_to_fixed_size(frame2)
 
+                # Приводим к uint8, если нужно
                 if frame0.dtype != frame2.dtype:
                     frame2 = frame2.astype(frame0.dtype)
 
-                if len(frame0.shape) != len(frame2.shape):
-                    if len(frame0.shape) == 2:
-                        frame0 = cv2.cvtColor(frame0, cv2.COLOR_GRAY2BGR)
-                    elif len(frame2.shape) == 2:
-                        frame2 = cv2.cvtColor(frame2, cv2.COLOR_GRAY2BGR)
-
+                # Делать массивы C-континуальными — обязательно
                 frame0 = np.ascontiguousarray(frame0)
                 frame2 = np.ascontiguousarray(frame2)
 
