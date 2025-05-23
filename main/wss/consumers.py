@@ -147,7 +147,7 @@ async def send_periodic_messages():
                     sensor_left_two, sensor_right_two, sensor_center_two], 
                     combined_frame)
                 FrameUtilis.display_all_roi_sensors([red_front_border, red_right_border, red_left_border], frameRed)
-                _, buffer = cv2.imencode('.jpg', combined_frame, [int(cv2.IMWRITE_JPEG_QUALITY),40])
+                _, buffer = cv2.imencode('.jpg', frameRed, [int(cv2.IMWRITE_JPEG_QUALITY),40])
                 image_data = base64.b64encode(buffer).decode('utf-8')
 
                 await channel_layer.group_send(
