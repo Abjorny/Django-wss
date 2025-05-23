@@ -28,8 +28,8 @@ async def send_periodic_messages():
                 await asyncio.sleep(1)
                 continue
 
-            ret0, frame0 = cap0.read()
-            ret2, frame2 = cap2.read()
+            ret0, frame0 = cap2.read()
+            ret2, frame2 = cap0.read()
 
             if not ret0 or not ret2:
                 await asyncio.sleep(0.05)
