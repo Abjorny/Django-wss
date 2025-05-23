@@ -49,25 +49,25 @@ class MyConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         global task_started
         self.group_name = "broadcast_group"
-        await self.channel_layer.group_add(
-            self.group_name,
-            self.channel_name
-        )
+        await self.channel_layer.group_add(self.group_name, self.channel_name)
+        await self.accept()
+
+        # Получить список камер
+        self.cameras = get_available_cameras(3)
+
+        # Отправить список доступных камер клиенту
         await self.send(text_data=json.dumps({
             "type": "camera_list",
             "cameras": self.cameras
         }))
-        await self.accept()
+
+        # Запустить потоковую передачу, если не запущено
         if not task_started:
             task_started = True
-            cameras = get_available_cameras(3)
-            asyncio.create_task(send_periodic_messages(cameras))
+            asyncio.create_task(send_periodic_messages(self.cameras))
 
     async def disconnect(self, close_code):
-        await self.channel_layer.group_discard(
-            self.group_name,
-            self.channel_name
-        )
+        await self.channel_layer.group_discard(self.group_name, self.channel_name)
 
     async def broadcast_message(self, event):
         message = event["message"]
