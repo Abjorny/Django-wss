@@ -2,8 +2,8 @@ import asyncio
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.layers import get_channel_layer
 import json
-from VirtualEye.Sensor import Sensor
-from VirtualEye.FrameUtilis import FrameUtilis
+from .VirtualEye.Sensor import Sensor
+from .VirtualEye.FrameUtilis import FrameUtilis
 import numpy as np
 import cv2
 import base64
