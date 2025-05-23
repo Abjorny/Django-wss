@@ -26,18 +26,19 @@ async def send_periodic_messages():
             ret2, frame2 = cap2.read()
 
             if not ret0 or not ret2:
-                await asyncio.sleep(0.01)
+                await asyncio.sleep(0.05)  # чуть больше, если кадры не готовы
                 continue
             
             if frame0.shape != frame2.shape:
                 frame2 = cv2.resize(frame2, (frame0.shape[1], frame0.shape[0]))
             
-            # Объединяем два кадра по горизонтали
             combined_frame = cv2.hconcat([frame0, frame2])
             
-            _, buffer = cv2.imencode('.jpg', combined_frame)
+            # JPEG качество 50 — баланс качество/размер
+            _, buffer = cv2.imencode('.jpg', combined_frame, [int(cv2.IMWRITE_JPEG_QUALITY), 50])
             image_data = base64.b64encode(buffer).decode('utf-8')
 
+            # Проверка на подписчиков в группе (если нужно, но Channels не всегда это легко)
             await channel_layer.group_send(
                 "broadcast_group",
                 {
@@ -46,10 +47,11 @@ async def send_periodic_messages():
                 }
             )
 
-            await asyncio.sleep(0.01)  
+            await asyncio.sleep(1/15)  # 15 FPS
     finally:
         cap0.release()
         cap2.release()
+
 
 class MyConsumer(AsyncWebsocketConsumer):
     async def connect(self):
