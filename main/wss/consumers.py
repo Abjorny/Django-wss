@@ -115,8 +115,12 @@ async def send_periodic_messages():
 
                 combined_frame = cv2.hconcat([frame0, frame2])
                 copyFrame = combined_frame.copy()
-                value_left_one = sensor_left_one.readObject(copyFrame, combined_frame)
-                print(value_left_one)
+
+                value_left_one, isTwo = sensor_left_one.readObject(copyFrame, combined_frame)
+                value_center_one, isTwo = sensor_center_one.readObject(copyFrame, combined_frame)
+                value_right_one, isTwo = sensor_right_one.readObject(copyFrame, combined_frame)
+
+
                 FrameUtilis.display_all_roi_sensors(
                     [sensor_left_one, sensor_right_one, sensor_center_one, 
                     sensor_left_two, sensor_right_two, sensor_center_two], 
@@ -128,7 +132,12 @@ async def send_periodic_messages():
                     "broadcast_group",
                     {
                         "type": "broadcast_message",
-                        "message": {"image": image_data},
+                        "message": {
+                            "image": image_data,
+                            "valueLeftOne": value_left_one,
+                            "valueCenterOne": value_center_one,
+                            "valueRightOne": value_right_one,
+                        },
                     }
                 )
             except Exception as e:

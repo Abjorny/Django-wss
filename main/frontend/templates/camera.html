@@ -50,9 +50,9 @@
             <span>255</span>
         </div>
         <div class="row-data">
-            <span>255</span>
-            <span>255</span>
-            <span>255</span>
+            <span id="value-left">255</span>
+            <span id="value-center">255</span>
+            <span id="value-right">255</span>
         </div>
     </div>
     <div class="utilis-webcam">
@@ -80,9 +80,12 @@
         camera.onmessage = function (event) {
             const data = JSON.parse(event.data);
             if (data.message.image) {
+                document.getElementById('value-left').textContent = data.message.valueLeftOne;
+                document.getElementById('value-center').textContent = data.message.valueCenterOne;
+                document.getElementById('value-right').textContent = data.message.valueRightOne;
                 imgElement.attr('src', `data:image/jpeg;base64,${data.message.image}`);
             }
-        };
+        };image
 
         camera.onclose = function (e) {
             console.error('WebSocket closed unexpectedly', e);
