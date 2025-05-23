@@ -52,7 +52,7 @@ sensor_right_two =  Sensor(
 )
 
 sensor_center_two =  Sensor(
-    np.array([[340, 30], [650, 30], [660, 160], [295, 160]]), 
+    np.array([[340, 30], [630, 30], [660, 160], [295, 160]]), 
     (0, 0, 255) 
 )
 
