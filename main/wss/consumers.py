@@ -5,7 +5,8 @@ import json
 import cv2
 import base64
 
-task_started = False
+active_connections = 0
+task = None  # Чтобы хранить ссылку на задачу
 
 async def send_periodic_messages():
     channel_layer = get_channel_layer()
@@ -22,11 +23,16 @@ async def send_periodic_messages():
 
     try:
         while True:
+            if active_connections == 0:
+                # Нет клиентов, ждем и не читаем камеры
+                await asyncio.sleep(1)
+                continue
+
             ret0, frame0 = cap0.read()
             ret2, frame2 = cap2.read()
 
             if not ret0 or not ret2:
-                await asyncio.sleep(0.05)  # чуть больше, если кадры не готовы
+                await asyncio.sleep(0.05)
                 continue
             
             if frame0.shape != frame2.shape:
@@ -34,11 +40,10 @@ async def send_periodic_messages():
             
             combined_frame = cv2.hconcat([frame0, frame2])
             
-            # JPEG качество 50 — баланс качество/размер
-            _, buffer = cv2.imencode('.jpg', combined_frame, [int(cv2.IMWRITE_JPEG_QUALITY), 50])
+            # Снизим качество JPEG для уменьшения нагрузки и размера
+            _, buffer = cv2.imencode('.jpg', combined_frame, [int(cv2.IMWRITE_JPEG_QUALITY), 40])
             image_data = base64.b64encode(buffer).decode('utf-8')
 
-            # Проверка на подписчиков в группе (если нужно, но Channels не всегда это легко)
             await channel_layer.group_send(
                 "broadcast_group",
                 {
@@ -52,25 +57,22 @@ async def send_periodic_messages():
         cap0.release()
         cap2.release()
 
-
 class MyConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        global task_started
+        global active_connections, task
         self.group_name = "broadcast_group"
-        await self.channel_layer.group_add(
-            self.group_name,
-            self.channel_name
-        )
+        await self.channel_layer.group_add(self.group_name, self.channel_name)
+        active_connections += 1
         await self.accept()
-        if not task_started:
-            task_started = True
-            asyncio.create_task(send_periodic_messages())
+
+        # Запускаем задачу, если она ещё не запущена
+        if task is None or task.done():
+            task = asyncio.create_task(send_periodic_messages())
 
     async def disconnect(self, close_code):
-        await self.channel_layer.group_discard(
-            self.group_name,
-            self.channel_name
-        )
+        global active_connections
+        await self.channel_layer.group_discard(self.group_name, self.channel_name)
+        active_connections -= 1
 
     async def broadcast_message(self, event):
         message = event["message"]
