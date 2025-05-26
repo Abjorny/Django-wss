@@ -281,10 +281,10 @@ class Sensor:
             
             elif  red_result.noblack !=0 and blue_result.noblack == 0:
                 red_result = self.get_red(roi, frame_copy)
-                if red_result.area > 3000 and red_result.w > red_result.h and not isTwo:
+                if red_result.area > 2500 and red_result.w > red_result.h and not isTwo:
                         value = 22
                 
-                elif red_result.area > 3000 and red_result.w < red_result.h and not isTwo:
+                elif red_result.area > 2500 and red_result.w < red_result.h and not isTwo:
                     value = 21
                 
                 elif red_result.w  <= red_result.h and isTwo:
