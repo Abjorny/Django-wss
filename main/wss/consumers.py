@@ -88,6 +88,7 @@ async def send_periodic_messages():
 
     while True:
             frame = get_frame_from_socket()
+            frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
             copyFrame = frame.copy()
 
             # frame0 = first_left.get_roi(frame0, False).roi_frame
