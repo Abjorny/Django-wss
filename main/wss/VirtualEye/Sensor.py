@@ -292,18 +292,7 @@ class Sensor:
         return value, isTwo
 
 class RedSensor(Sensor):
-    def get_red(self, roi: Roi, frame_3d):
-        result: Result = self.serach_two_color(
-            roi = roi,
-            min_one = self.hsv.min_red_one,
-            max_one = self.hsv.max_red_one,
-            min_two = self.hsv.min_red_two,
-            max_two = self.hsv.max_red_two
-        )
-        x_global = result.x + roi.x
-        y_global = result.y + roi.y
-        cv2.rectangle(frame_3d, (x_global, y_global), (x_global + result.w, y_global + result.h), (0, 255, 255), 2)
-        return result
+
     
     def check_border(self, frame, frame_3d):
         self.posRobot = 1
@@ -344,7 +333,7 @@ class RedSensor(Sensor):
         )
         mask1 = cv2.inRange(frame, min_one, max_one)
         mask2 = cv2.inRange(frame, min_two, max_two)
-        red_mask = cv2.bitwise_or(mask1, mask2)
+        red_mask = mask1 | mask2
         counturs, hierarchy = cv2.findContours(red_mask,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
         area_delta = 0
         x,y,w,h = 0,0,0,0
