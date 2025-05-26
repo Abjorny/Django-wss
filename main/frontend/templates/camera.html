@@ -22,7 +22,7 @@
 
     }
 
-    .utilis-row-data{
+    .utilis-row-data {
         display: flex;
         flex-direction: column;
         align-items: flex-start;
@@ -33,7 +33,7 @@
         margin-top: 20px;
     }
 
-    .utilis-row-data .row-data{
+    .utilis-row-data .row-data {
         display: flex;
         flex-direction: row;
         align-items: center;
@@ -46,13 +46,22 @@
     <div class="utilis-row-data">
         <div class="row-data">
             <span id="value-left-two">255</span>
-            <span  id="value-center-two">255</span>
+            <span id="value-center-two">255</span>
             <span id="value-right-two">255</span>
         </div>
         <div class="row-data">
             <span id="value-left">255</span>
             <span id="value-center">255</span>
             <span id="value-right">255</span>
+        </div>
+        <div class="row-data">
+            <span id="red-left">Лево: 0</span>
+            <span id="red-right">Право: 0</span>
+
+        </div>
+        <div class="row-data">
+            <span id="red-front">Перед: 0</span>
+            <span id="red-front-two">Перед второй: 0</span>
         </div>
     </div>
     <div class="utilis-webcam">
@@ -87,9 +96,17 @@
                 document.getElementById('value-left-two').textContent = data.message.valueLeftTwo;
                 document.getElementById('value-center-two').textContent = data.message.valueCenterTwo;
                 document.getElementById('value-right-two').textContent = data.message.valueRightTwo;
+
+
+
+                document.getElementById('red-left').textContent = 'Лево: ' + data.message.redLeft;
+                document.getElementById('red-right').textContent = 'Право: ' + data.message.redRight;
+                document.getElementById('red-front').textContent = 'Перед: ' + data.message.redFront;
+                document.getElementById('red-front-two').textContent = 'Перед второй: ' + data.message.redFrontTwo;
+
                 imgElement.attr('src', `data:image/jpeg;base64,${data.message.image}`);
             }
-        };image
+        }; image
 
         camera.onclose = function (e) {
             console.error('WebSocket closed unexpectedly', e);

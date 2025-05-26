@@ -174,8 +174,8 @@ async def send_periodic_messages():
                     value_right_two = 0
                     value_left_two = 0
                     value_center_two = 0
-                    
-                print(red_front, red_front_two,  red_left, red_right)
+
+                # print(red_front, red_front_two,  red_left, red_right)
                 FrameUtilis.display_all_roi_sensors(
                     [sensor_left_one, sensor_right_one, sensor_center_one, 
                     sensor_left_two, sensor_right_two, sensor_center_two], 
@@ -199,6 +199,10 @@ async def send_periodic_messages():
                             "valueLeftTwo": value_left_two,
                             "valueCenterTwo": value_center_two,
                             "valueRightTwo": value_right_two,
+                            "redLeft" : red_left,
+                            "redRight" : red_right,
+                            "redFront" : red_front,
+                            "redFrontTwo": red_front_two  
                         },
                     }
                 )
