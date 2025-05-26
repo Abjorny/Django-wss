@@ -132,6 +132,7 @@ async def send_periodic_messages():
                     [-4.21205669e-04,  2.08644464e-03,  1.00000000e+00]
                 ])
                 output_size = (480, 480)
+                
                 frame0 = cv2.warpPerspective(frame0, M0, output_size)
                 frame2 = cv2.warpPerspective(frame2, M2, output_size)
 
@@ -147,19 +148,20 @@ async def send_periodic_messages():
                 value_center_two, isTwo = sensor_center_two.readObject(copyFrame, combined_frame)
                 value_right_two, isTwo = sensor_right_two.readObject(copyFrame, combined_frame)
 
-                red_front = red_front_border.check_border(copyFrame, copyFrame)
-                red_front_two = red_frontTwo_border.check_border(copyFrame, copyFrame)
-                red_right = red_right_border.check_border(copyFrame, copyFrame)
-                red_left = red_left_border.check_border(copyFrame, copyFrame)
+                red_front = red_front_border.check_border(copyFrame, frameRed)
+                red_front_two = red_frontTwo_border.check_border(copyFrame, frameRed)
+                red_right = red_right_border.check_border(copyFrame, frameRed)
+                red_left = red_left_border.check_border(copyFrame, frameRed)
 
-
+                
                 print(red_front, red_front_two,  red_left, red_right)
                 FrameUtilis.display_all_roi_sensors(
                     [sensor_left_one, sensor_right_one, sensor_center_one, 
                     sensor_left_two, sensor_right_two, sensor_center_two], 
                     combined_frame)
+                
                 FrameUtilis.display_all_roi_sensors([red_front_border, red_frontTwo_border, red_right_border, red_left_border], frameRed)
-                _, buffer = cv2.imencode('.jpg', frameRed, [int(cv2.IMWRITE_JPEG_QUALITY),40])
+                _, buffer = cv2.imencode('.jpg', combined_frame, [int(cv2.IMWRITE_JPEG_QUALITY),40])
 
                 image_data = base64.b64encode(buffer).decode('utf-8')
 
