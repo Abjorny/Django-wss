@@ -140,14 +140,13 @@ class Sensor:
         )
         return result
 
-    def get_red(self, roi: Roi, frame_3d, smart = False):
+    def get_red(self, roi: Roi, frame_3d):
         result: Result = self.serach_two_color(
             roi = roi,
             min_one = self.hsv.min_red_one,
             max_one = self.hsv.max_red_one,
             min_two = self.hsv.min_red_two,
             max_two = self.hsv.max_red_two,
-            smart = smart
         )
 
         x_global = result.x + roi.x
