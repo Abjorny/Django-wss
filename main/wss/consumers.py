@@ -5,9 +5,13 @@ import json
 from .VirtualEye.Sensor import Sensor, RedSensor
 from .VirtualEye.FrameUtilis import FrameUtilis
 import numpy as np
+import struct
+from io import BytesIO
+from PIL import Image
 import cv2
 import base64
 import logging
+import socket
 
 logger = logging.getLogger(__name__)
 cap0 = cv2.VideoCapture(0)
@@ -15,6 +19,22 @@ cap0 = cv2.VideoCapture(0)
 task = None
 
 
+def get_frame_from_socket():
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.connect(("127.0.0.1", 9999))
+        s.sendall(b'GETI')
+        raw_len = s.recv(4)
+        if not raw_len:
+            return None
+        img_len = struct.unpack('>I', raw_len)[0]
+        img_data = b''
+        while len(img_data) < img_len:
+            chunk = s.recv(4096)
+            if not chunk:
+                break
+            img_data += chunk
+        img = Image.open(BytesIO(img_data)).convert("RGB")
+        return np.array(img)
 
 
 
@@ -67,7 +87,7 @@ async def send_periodic_messages():
 
 
     while True:
-            ret, frame = cap0.read()
+            ret, frame = get_frame_from_socket()
             copyFrame = frame.copy()
 
             # frame0 = first_left.get_roi(frame0, False).roi_frame
