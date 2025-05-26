@@ -14,12 +14,12 @@ logger = logging.getLogger(__name__)
 task = None
 
 first_left = Sensor(
-    np.array([[165, 160], [330, 150], [360, 420], [75, 370]]), 
+    np.array([[165, 190], [330, 180], [360, 420], [75, 370]]), 
     (0, 0, 255) 
 )
 
 first_right = Sensor(
-    np.array([[285, 150], [450, 150], [560, 360], [260, 430]]), 
+    np.array([[285, 180], [450, 180], [560, 360], [260, 430]]), 
     (0, 0, 255) 
 )
 
@@ -110,7 +110,7 @@ async def send_periodic_messages():
                     [-1.15379595e-02,  2.01337394e+00, -1.36724820e+00],
                     [-4.21205669e-04,  2.08644464e-03,  1.00000000e+00]
                 ])
-                output_size = (480, 580)
+                output_size = (480, 480)
                 
                 frame0 = cv2.warpPerspective(frame0, M0, output_size)
                 frame2 = cv2.warpPerspective(frame2, M2, output_size)
