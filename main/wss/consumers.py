@@ -166,8 +166,8 @@ async def send_periodic_messages():
                     [ sensor_center_one, 
                       sensor_center_two], 
                     combined_frame)
-                roi = sensor_center_two.get_roi(combined_frame, False)
-                delta = roi.roi_frame[30:-30, 30:-30]
+                roi = sensor_center_two.get_roi(copyFrame, False)
+                delta = roi.roi_frame[20:-20, 20:-20]
                 # FrameUtilis.display_all_roi_sensors([red_front_border, red_frontTwo_border, red_right_border, red_left_border], frameRed)
                 _, buffer = cv2.imencode('.jpg', delta, [int(cv2.IMWRITE_JPEG_QUALITY),40])
 
