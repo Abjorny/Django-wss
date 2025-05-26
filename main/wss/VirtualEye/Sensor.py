@@ -89,7 +89,7 @@ class Sensor:
     
     def serach_two_color(self, roi: Roi, min_one, max_one, min_two, max_two, smart = False):
         if smart:
-             roi.roi_frame = roi.roi_frame[30:-30, 30:-30]
+            roi.roi_frame = roi.roi_frame[30:-30, 30:-30]
         frame = cv2.GaussianBlur(roi.roi_frame, (5, 5), 0)
 
 
