@@ -43,6 +43,26 @@
 
 <div class="container-camera">
     <img id="webcam-feed" alt="Webcam Feed" />
+    <div class="hsv-controls p-3 border rounded bg-light"
+        style="display: flex; flex-direction: column; gap: 10px; max-width: 300px;">
+        <label>H Min: <span id="h-min-val">0</span></label>
+        <input type="range" id="h-min" min="0" max="180" value="0" class="form-range" />
+
+        <label>H Max: <span id="h-max-val">180</span></label>
+        <input type="range" id="h-max" min="0" max="180" value="180" class="form-range" />
+
+        <label>S Min: <span id="s-min-val">0</span></label>
+        <input type="range" id="s-min" min="0" max="255" value="0" class="form-range" />
+
+        <label>S Max: <span id="s-max-val">255</span></label>
+        <input type="range" id="s-max" min="0" max="255" value="255" class="form-range" />
+
+        <label>V Min: <span id="v-min-val">0</span></label>
+        <input type="range" id="v-min" min="0" max="255" value="0" class="form-range" />
+
+        <label>V Max: <span id="v-max-val">255</span></label>
+        <input type="range" id="v-max" min="0" max="255" value="255" class="form-range" />
+    </div>
     <div class="utilis-row-data">
         <div class="row-data">
             <span id="value-center-two">255</span>
@@ -156,7 +176,35 @@
             connectCamera();
         }
     });
+    const hsvSliders = [
+        { id: 'h-min', name: 'h_min' },
+        { id: 'h-max', name: 'h_max' },
+        { id: 's-min', name: 's_min' },
+        { id: 's-max', name: 's_max' },
+        { id: 'v-min', name: 'v_min' },
+        { id: 'v-max', name: 'v_max' },
+    ];
 
+    function sendHSV() {
+        if (camera && camera.readyState === WebSocket.OPEN) {
+            const hsv = {};
+            hsvSliders.forEach(({ id, name }) => {
+                hsv[name] = parseInt(document.getElementById(id).value);
+            });
+
+            camera.send(JSON.stringify({ type: 'hsv', data: hsv }));
+        }
+    }
+
+    // Привязываем к input
+    hsvSliders.forEach(({ id }) => {
+        const el = document.getElementById(id);
+        const valDisplay = document.getElementById(`${id}-val`);
+        el.addEventListener('input', () => {
+            valDisplay.textContent = el.value;
+            sendHSV();
+        });
+    });
     $('#button-download-camera').click(() => {
         if (camera !== null) {
             saveUrlAsFile(imgElement.attr('src'), 'image.jpg');

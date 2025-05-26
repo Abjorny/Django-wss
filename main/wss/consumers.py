@@ -10,43 +10,41 @@ import base64
 import logging
 
 logger = logging.getLogger(__name__)
+cap0 = cv2.VideoCapture(0)
 
 task = None
 
-first_left = Sensor(
-    np.array([[165, 130], [330, 120], [360, 420], [75, 370]]), 
-    (0, 0, 255) 
-)
 
-first_right = Sensor(
-    np.array([[280, 120], [450, 120], [560, 360], [260, 430]]), 
-    (0, 0, 255) 
-)
 
 
 
 sensor_center_one =  Sensor(
+    np.array([[340, 265], [630, 270], [630, 480], [340, 480]]),
     np.array([[340, 265], [630, 270], [630, 480], [340, 480]]), 
     (0, 0, 255) 
 )
 
 sensor_center_two =  Sensor(
     np.array([[340, 30], [630, 30], [660, 160], [300, 160]]), 
+    np.array([[340, 30], [630, 30], [660, 160], [300, 160]]), 
     (0, 0, 255) 
 )
 
 red_front_border = RedSensor(
     np.array([[310, 410], [410, 410], [410, 440], [310, 440]]),
+    np.array([[0, 0], [0, 0], [0, 0], [0, 0]]),
     (0, 0, 255)
 )
 
 red_right_border = RedSensor(
     np.array([[445, 440], [475, 440], [475, 470], [445, 470]]),
+    np.array([[0, 0], [0, 0], [0, 0], [0, 0]]),
     (0, 0, 255)
 )
 
 red_left_border = RedSensor(
     np.array([[225, 440], [255, 440], [255, 470], [225, 470]]),
+    np.array([[0, 0], [0, 0], [0, 0], [0, 0]]),
     (0, 0, 255)
 )
 
@@ -66,84 +64,65 @@ def resize_frame(frame, width=FIXED_WIDTH, height=FIXED_HEIGHT):
 async def send_periodic_messages():
     channel_layer = get_channel_layer()
 
-    cap0 = cv2.VideoCapture(0)
 
+    while True:
+            ret, frame = cap0.read()
+            copyFrame = frame.copy()
 
-    try:
-        while True:
-            try:
-                ret, frame = cap0.read()
-                copyFrame = frame.copy()
+            # frame0 = first_left.get_roi(frame0, False).roi_frame
 
-                # frame0 = first_left.get_roi(frame0, False).roi_frame
+            frame0 = resize_frame(frame0)
 
-                frame0 = resize_frame(frame0)
+            output_size = (480, 480)
 
-                output_size = (480, 480)
+            value_center_one, isTwo = sensor_center_one.readObject(copyFrame, frame)
 
-                value_center_one, isTwo = sensor_center_one.readObject(copyFrame, frame)
+            value_center_two, isTwo = sensor_center_two.readObject(copyFrame, frame)
 
-                value_center_two, isTwo = sensor_center_two.readObject(copyFrame, frame)
+            red_front = red_front_border.check_border(copyFrame, copyFrame)
+            red_front_two = red_frontTwo_border.check_border(copyFrame, copyFrame)
+            red_right = red_right_border.check_border(copyFrame, copyFrame)
+            red_left = red_left_border.check_border(copyFrame, copyFrame)
+            
+            # if red_front:
+            #     value_center_one = 0
+            #     value_center_two = 0
 
-                red_front = red_front_border.check_border(copyFrame, copyFrame)
-                red_front_two = red_frontTwo_border.check_border(copyFrame, copyFrame)
-                red_right = red_right_border.check_border(copyFrame, copyFrame)
-                red_left = red_left_border.check_border(copyFrame, copyFrame)
-                
-                # if red_front:
-                #     value_center_one = 0
-                #     value_center_two = 0
+            # if red_front_two:
+            #     value_center_two = 0
 
-                # if red_front_two:
-                #     value_center_two = 0
+            FrameUtilis.display_all_roi_sensors(
+                [ sensor_center_one, 
+                    sensor_center_two], 
+                frame )
 
-                FrameUtilis.display_all_roi_sensors(
-                    [ sensor_center_one, 
-                      sensor_center_two], 
-                    frame )
+            _, buffer = cv2.imencode('.jpg', frame, [int(cv2.IMWRITE_JPEG_QUALITY),40])
 
-                _, buffer = cv2.imencode('.jpg', frame, [int(cv2.IMWRITE_JPEG_QUALITY),40])
+            image_data = base64.b64encode(buffer).decode('utf-8')
 
-                image_data = base64.b64encode(buffer).decode('utf-8')
+            await channel_layer.group_send(
+                "broadcast_group",
+                {
+                    "type": "broadcast_message",
+                    "message": {
+                        "image": image_data,
+                        "valueCenterOne": value_center_one,
+                        "valueCenterTwo": value_center_two,
+                        "redLeft" : red_left,
+                        "redRight" : red_right,
+                        "redFront" : red_front,
+                        "redFrontTwo": red_front_two  
+                    },
+                }
+            )
 
-                await channel_layer.group_send(
-                    "broadcast_group",
-                    {
-                        "type": "broadcast_message",
-                        "message": {
-                            "image": image_data,
-                            # "valueLeftOne": value_left_one,
-                            "valueCenterOne": value_center_one,
-                            # "valueRightOne": value_right_one,
+            await asyncio.sleep(1/20)
 
-                            # "valueLeftTwo": value_left_two,
-                            "valueCenterTwo": value_center_two,
-                            # "valueRightTwo": value_right_two,
-                            "redLeft" : red_left,
-                            "redRight" : red_right,
-                            "redFront" : red_front,
-                            "redFrontTwo": red_front_two  
-                        },
-                    }
-                )
-            except Exception as e:
-                logger.error(f"Error inside send_periodic_messages loop: {e}")
-
-            await asyncio.sleep(1/15)
-    except asyncio.CancelledError:
-        logger.info("send_periodic_messages task was cancelled")
     
-    except Exception as e:
-        logger.error(f"send_periodic_messages task crashed: {e}")
-    
-    finally:
-        cap0.release()
-        cap2.release()
-        logger.info("Cameras released")
 
 class MyConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        global  task
+        global task
         self.group_name = "broadcast_group"
         await self.channel_layer.group_add(self.group_name, self.channel_name)
         await self.accept()
@@ -154,6 +133,19 @@ class MyConsumer(AsyncWebsocketConsumer):
 
     async def disconnect(self, close_code):
         await self.channel_layer.group_discard(self.group_name, self.channel_name)
+
+    async def receive(self, text_data):
+        data = json.loads(text_data)
+        if data.get("type") == "hsv":
+            hsv_data = data.get("data", {})
+            h_min = hsv_data.get("h_min")
+            h_max = hsv_data.get("h_max")
+            s_min = hsv_data.get("s_min")
+            s_max = hsv_data.get("s_max")
+            v_min = hsv_data.get("v_min")
+            v_max = hsv_data.get("v_max")
+            logger.info(f"Received HSV: H({h_min}-{h_max}), S({s_min}-{s_max}), V({v_min}-{v_max})")
+            # await update_hsv_settings(h_min, h_max, s_min, s_max, v_min, v_max)
 
     async def broadcast_message(self, event):
         message = event["message"]

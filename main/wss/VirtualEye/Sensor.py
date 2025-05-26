@@ -42,8 +42,10 @@ class LibaryHSV:
 
 class Sensor:
     
-    def __init__(self, mass,  color):
+    def __init__(self, mass, massTwo,  color):
         self.mass = mass
+        self.massTwo = massTwo
+
         self.mass_display = mass
         self.color = color
         self.hsv = LibaryHSV()
@@ -181,8 +183,12 @@ class Sensor:
         cv2.rectangle(frame_3d, (x_global, y_global), (x_global + result.w, y_global + result.h), (255, 0, 0), 2)
         return result
 
-    def get_roi(self, frame, isTwo):
-        box = self.mass
+    def get_roi(self, frame):
+        if self.posRobot  == 2:
+            box = self.massTwo
+        else:
+            box = self.mass
+        
 
         mask = np.zeros(frame.shape[:2], dtype=np.uint8)
         cv2.fillPoly(mask, [box], 255)  
@@ -243,7 +249,7 @@ class Sensor:
     
     def readObject(self, frame_copy, frame):
 
-        roi = self.get_roi(frame_copy, False)
+        roi = self.get_roi(frame_copy)
         isTwo = self.checkIsTwo(frame_copy)
 
 
@@ -308,7 +314,7 @@ class Sensor:
 class RedSensor(Sensor):
     def check_border(self, frame, frame_3d):
         self.posRobot = 1
-        roi: Roi = self.get_roi(frame, False)
+        roi: Roi = self.get_roi(frame)
         result: Result = self.get_red(roi, frame_3d)
         isBorder = False
         if result.w * result.h > 0:
