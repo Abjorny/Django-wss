@@ -109,9 +109,9 @@ class Sensor:
                     [(x1 + w1) // 2, (y1 + h1) //2]
                 )
 
-                if dist > dist_delta:
+                if dist > dist_delta and area > 100:
                     if smart:
-                        if area > 1500:
+                        if area > 2500:
                             x,y,w,h = x1,y1,w1,h1
                             dist_delta = dist
                             area_delta = area
