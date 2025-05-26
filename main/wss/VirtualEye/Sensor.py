@@ -26,16 +26,16 @@ class Roi:
 class LibaryHSV:
     def __init__(self):
         
-        self.min_red_one = np.array([0, 51, 166])   
+        self.min_red_one = np.array([0, 51, 100])   
         self.max_red_one = np.array([21, 255, 255])
         
-        self.min_red_two = np.array([106, 51, 166])
+        self.min_red_two = np.array([106, 51, 100])
         self.max_red_two = np.array([180, 255, 255])
 
         self.min_blue = np.array([105, 64, 0])  
         self.max_blue = np.array( [157, 255, 255])  
 
-        self.min_green = np.array([42, 62, 176])  
+        self.min_green = np.array([42, 62, 130])  
         self.max_green = np.array([97, 255, 255])
 
         self.min_black = np.array([0,0,0]) 
