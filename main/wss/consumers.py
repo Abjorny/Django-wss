@@ -148,10 +148,10 @@ async def send_periodic_messages():
                 value_center_two, isTwo = sensor_center_two.readObject(copyFrame, combined_frame)
                 value_right_two, isTwo = sensor_right_two.readObject(copyFrame, combined_frame)
 
-                red_front = red_front_border.check_border(copyFrame, frameRed)
-                red_front_two = red_frontTwo_border.check_border(copyFrame, frameRed)
-                red_right = red_right_border.check_border(copyFrame, frameRed)
-                red_left = red_left_border.check_border(copyFrame, frameRed)
+                red_front = red_front_border.check_border(frameRed, frameRed)
+                red_front_two = red_frontTwo_border.check_border(frameRed, frameRed)
+                red_right = red_right_border.check_border(frameRed, frameRed)
+                red_left = red_left_border.check_border(frameRed, frameRed)
 
                 
                 print(red_front, red_front_two,  red_left, red_right)
