@@ -67,67 +67,28 @@ async def send_periodic_messages():
     channel_layer = get_channel_layer()
 
     cap0 = cv2.VideoCapture(0)
-    cap2 = cv2.VideoCapture(2)
 
-    if not cap0.isOpened() or not cap2.isOpened():
-        logger.error(f"Cameras not opened: cap0 {cap0.isOpened()}, cap2 {cap2.isOpened()}")
-        if cap0.isOpened():
-            cap0.release()
-        if cap2.isOpened():
-            cap2.release()
-        return
 
     try:
         while True:
             try:
-                ret0, frame0 = cap2.read()
-                frameRed = frame0.copy()
+                ret, frame = cap0.read()
+                copyFrame = frame.copy()
 
-                ret2, frame2 = cap0.read()
-
-                if not ret0 or not ret2:
-                    logger.warning("Failed to read from one of the cameras")
-                    await asyncio.sleep(0.05)
-                    continue
-
-                frame0 = first_left.get_roi(frame0, False).roi_frame
-                frame2 = first_right.get_roi(frame2, False).roi_frame 
-                cv2.imwrite("frame0.jpg", frame0)
-                cv2.imwrite("frame2.jpg", frame2)
+                # frame0 = first_left.get_roi(frame0, False).roi_frame
 
                 frame0 = resize_frame(frame0)
-                frame2 = resize_frame(frame2)
 
-
-
-                M0 = np.array([
-                    [ 1.92535667e+00,  1.05309564e+00, -4.11909317e+02],
-                    [ 1.42373556e-01,  2.75005764e+00, -8.39029846e+01],
-                    [ 7.55680568e-04,  2.65890460e-03,  1.00000000e+00]
-                ])
-
-                M2 = np.array([
-                    [ 1.14622885e+00,  1.26279449e-01, -6.43150950e+01],
-                    [-1.15379595e-02,  2.01337394e+00, -1.36724820e+00],
-                    [-4.21205669e-04,  2.08644464e-03,  1.00000000e+00]
-                ])
                 output_size = (480, 480)
-                
-                frame0 = cv2.warpPerspective(frame0, M0, output_size)
-                frame2 = cv2.warpPerspective(frame2, M2, output_size)
 
+                value_center_one, isTwo = sensor_center_one.readObject(copyFrame, frame)
 
-                combined_frame = cv2.hconcat([frame0, frame2])
-                copyFrame = combined_frame.copy()
+                value_center_two, isTwo = sensor_center_two.readObject(copyFrame, frame)
 
-                value_center_one, isTwo = sensor_center_one.readObject(copyFrame, combined_frame)
-
-                value_center_two, isTwo = sensor_center_two.readObject(copyFrame, combined_frame)
-
-                red_front = red_front_border.check_border(frameRed, frameRed)
-                red_front_two = red_frontTwo_border.check_border(frameRed, frameRed)
-                red_right = red_right_border.check_border(frameRed, frameRed)
-                red_left = red_left_border.check_border(frameRed, frameRed)
+                red_front = red_front_border.check_border(copyFrame, copyFrame)
+                red_front_two = red_frontTwo_border.check_border(copyFrame, copyFrame)
+                red_right = red_right_border.check_border(copyFrame, copyFrame)
+                red_left = red_left_border.check_border(copyFrame, copyFrame)
                 
                 # if red_front:
                 #     value_center_one = 0
@@ -139,9 +100,9 @@ async def send_periodic_messages():
                 FrameUtilis.display_all_roi_sensors(
                     [ sensor_center_one, 
                       sensor_center_two], 
-                    combined_frame)
+                    frame )
 
-                _, buffer = cv2.imencode('.jpg', combined_frame, [int(cv2.IMWRITE_JPEG_QUALITY),40])
+                _, buffer = cv2.imencode('.jpg', frame, [int(cv2.IMWRITE_JPEG_QUALITY),40])
 
                 image_data = base64.b64encode(buffer).decode('utf-8')
 
