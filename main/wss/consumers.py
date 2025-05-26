@@ -133,13 +133,13 @@ async def send_periodic_messages():
             frame = cv2.bitwise_and(frame, frame, mask=mask)
 
             _, buffer = cv2.imencode('.jpg', frame, [int(cv2.IMWRITE_JPEG_QUALITY), 40])
-
+            image_data = base64.b64encode(buffer).decode('utf-8')
             await channel_layer.group_send(
                 "broadcast_group",
                 {
                     "type": "broadcast_message",
                     "message": {
-                        "image": buffer,
+                        "image": image_data,
                         "valueCenterOne": value_center_one,
                         "valueCenterTwo": value_center_two,
                         "redLeft" : red_left,
