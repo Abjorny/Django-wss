@@ -254,7 +254,12 @@ class Sensor:
 
   
         else:
-            if (red_result.x + red_result.w < roi.x + roi.w - 20) and  red_result.noblack !=0 and blue_result.noblack != 0:
+            if (red_result.x + red_result.w < roi.x + roi.w - 20 and \
+                red_result.y < roi.y - 20 and \
+                red_result.x < roi.x - 20 and \
+                red_result.y + red_result.h < roi.y + roi.h
+                
+            ) and  red_result.noblack !=0 and blue_result.noblack != 0:
                 delta_x = abs(red_result_first.x_center - blue_result_first.x_center)
                 delta_y = abs(red_result_first.y_center - blue_result_first.y_center)
                 if delta_x > delta_y:
@@ -270,7 +275,12 @@ class Sensor:
                     else:
                         value = 54
             
-            elif (red_result.x + red_result.w < roi.x + roi.w - 20) and red_result.noblack !=0 and blue_result.noblack == 0:
+            elif (red_result.x + red_result.w < roi.x + roi.w - 20 and \
+                red_result.y < roi.y - 20 and \
+                red_result.x < roi.x - 20 and \
+                red_result.y + red_result.h < roi.y + roi.h
+                
+            )  and red_result.noblack !=0 and blue_result.noblack == 0:
                 red_result = self.get_red(roi, frame_copy)
                 if red_result.w > red_result.h and not isTwo:
                         value = 22
