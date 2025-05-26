@@ -102,7 +102,7 @@ class Sensor:
         x,y,w,h = 0,0,0,0
         for countur in counturs:
             area = cv2.contourArea(countur)
-            if area > 2500:
+            if area > 100:
                 x1,y1,w1,h1 = cv2.boundingRect(countur)
                 dist = self.distance(
                     [(roi.x +roi.w) // 2, (roi.y + roi.h) // 2],
@@ -279,7 +279,7 @@ class Sensor:
                     else:
                         value = 54
             
-            elif red_result.noblack !=0 and blue_result.noblack == 0:
+            elif red_result.area > 3000 and red_result.noblack !=0 and blue_result.noblack == 0:
                 red_result = self.get_red(roi, frame_copy)
                 if red_result.w > red_result.h and not isTwo:
                         value = 22
