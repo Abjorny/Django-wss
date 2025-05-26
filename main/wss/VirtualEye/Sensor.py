@@ -88,7 +88,7 @@ class Sensor:
         result = Result([x,y,w,h, mask, roi, area_delta])
         return result
     
-    def serach_two_color(self, roi: Roi, min_one, max_one, min_two, max_two):
+    def serach_two_color(self, roi: Roi, min_one, max_one, min_two, max_two, smart = False):
         frame = cv2.GaussianBlur(roi.roi_frame, (5, 5), 0)
         frame = cv2.cvtColor(
             frame,
@@ -109,8 +109,13 @@ class Sensor:
                     [(x1 + w1) // 2, (y1 + h1) //2]
                 )
                 if dist > dist_delta:
-                    x,y,w,h = x1,y1,w1,h1
-                    dist_delta = dist
+                    if smart:
+                        if area > 2500:
+                            x,y,w,h = x1,y1,w1,h1
+                            dist_delta = dist
+                    else:
+                        x,y,w,h = x1,y1,w1,h1
+                        dist_delta = dist
         
         result = Result([x,y,w,h, red_mask, roi, dist_delta])
         return result
@@ -136,13 +141,14 @@ class Sensor:
         )
         return result
 
-    def get_red(self, roi: Roi, frame_3d):
+    def get_red(self, roi: Roi, frame_3d, smart = False):
         result: Result = self.serach_two_color(
             roi = roi,
             min_one = self.hsv.min_red_one,
             max_one = self.hsv.max_red_one,
             min_two = self.hsv.min_red_two,
-            max_two = self.hsv.max_red_two
+            max_two = self.hsv.max_red_two,
+            smart = smart
         )
         x_global = result.x + roi.x
         y_global = result.y + roi.y
@@ -280,11 +286,11 @@ class Sensor:
                         value = 54
             
             elif  red_result.noblack !=0 and blue_result.noblack == 0:
-                red_result = self.get_red(roi, frame_copy)
-                if red_result.area > 1500 and red_result.w > red_result.h and not isTwo:
+                red_result = self.get_red(roi, frame_copy, True)
+                if red_result.w > red_result.h and not isTwo:
                         value = 22
                 
-                elif red_result.area > 1500 and red_result.w < red_result.h and not isTwo:
+                elif  red_result.w < red_result.h and not isTwo:
                     value = 21
                 
                 elif red_result.w  <= red_result.h and isTwo:
