@@ -103,6 +103,7 @@ class Sensor:
         for countur in counturs:
             area = cv2.contourArea(countur)
             if area > 100:
+                print(area)
                 x1,y1,w1,h1 = cv2.boundingRect(countur)
                 dist = self.distance(
                     [(roi.x +roi.w) // 2, (roi.y + roi.h) // 2],
@@ -236,7 +237,6 @@ class Sensor:
         return int(C_x), int(C_y)
     
 
-
     def readObject(self, frame_copy, frame):
 
         roi = self.get_roi(frame_copy, False)
@@ -263,36 +263,24 @@ class Sensor:
             elif green_x < x and green_y > y:
                 value = 34
         
-
-  
         else:
-            if (red_result.x1_absolute + red_result.w < roi.x + roi.w - 20 and \
-                red_result.y1_absolute < roi.y - 20 and \
-                red_result.x1_absolute < roi.x - 20 and \
-                red_result.y1_absolute + red_result.h < roi.y + roi.h - 20
-                
-            ) and  red_result.noblack !=0 and blue_result.noblack != 0:
-                delta_x = abs(red_result_first.x_center - blue_result_first.x_center)
-                delta_y = abs(red_result_first.y_center - blue_result_first.y_center)
+            if red_result.noblack !=0 and blue_result.noblack != 0:
+                delta_x = abs(red_result.x_center - blue_result.x_center)
+                delta_y = abs(red_result.y_center - blue_result.y_center)
                 if delta_x > delta_y:
                     #вертикально
-                    if red_result_first.x1 > blue_result_first.x1:
+                    if red_result.x1 > blue_result.x1:
                         value = 53
                     else:
                         value = 51
                 else:
                     #горизонтально
-                    if red_result_first.y1 > blue_result_first.y1:
+                    if red_result.y1 > blue_result.y1:
                         value = 52
                     else:
                         value = 54
             
-            elif (red_result.x + red_result.w < roi.x + roi.w - 20 and \
-                red_result.y1_absolute < roi.y - 20 and \
-                red_result.x1_absolute < roi.x - 20 and \
-                red_result.y1_absolute + red_result.h < roi.y + roi.h - 20
-                
-            )  and red_result.noblack !=0 and blue_result.noblack == 0:
+            elif red_result.noblack !=0 and blue_result.noblack == 0:
                 red_result = self.get_red(roi, frame_copy)
                 if red_result.w > red_result.h and not isTwo:
                         value = 22
