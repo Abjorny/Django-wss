@@ -337,7 +337,7 @@ class RedSensor(Sensor):
         result = Result([x,y,w,h, mask, roi, area_delta])
         return result
     
-    def serach_two_color(self, roi: Roi, min_one, max_one, min_two, max_two, smart):
+    def serach_two_color(self, roi: Roi, min_one, max_one, min_two, max_two):
         frame = cv2.GaussianBlur(roi.roi_frame, (5, 5), 0)
         frame = cv2.cvtColor(
             frame,
