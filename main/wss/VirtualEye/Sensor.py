@@ -89,6 +89,9 @@ class Sensor:
     
     def serach_two_color(self, roi: Roi, min_one, max_one, min_two, max_two, smart = False):
         frame = cv2.GaussianBlur(roi.roi_frame, (5, 5), 0)
+        if smart:
+            frame = frame[20:-20, 20:-20]
+            
         frame = cv2.cvtColor(
             frame,
             cv2.COLOR_BGR2HSV
@@ -110,12 +113,6 @@ class Sensor:
                 )
 
                 if dist > dist_delta and area > 100:
-                    if smart:
-                        if area > 2500:
-                            x,y,w,h = x1,y1,w1,h1
-                            dist_delta = dist
-                            area_delta = area
-                    else:
                         x,y,w,h = x1,y1,w1,h1
                         dist_delta = dist
                         area_delta = area
