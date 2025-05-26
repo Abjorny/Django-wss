@@ -110,6 +110,7 @@ class Sensor:
                 )
                 if dist > dist_delta:
                     if smart:
+                        print(area)
                         if area > 1500:
                             x,y,w,h = x1,y1,w1,h1
                             dist_delta = dist
