@@ -139,7 +139,7 @@ async def send_periodic_messages():
                 {
                     "type": "broadcast_message",
                     "message": {
-                        "image": image_data,
+                        "image": buffer,
                         "valueCenterOne": value_center_one,
                         "valueCenterTwo": value_center_two,
                         "redLeft" : red_left,
