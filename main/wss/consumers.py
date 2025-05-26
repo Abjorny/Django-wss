@@ -92,7 +92,8 @@ async def send_periodic_messages():
 
                 frame0 = first_left.get_roi(frame0, False).roi_frame
                 frame2 = first_right.get_roi(frame2, False).roi_frame 
-
+                cv2.imwrite("frame0.jpg", frame0)
+                cv2.imwrite("frame2.jpg", frame2)
 
                 frame0 = resize_frame(frame0)
                 frame2 = resize_frame(frame2)
