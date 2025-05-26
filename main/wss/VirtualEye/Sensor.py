@@ -102,8 +102,7 @@ class Sensor:
         x,y,w,h = 0,0,0,0
         for countur in counturs:
             area = cv2.contourArea(countur)
-            if area > 100:
-                print(area)
+            if area > 2500:
                 x1,y1,w1,h1 = cv2.boundingRect(countur)
                 dist = self.distance(
                     [(roi.x +roi.w) // 2, (roi.y + roi.h) // 2],
