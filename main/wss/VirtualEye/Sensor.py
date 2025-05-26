@@ -27,6 +27,7 @@ class LibaryHSV:
         
         self.min_red_one = np.array([0, 51, 166])   
         self.max_red_one = np.array([21, 255, 255])
+
         self.min_red_two = np.array([106, 51, 166])
         self.max_red_two = np.array([180, 255, 255])
 
@@ -349,7 +350,7 @@ class RedSensor(Sensor):
         x,y,w,h = 0,0,0,0
         for countur in counturs:
             area = cv2.contourArea(countur)
-            if area > 50:
+            if area > 1:
                 x1,y1,w1,h1 = cv2.boundingRect(countur)
                 if w1 * h1 > w * h:
                     x,y,w,h = x1,y1,w1,h1
