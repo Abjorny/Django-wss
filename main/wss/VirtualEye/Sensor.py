@@ -86,8 +86,12 @@ class Sensor:
         return result
     
     def serach_two_color(self, roi: Roi, min_one, max_one, min_two, max_two, smart = False):
+        cv2.rectangle(roi.roi_frame, (30, roi.y), (roi.x + roi.w, roi.y + roi.h), (0, 0, 255), 2)
+        
         if smart:
+
             roi.roi_frame = roi.roi_frame[30:-30, 30:-30]
+
         frame = cv2.GaussianBlur(roi.roi_frame, (5, 5), 0)
 
 
@@ -149,8 +153,10 @@ class Sensor:
             max_two = self.hsv.max_red_two,
             smart = smart
         )
+
         x_global = result.x + roi.x
         y_global = result.y + roi.y
+
         cv2.rectangle(frame_3d, (x_global, y_global), (x_global + result.w, y_global + result.h), (0, 0, 255), 2)
         return result
     
