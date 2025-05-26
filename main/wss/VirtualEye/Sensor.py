@@ -111,7 +111,7 @@ class Sensor:
                     [(x1 + w1) // 2, (y1 + h1) //2]
                 )
 
-                if dist > dist_delta and area > 100:
+                if area > area_delta:
                         x,y,w,h = x1,y1,w1,h1
                         dist_delta = dist
                         area_delta = area
@@ -249,7 +249,6 @@ class Sensor:
 
         green_result: Result = self.get_green(roi, frame)
         blue_result: Result = self.get_blue(roi, frame)
-        roi.roi_frame = roi.roi_frame[30:-30, 30:-30]
         red_result: Result = self.get_red(roi, frame)   
         value = 1
 
@@ -286,6 +285,7 @@ class Sensor:
             
             elif  red_result.noblack !=0 and blue_result.noblack == 0:
 
+                roi.roi_frame = roi.roi_frame[30:-30, 30:-30]
 
                 red_result = self.get_red(roi, frame_copy)
                 if red_result.w > red_result.h and not isTwo:
