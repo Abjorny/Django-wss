@@ -151,8 +151,8 @@ async def send_periodic_messages():
                 red_right = red_right_border.check_border(copyFrame, frameRed)
                 red_left = red_left_border.check_border(copyFrame, frameRed)
                 print(red_front, red_front_two,  red_left, red_right)
-                roi = red_front.get_roi(copyFrame, False)
-                red_framme  = red_front.get_red(roi, frameRed)
+                roi = red_front_border.get_roi(copyFrame, False)
+                red_framme  = red_front_border.get_red(roi, frameRed)
                 FrameUtilis.display_all_roi_sensors(
                     [sensor_left_one, sensor_right_one, sensor_center_one, 
                     sensor_left_two, sensor_right_two, sensor_center_two], 
