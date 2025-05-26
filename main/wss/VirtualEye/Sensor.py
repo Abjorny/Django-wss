@@ -257,7 +257,7 @@ class Sensor:
             if (red_result.x + red_result.w < roi.x + roi.w - 20 and \
                 red_result.y < roi.y - 20 and \
                 red_result.x < roi.x - 20 and \
-                red_result.y + red_result.h < roi.y + roi.h
+                red_result.y + red_result.h < roi.y + roi.h - 20
                 
             ) and  red_result.noblack !=0 and blue_result.noblack != 0:
                 delta_x = abs(red_result_first.x_center - blue_result_first.x_center)
@@ -278,7 +278,7 @@ class Sensor:
             elif (red_result.x + red_result.w < roi.x + roi.w - 20 and \
                 red_result.y < roi.y - 20 and \
                 red_result.x < roi.x - 20 and \
-                red_result.y + red_result.h < roi.y + roi.h
+                red_result.y + red_result.h < roi.y + roi.h - 20
                 
             )  and red_result.noblack !=0 and blue_result.noblack == 0:
                 red_result = self.get_red(roi, frame_copy)
