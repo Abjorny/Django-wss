@@ -104,7 +104,7 @@ async def send_periodic_messages():
                     [ 1.42373556e-01,  2.75005764e+00, -8.39029846e+01],
                     [ 7.55680568e-04,  2.65890460e-03,  1.00000000e+00]
                 ])
-                
+
                 M2 = np.array([
                     [ 1.14622885e+00,  1.26279449e-01, -6.43150950e+01],
                     [-1.15379595e-02,  2.01337394e+00, -1.36724820e+00],
@@ -128,12 +128,12 @@ async def send_periodic_messages():
                 red_right = red_right_border.check_border(frameRed, frameRed)
                 red_left = red_left_border.check_border(frameRed, frameRed)
                 
-                if red_front:
-                    value_center_one = 0
-                    value_center_two = 0
+                # if red_front:
+                #     value_center_one = 0
+                #     value_center_two = 0
 
-                if red_front_two:
-                    value_center_two = 0
+                # if red_front_two:
+                #     value_center_two = 0
 
                 FrameUtilis.display_all_roi_sensors(
                     [ sensor_center_one, 
