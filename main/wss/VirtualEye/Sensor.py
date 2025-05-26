@@ -230,8 +230,6 @@ class Sensor:
         roi = self.get_roi(frame_copy, False)
         isTwo = self.checkIsTwo(frame_copy)
 
-        red_result_first: Result = self.get_red(roi, frame)
-        blue_result_first: Result = self.get_blue(roi, frame)
 
         green_result: Result = self.get_green(roi, frame)
         red_result: Result = self.get_red(roi, frame)
@@ -256,7 +254,7 @@ class Sensor:
 
   
         else:
-            if red_result_first.noblack !=0 and blue_result_first.noblack != 0:
+            if (red_result.x + red_result.w < roi.x + roi.w - 20) and  red_result.noblack !=0 and blue_result.noblack != 0:
                 delta_x = abs(red_result_first.x_center - blue_result_first.x_center)
                 delta_y = abs(red_result_first.y_center - blue_result_first.y_center)
                 if delta_x > delta_y:
