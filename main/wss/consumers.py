@@ -24,32 +24,32 @@ first_right = Sensor(
 )
 
 
-sensor_left_one =  Sensor(
-    np.array([[35, 280], [280, 265], [280, 480], [40, 480]]), 
-    (0, 0, 255) 
-)
+# sensor_left_one =  Sensor(
+#     np.array([[35, 280], [280, 265], [280, 480], [40, 480]]), 
+#     (0, 0, 255) 
+# )
 
 
-sensor_right_one =  Sensor(
-    np.array([[665, 270], [920, 280], [900, 480], [665, 480]]), 
-    (0, 0, 255) 
-)
+# sensor_right_one =  Sensor(
+#     np.array([[665, 270], [920, 280], [900, 480], [665, 480]]), 
+#     (0, 0, 255) 
+# )
 
 sensor_center_one =  Sensor(
     np.array([[340, 265], [630, 270], [630, 480], [340, 480]]), 
     (0, 0, 255) 
 )
 
-sensor_left_two =  Sensor(
-    np.array([[60, 50], [330, 30], [285, 160], [0, 170]]), 
-    (0, 0, 255) 
-)
+# sensor_left_two =  Sensor(
+#     np.array([[60, 50], [330, 30], [285, 160], [0, 170]]), 
+#     (0, 0, 255) 
+# )
 
 
-sensor_right_two =  Sensor(
-    np.array([[640, 30], [920, 40], [960, 170], [670, 160]]), 
-    (0, 0, 255) 
-)
+# sensor_right_two =  Sensor(
+#     np.array([[640, 30], [920, 40], [960, 170], [670, 160]]), 
+#     (0, 0, 255) 
+# )
 
 sensor_center_two =  Sensor(
     np.array([[340, 30], [630, 30], [660, 160], [300, 160]]), 
@@ -76,6 +76,7 @@ red_frontTwo_border = RedSensor(
     np.array([[290, 230], [390, 230], [390, 260], [290, 260]]),
     (0, 0, 255)
 )
+
 FIXED_WIDTH = 640
 FIXED_HEIGHT = 480
 
@@ -140,13 +141,13 @@ async def send_periodic_messages():
                 combined_frame = cv2.hconcat([frame0, frame2])
                 copyFrame = combined_frame.copy()
 
-                value_left_one, isTwo = sensor_left_one.readObject(copyFrame, combined_frame)
+                # value_left_one, isTwo = sensor_left_one.readObject(copyFrame, combined_frame)
                 value_center_one, isTwo = sensor_center_one.readObject(copyFrame, combined_frame)
-                value_right_one, isTwo = sensor_right_one.readObject(copyFrame, combined_frame)
+                # value_right_one, isTwo = sensor_right_one.readObject(copyFrame, combined_frame)
 
-                value_left_two, isTwo = sensor_left_two.readObject(copyFrame, combined_frame)
+                # value_left_two, isTwo = sensor_left_two.readObject(copyFrame, combined_frame)
                 value_center_two, isTwo = sensor_center_two.readObject(copyFrame, combined_frame)
-                value_right_two, isTwo = sensor_right_two.readObject(copyFrame, combined_frame)
+                # value_right_two, isTwo = sensor_right_two.readObject(copyFrame, combined_frame)
 
                 red_front = red_front_border.check_border(frameRed, frameRed)
                 red_front_two = red_frontTwo_border.check_border(frameRed, frameRed)
@@ -154,31 +155,16 @@ async def send_periodic_messages():
                 red_left = red_left_border.check_border(frameRed, frameRed)
                 
                 if red_front:
-                    value_left_one = 0
                     value_center_one = 0
-                    value_right_one = 0
-
-                    value_right_two = 0
-                    value_left_two = 0
                     value_center_two = 0
 
-                if red_left:
-                    value_left_two = 0
-                    value_left_one = 0
-
-                if red_right:
-                    value_right_one = 0
-                    value_right_two = 0
-                
                 if red_front_two:
-                    value_right_two = 0
-                    value_left_two = 0
                     value_center_two = 0
 
                 # print(red_front, red_front_two,  red_left, red_right)
                 FrameUtilis.display_all_roi_sensors(
-                    [sensor_left_one, sensor_right_one, sensor_center_one, 
-                    sensor_left_two, sensor_right_two, sensor_center_two], 
+                    [ sensor_center_one, 
+                      sensor_center_two], 
                     combined_frame)
                 
                 # FrameUtilis.display_all_roi_sensors([red_front_border, red_frontTwo_border, red_right_border, red_left_border], frameRed)
@@ -192,13 +178,13 @@ async def send_periodic_messages():
                         "type": "broadcast_message",
                         "message": {
                             "image": image_data,
-                            "valueLeftOne": value_left_one,
+                            # "valueLeftOne": value_left_one,
                             "valueCenterOne": value_center_one,
-                            "valueRightOne": value_right_one,
+                            # "valueRightOne": value_right_one,
 
-                            "valueLeftTwo": value_left_two,
+                            # "valueLeftTwo": value_left_two,
                             "valueCenterTwo": value_center_two,
-                            "valueRightTwo": value_right_two,
+                            # "valueRightTwo": value_right_two,
                             "redLeft" : red_left,
                             "redRight" : red_right,
                             "redFront" : red_front,
