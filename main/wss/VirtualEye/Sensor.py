@@ -248,9 +248,9 @@ class Sensor:
 
 
         green_result: Result = self.get_green(roi, frame)
-        red_result: Result = self.get_red(roi, frame)
         blue_result: Result = self.get_blue(roi, frame)
-        
+        roi.roi_frame = roi.roi_frame[30:-30, 30:-30]
+        red_result: Result = self.get_red(roi, frame)   
         value = 1
 
 
@@ -285,7 +285,8 @@ class Sensor:
                         value = 54
             
             elif  red_result.noblack !=0 and blue_result.noblack == 0:
-                roi.roi_frame = roi.roi_frame[30:-30, 30:-30]
+
+
                 red_result = self.get_red(roi, frame_copy)
                 if red_result.w > red_result.h and not isTwo:
                         value = 22
