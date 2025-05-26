@@ -35,8 +35,8 @@ class LibaryHSV:
         self.min_blue = np.array([105, 64, 0])  
         self.max_blue = np.array( [157, 255, 255])  
 
-        self.min_green = np.array([42, 62, 100])  
-        self.max_green = np.array([97, 255, 255])
+        self.min_green = np.array([35, 60, 90])  
+        self.max_green = np.array([110, 255, 255])
 
         self.min_black = np.array([0,0,0]) 
         self.max_black = np.array([180,130,130])  
