@@ -77,6 +77,14 @@ red_frontTwo_border = RedSensor(
 
 FIXED_WIDTH = 640
 FIXED_HEIGHT = 480
+latest_hsv = {
+    "h_min": 0,
+    "h_max": 179,
+    "s_min": 0,
+    "s_max": 255,
+    "v_min": 0,
+    "v_max": 255
+}
 
 
 def resize_frame(frame, width=FIXED_WIDTH, height=FIXED_HEIGHT):
@@ -114,13 +122,17 @@ async def send_periodic_messages():
             #     value_center_two = 0
 
             FrameUtilis.display_all_roi_sensors(
-                [ sensor_center_one, 
-                    sensor_center_two], 
-                frame )
+                [sensor_center_one, sensor_center_two], 
+                frame
+            )
 
-            _, buffer = cv2.imencode('.jpg', frame, [int(cv2.IMWRITE_JPEG_QUALITY),40])
+            hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+            lower = np.array([latest_hsv["h_min"], latest_hsv["s_min"], latest_hsv["v_min"]])
+            upper = np.array([latest_hsv["h_max"], latest_hsv["s_max"], latest_hsv["v_max"]])
+            mask = cv2.inRange(hsv, lower, upper)
+            frame = cv2.bitwise_and(frame, frame, mask=mask)
 
-            image_data = base64.b64encode(buffer).decode('utf-8')
+            _, buffer = cv2.imencode('.jpg', frame, [int(cv2.IMWRITE_JPEG_QUALITY), 40])
 
             await channel_layer.group_send(
                 "broadcast_group",
@@ -157,18 +169,19 @@ class MyConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_discard(self.group_name, self.channel_name)
 
     async def receive(self, text_data):
+        global latest_hsv
         data = json.loads(text_data)
         if data.get("type") == "hsv":
             hsv_data = data.get("data", {})
-            h_min = hsv_data.get("h_min")
-            h_max = hsv_data.get("h_max")
-            s_min = hsv_data.get("s_min")
-            s_max = hsv_data.get("s_max")
-            v_min = hsv_data.get("v_min")
-            v_max = hsv_data.get("v_max")
-            logger.info(f"Received HSV: H({h_min}-{h_max}), S({s_min}-{s_max}), V({v_min}-{v_max})")
-            # await update_hsv_settings(h_min, h_max, s_min, s_max, v_min, v_max)
-
+            latest_hsv.update({
+                "h_min": hsv_data.get("h_min", latest_hsv["h_min"]),
+                "h_max": hsv_data.get("h_max", latest_hsv["h_max"]),
+                "s_min": hsv_data.get("s_min", latest_hsv["s_min"]),
+                "s_max": hsv_data.get("s_max", latest_hsv["s_max"]),
+                "v_min": hsv_data.get("v_min", latest_hsv["v_min"]),
+                "v_max": hsv_data.get("v_max", latest_hsv["v_max"]),
+            })
+            logger.info(f"Updated HSV: {latest_hsv}")
     async def broadcast_message(self, event):
         message = event["message"]
         await self.send(text_data=json.dumps({
