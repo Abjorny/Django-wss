@@ -26,10 +26,10 @@ class Roi:
 class LibaryHSV:
     def __init__(self):
         
-        self.min_red_one = np.array([0, 80, 100])   
+        self.min_red_one = np.array([0, 70, 100])   
         self.max_red_one = np.array([30, 255, 200])
         
-        self.min_red_two = np.array([155, 80, 100])
+        self.min_red_two = np.array([155, 70, 100])
         self.max_red_two = np.array([180, 255, 255])
 
         self.min_blue = np.array([100, 80, 50])  
@@ -91,7 +91,7 @@ class Sensor:
         frame = cv2.GaussianBlur(roi.roi_frame, (5, 5), 0)
         if smart:
             frame = frame[20:-20, 20:-20]
-            
+
         frame = cv2.cvtColor(
             frame,
             cv2.COLOR_BGR2HSV
