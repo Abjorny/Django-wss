@@ -150,7 +150,7 @@ async def send_periodic_messages():
                 }
             )
 
-            await asyncio.sleep(1/20)
+            await asyncio.sleep(1/30)
 
     
 
