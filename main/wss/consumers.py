@@ -87,7 +87,7 @@ async def send_periodic_messages():
 
 
     while True:
-            ret, frame = get_frame_from_socket()
+            frame = get_frame_from_socket()
             copyFrame = frame.copy()
 
             # frame0 = first_left.get_roi(frame0, False).roi_frame
