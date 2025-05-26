@@ -344,10 +344,11 @@ class RedSensor(Sensor):
         )
         mask1 = cv2.inRange(frame, min_one, max_one)
         mask2 = cv2.inRange(frame, min_two, max_two)
-        red_mask = mask1 | mask2
+        red_mask = cv2.bitwise_or(mask1, mask2)
         counturs, hierarchy = cv2.findContours(red_mask,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
         area_delta = 0
         x,y,w,h = 0,0,0,0
+        
         for countur in counturs:
             area = cv2.contourArea(countur)
             if area > 50:

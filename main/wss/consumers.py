@@ -151,14 +151,12 @@ async def send_periodic_messages():
                 red_right = red_right_border.check_border(copyFrame, frameRed)
                 red_left = red_left_border.check_border(copyFrame, frameRed)
                 print(red_front, red_front_two,  red_left, red_right)
-                roi = red_front_border.get_roi(copyFrame, False)
-                red_framme  = red_front_border.get_red(roi, frameRed)
                 FrameUtilis.display_all_roi_sensors(
                     [sensor_left_one, sensor_right_one, sensor_center_one, 
                     sensor_left_two, sensor_right_two, sensor_center_two], 
                     combined_frame)
                 FrameUtilis.display_all_roi_sensors([red_front_border, red_frontTwo_border, red_right_border, red_left_border], frameRed)
-                _, buffer = cv2.imencode('.jpg', red_framme.mask, [int(cv2.IMWRITE_JPEG_QUALITY),40])
+                _, buffer = cv2.imencode('.jpg', frameRed, [int(cv2.IMWRITE_JPEG_QUALITY),40])
 
                 image_data = base64.b64encode(buffer).decode('utf-8')
 
