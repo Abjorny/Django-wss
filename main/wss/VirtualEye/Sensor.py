@@ -98,7 +98,7 @@ class Sensor:
         mask2 = cv2.inRange(frame, min_two, max_two)
         red_mask = mask1 | mask2
         counturs, hierarchy = cv2.findContours(red_mask,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
-        dist_delta = 100000
+        dist_delta = 0
         x,y,w,h = 0,0,0,0
         for countur in counturs:
             area = cv2.contourArea(countur)
@@ -108,7 +108,7 @@ class Sensor:
                     [(roi.x +roi.w) // 2, (roi.y + roi.h) // 2],
                     [(x1 + w1) // 2, (y1 + h1) //2]
                 )
-                if dist < dist_delta:
+                if dist > dist_delta:
                     x,y,w,h = x1,y1,w1,h1
                     dist_delta = dist
         
