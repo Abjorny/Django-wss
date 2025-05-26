@@ -270,7 +270,7 @@ class Sensor:
                     else:
                         value = 54
             
-            elif red_result.noblack !=0 and blue_result.noblack == 0:
+            elif (red_result.x + red_result.w < roi.x + roi.w - 20) and red_result.noblack !=0 and blue_result.noblack == 0:
                 red_result = self.get_red(roi, frame_copy)
                 if red_result.w > red_result.h and not isTwo:
                         value = 22
