@@ -57,7 +57,7 @@ sensor_center_two =  Sensor(
 )
 
 red_front_border = RedSensor(
-    np.array([[310, 410], [410, 410], [410, 440], [310, 440]]),
+    np.array([[330, 410], [430, 410], [430, 440], [330, 440]]),
     (0, 0, 255)
 )
 
