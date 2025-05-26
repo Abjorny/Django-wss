@@ -71,7 +71,7 @@ async def send_periodic_messages():
 
             # frame0 = first_left.get_roi(frame0, False).roi_frame
 
-            frame0 = resize_frame(frame0)
+            # frame0 = resize_frame(frame0)
 
             output_size = (480, 480)
 
