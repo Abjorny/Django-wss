@@ -110,7 +110,7 @@ async def send_periodic_messages():
                     [-1.15379595e-02,  2.01337394e+00, -1.36724820e+00],
                     [-4.21205669e-04,  2.08644464e-03,  1.00000000e+00]
                 ])
-                output_size = (480, 480)
+                output_size = (480, 580)
                 
                 frame0 = cv2.warpPerspective(frame0, M0, output_size)
                 frame2 = cv2.warpPerspective(frame2, M2, output_size)
