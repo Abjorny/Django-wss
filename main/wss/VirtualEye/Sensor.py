@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 from .Result import Result
+import math
 
 
 
@@ -50,6 +51,13 @@ class Sensor:
         self.posRobot = 1
         self.show = True
     
+
+    def distance(self, point1, point2):
+        x1, y1 = point1[0], point1[1]
+        x2, y2 = point2[0], point2[1]
+        return math.sqrt((x2 - x1)**2 + (y2 - y1)**2)
+
+
     def polygon_area(self,points):
         n = len(points)
         area = 0
@@ -90,17 +98,21 @@ class Sensor:
         mask2 = cv2.inRange(frame, min_two, max_two)
         red_mask = mask1 | mask2
         counturs, hierarchy = cv2.findContours(red_mask,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
-        area_delta = 0
+        dist_delta = 100000
         x,y,w,h = 0,0,0,0
         for countur in counturs:
             area = cv2.contourArea(countur)
             if area > 100:
                 x1,y1,w1,h1 = cv2.boundingRect(countur)
-                if w1 * h1 > w * h:
+                dist = self.distance(
+                    [(roi.x +roi.w) // 2, (roi.y + roi.h) // 2],
+                    [(x1 + w1) // 2, (y1 + h1) //2]
+                )
+                if dist < dist_delta:
                     x,y,w,h = x1,y1,w1,h1
-                    area_delta = area
+                    dist_delta = dist
         
-        result = Result([x,y,w,h, red_mask, roi, area_delta])
+        result = Result([x,y,w,h, red_mask, roi, dist_delta])
         return result
 
     def checkIsTwo(self, frame):
