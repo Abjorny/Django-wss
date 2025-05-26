@@ -57,7 +57,7 @@ sensor_center_two =  Sensor(
 )
 
 red_front_border = RedSensor(
-    np.array([[290, 230], [390, 230], [390, 260], [290, 260]]),
+    np.array([[310, 410], [410, 410], [410, 440], [310, 440]]),
     (0, 0, 255)
 )
 
@@ -73,7 +73,7 @@ red_left_border = RedSensor(
 
 
 red_frontTwo_border = RedSensor(
-    np.array([[310, 410], [410, 410], [410, 440], [310, 440]]),
+    np.array([[290, 230], [390, 230], [390, 260], [290, 260]]),
     (0, 0, 255)
 )
 FIXED_WIDTH = 640
@@ -153,7 +153,7 @@ async def send_periodic_messages():
                 red_right = red_right_border.check_border(frameRed, frameRed)
                 red_left = red_left_border.check_border(frameRed, frameRed)
                 
-                if red_front_two:
+                if red_front:
                     value_left_one = 0
                     value_center_one = 0
                     value_right_one = 0
@@ -170,7 +170,7 @@ async def send_periodic_messages():
                     value_right_one = 0
                     value_right_two = 0
                 
-                if red_front:
+                if red_front_two:
                     value_right_two = 0
                     value_left_two = 0
                     value_center_two = 0
