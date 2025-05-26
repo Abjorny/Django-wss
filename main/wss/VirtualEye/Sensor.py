@@ -50,12 +50,10 @@ class Sensor:
         self.posRobot = 1
         self.show = True
     
-
     def distance(self, point1, point2):
         x1, y1 = point1[0], point1[1]
         x2, y2 = point2[0], point2[1]
         return math.sqrt((x2 - x1)**2 + (y2 - y1)**2)
-
 
     def polygon_area(self,points):
         n = len(points)
@@ -242,7 +240,6 @@ class Sensor:
 
         return int(C_x), int(C_y)
     
-
     def readObject(self, frame_copy, frame):
 
         roi = self.get_roi(frame_copy, False)
@@ -306,8 +303,6 @@ class Sensor:
         return value, isTwo
 
 class RedSensor(Sensor):
-
-    
     def check_border(self, frame, frame_3d):
         self.posRobot = 1
         roi: Roi = self.get_roi(frame, False)

@@ -24,32 +24,11 @@ first_right = Sensor(
 )
 
 
-# sensor_left_one =  Sensor(
-#     np.array([[35, 280], [280, 265], [280, 480], [40, 480]]), 
-#     (0, 0, 255) 
-# )
-
-
-# sensor_right_one =  Sensor(
-#     np.array([[665, 270], [920, 280], [900, 480], [665, 480]]), 
-#     (0, 0, 255) 
-# )
 
 sensor_center_one =  Sensor(
     np.array([[340, 265], [630, 270], [630, 480], [340, 480]]), 
     (0, 0, 255) 
 )
-
-# sensor_left_two =  Sensor(
-#     np.array([[60, 50], [330, 30], [285, 160], [0, 170]]), 
-#     (0, 0, 255) 
-# )
-
-
-# sensor_right_two =  Sensor(
-#     np.array([[640, 30], [920, 40], [960, 170], [670, 160]]), 
-#     (0, 0, 255) 
-# )
 
 sensor_center_two =  Sensor(
     np.array([[340, 30], [630, 30], [660, 160], [300, 160]]), 
@@ -118,15 +97,14 @@ async def send_periodic_messages():
                 frame0 = resize_frame(frame0)
                 frame2 = resize_frame(frame2)
 
-                # # Делать массивы C-континуальными (для hconcat)
-                # frame0 = np.ascontiguousarray(frame0)
-                # frame2 = np.ascontiguousarray(frame2)
+
 
                 M0 = np.array([
                     [ 1.92535667e+00,  1.05309564e+00, -4.11909317e+02],
                     [ 1.42373556e-01,  2.75005764e+00, -8.39029846e+01],
                     [ 7.55680568e-04,  2.65890460e-03,  1.00000000e+00]
                 ])
+                
                 M2 = np.array([
                     [ 1.14622885e+00,  1.26279449e-01, -6.43150950e+01],
                     [-1.15379595e-02,  2.01337394e+00, -1.36724820e+00],
@@ -141,13 +119,9 @@ async def send_periodic_messages():
                 combined_frame = cv2.hconcat([frame0, frame2])
                 copyFrame = combined_frame.copy()
 
-                # value_left_one, isTwo = sensor_left_one.readObject(copyFrame, combined_frame)
                 value_center_one, isTwo = sensor_center_one.readObject(copyFrame, combined_frame)
-                # value_right_one, isTwo = sensor_right_one.readObject(copyFrame, combined_frame)
 
-                # value_left_two, isTwo = sensor_left_two.readObject(copyFrame, combined_frame)
                 value_center_two, isTwo = sensor_center_two.readObject(copyFrame, combined_frame)
-                # value_right_two, isTwo = sensor_right_two.readObject(copyFrame, combined_frame)
 
                 red_front = red_front_border.check_border(frameRed, frameRed)
                 red_front_two = red_frontTwo_border.check_border(frameRed, frameRed)
@@ -161,15 +135,12 @@ async def send_periodic_messages():
                 if red_front_two:
                     value_center_two = 0
 
-                # print(red_front, red_front_two,  red_left, red_right)
                 FrameUtilis.display_all_roi_sensors(
                     [ sensor_center_one, 
                       sensor_center_two], 
                     combined_frame)
-                roi = sensor_center_one.get_roi(copyFrame, False)
-                delta = roi.roi_frame[20:-20, 20:-20]
-                # FrameUtilis.display_all_roi_sensors([red_front_border, red_frontTwo_border, red_right_border, red_left_border], frameRed)
-                _, buffer = cv2.imencode('.jpg', delta, [int(cv2.IMWRITE_JPEG_QUALITY),40])
+
+                _, buffer = cv2.imencode('.jpg', combined_frame, [int(cv2.IMWRITE_JPEG_QUALITY),40])
 
                 image_data = base64.b64encode(buffer).decode('utf-8')
 
