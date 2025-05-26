@@ -26,10 +26,10 @@ class Roi:
 class LibaryHSV:
     def __init__(self):
         
-        self.min_red_one = np.array([0, 51, 90])   
+        self.min_red_one = np.array([0, 51, 100])   
         self.max_red_one = np.array([21, 255, 255])
         
-        self.min_red_two = np.array([106, 51, 90])
+        self.min_red_two = np.array([106, 51, 100])
         self.max_red_two = np.array([180, 255, 255])
 
         self.min_blue = np.array([105, 64, 0])  
@@ -99,6 +99,7 @@ class Sensor:
         red_mask = mask1 | mask2
         counturs, hierarchy = cv2.findContours(red_mask,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
         dist_delta = 0
+        area_delta = 0
         x,y,w,h = 0,0,0,0
         for countur in counturs:
             area = cv2.contourArea(countur)
@@ -108,17 +109,19 @@ class Sensor:
                     [(roi.x +roi.w) // 2, (roi.y + roi.h) // 2],
                     [(x1 + w1) // 2, (y1 + h1) //2]
                 )
+
                 if dist > dist_delta:
                     if smart:
-                        print(area)
                         if area > 1500:
                             x,y,w,h = x1,y1,w1,h1
                             dist_delta = dist
+                            area_delta = area
                     else:
                         x,y,w,h = x1,y1,w1,h1
                         dist_delta = dist
+                        area_delta = area
         
-        result = Result([x,y,w,h, red_mask, roi, dist_delta])
+        result = Result([x,y,w,h, red_mask, roi, area_delta])
         return result
 
     def checkIsTwo(self, frame):
