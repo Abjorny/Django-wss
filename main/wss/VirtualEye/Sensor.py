@@ -43,17 +43,21 @@ class LibaryHSV:
         self.min_white = np.array([90, 0, 175])
         self.max_white = np.array([180, 42, 255])
 
+
 class Sensor:
     
-    def __init__(self, mass, massCheck,  color):
+    def __init__(self, mass, massCheck, massTwo, color):
         self.mass = mass
         self.massCheck = massCheck
+        self.massTwo = massTwo        
 
         self.mass_display = mass
         self.color = color
         self.hsv = LibaryHSV()
         self.posRobot = 1
         self.show = True
+        self.isTwo = False
+        
     
     def distance(self, point1, point2):
         x1, y1 = point1[0], point1[1]
@@ -104,7 +108,6 @@ class Sensor:
         mask2 = cv2.inRange(frame, min_two, max_two)
         red_mask = mask1 | mask2
         counturs, hierarchy = cv2.findContours(red_mask,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
-        dist_delta = 0
         area_delta = 0
         x,y,w,h = 0,0,0,0
         for countur in counturs:
@@ -127,15 +130,14 @@ class Sensor:
     def checkIsTwo(self, frame):
         roi = self.get_roi_check(frame)
         result: Result = self.get_black(roi)
-        isTwo = False
+        self.isTwo = False
         if result.noblack > result.black:
-            isTwo = True
+            self.isTwo = True
             self.color = (255, 255, 255)
         
         else:
             self.color = (0, 0, 0)
 
-        return isTwo    
 
     def get_black(self, roi):
         result: Result = self.search_color(
@@ -187,7 +189,10 @@ class Sensor:
         return result
 
     def get_roi(self, frame):
-        box = self.mass
+        if self.isTwo:
+            box = self.massTwo
+        else:
+            box = self.mass
         
 
         mask = np.zeros(frame.shape[:2], dtype=np.uint8)
@@ -230,8 +235,11 @@ class Sensor:
         roi = Roi([roi, x, y, w, h])
         return roi
     
-    def calculate_centroid(self, isTwo):
-        points = np.vstack([self.mass, self.mass[0]])
+    def calculate_centroid(self):
+        if self.isTwo: 
+            points = np.vstack([self.massTwo, self.massTwo[0]])
+        else:
+            points = np.vstack([self.mass, self.mass[0]])
 
         def polygon_area(points):
             x = points[:, 0]
@@ -248,9 +256,8 @@ class Sensor:
         return int(C_x), int(C_y)
     
     def readObject(self, frame_copy, frame):
-
+        self.checkIsTwo(frame_copy)
         roi = self.get_roi(frame_copy)
-        isTwo = self.checkIsTwo(frame_copy)
 
 
         green_result: Result = self.get_green(roi, frame)
@@ -261,7 +268,7 @@ class Sensor:
 
         if green_result.noblack != 0 :
             green_x, green_y = green_result.x2_absolute, green_result.y2_absolute
-            x, y = self.calculate_centroid(isTwo)
+            x, y = self.calculate_centroid()
             
             if green_x > x and green_y > y:
                 value = 32
@@ -294,22 +301,22 @@ class Sensor:
                 roi.roi_frame = roi.roi_frame[30:-30, 30:-30]
 
                 red_result = self.get_red(roi, frame_copy)
-                if red_result.w > red_result.h and not isTwo:
+                if red_result.w > red_result.h and not self.isTwo:
                         value = 22
                 
-                elif  red_result.w < red_result.h and not isTwo:
+                elif  red_result.w < red_result.h and not self.isTwo:
                     value = 21
                 
-                elif red_result.w  <= red_result.h and isTwo:
+                elif red_result.w  <= red_result.h and self.isTwo:
                     value = 23
                 
-                elif  isTwo :
+                elif  self.isTwo :
                     value = 24
             
-            elif isTwo:
+            elif self.isTwo:
                 value = 41
 
-        return value, isTwo
+        return value, self.isTwo
 
 class RedSensor(Sensor):
     def check_border(self, frame, frame_3d):
