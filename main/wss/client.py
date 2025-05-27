@@ -3,6 +3,16 @@ import websockets
 import json
 import serial
 
+class Message:
+    def __init__(self, data: list):
+        self.valueOne = data['valueCenterOne']
+        self.valueTwo = data['valueCenterTwo']
+
+        self.redLeft = data['redLeft']
+        self.redRight = data['redRight']
+        self.redFront = data['redFront']
+        self.redFrontTwo = data['redFrontTwo']
+
 class UartController:
     def __init__(self):
         self.uartBody = serial.Serial(
@@ -21,30 +31,30 @@ class UartController:
         while (self.uartBody.in_waiting == 0): pass
         self.uartBody.reset_input_buffer()
 
-
 async def get_message_once():
     uri = "ws://127.0.0.1:4000/ws/api/get_image"
     async with websockets.connect(uri) as websocket:
         message = await websocket.recv()
         data = json.loads(message)
-        return data["message"]
+        return Message(data["message"])
 
-def get_message():
+    
+def get_message() -> Message:
     return asyncio.run(get_message_once())
 
 uart = UartController()
 message = get_message()
-print(message['valueCenterOne'], message['valueCenterTwo'])
+print(message.valueOne, message.valueTwo)
 uart.sendValueAndWait("40")
 
 message = get_message()
-print(message['valueCenterOne'], message['valueCenterTwo'])
+print(message.valueOne, message.valueTwo)
 uart.sendValueAndWait("40")
 
 
 message = get_message()
-print(message['valueCenterOne'], message['valueCenterTwo'])
+print(message.valueOne, message.valueTwo)
 uart.sendValueAndWait("40")
 
 message = get_message()
-print(message['valueCenterOne'], message['valueCenterTwo'])
+print(message.valueOne, message.valueTwo)
