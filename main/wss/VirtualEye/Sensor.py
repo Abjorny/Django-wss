@@ -38,13 +38,16 @@ class LibaryHSV:
         self.max_green = np.array([90, 255, 255])
 
         self.min_black = np.array([0,0,0]) 
-        self.max_black = np.array([180,130,130])  
+        self.max_black = np.array([180,90, 110])  
+
+        self.min_white = np.array([90, 0, 175])
+        self.max_white = np.array([180, 42, 255])
 
 class Sensor:
     
-    def __init__(self, mass, massTwo,  color):
+    def __init__(self, mass, massCheck,  color):
         self.mass = mass
-        self.massTwo = massTwo
+        self.massCheck = massCheck
 
         self.mass_display = mass
         self.color = color
@@ -184,10 +187,7 @@ class Sensor:
         return result
 
     def get_roi(self, frame):
-        if self.posRobot  == 2:
-            box = self.massTwo
-        else:
-            box = self.mass
+        box = self.mass
         
 
         mask = np.zeros(frame.shape[:2], dtype=np.uint8)
@@ -217,7 +217,7 @@ class Sensor:
         return roi
     
     def get_roi_check(self, frame):
-        box = self.mass
+        box = self.massCheck
         mask = np.zeros(frame.shape[:2], dtype=np.uint8)
         cv2.fillPoly(mask, [box], 255)  
         roi = cv2.bitwise_and(frame, frame, mask=mask)
