@@ -106,12 +106,6 @@ async def send_periodic_messages():
                 frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
                 copyFrame = frame.copy()
 
-                # frame0 = first_left.get_roi(frame0, False).roi_frame
-
-                # frame0 = resize_frame(frame0)
-
-                # output_size = (480, 480)
-
                 value_center_one, isTwo = sensor_center_one.readObject(copyFrame, frame)
 
                 value_center_two, isTwo = sensor_center_two.readObject(copyFrame, frame)
