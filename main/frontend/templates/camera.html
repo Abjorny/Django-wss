@@ -280,8 +280,8 @@
             const vMax = parseInt(document.getElementById('v-max').value);
 
             const outputText =
-                `self.min_red_one = np.array([${hMin}, ${sMin}, ${vMin}])
-self.max_red_one = np.array([${hMax}, ${sMax}, ${vMax}])`;
+                `np.array([${hMin}, ${sMin}, ${vMin}])
+np.array([${hMax}, ${sMax}, ${vMax}])`;
 
             document.getElementById('hsv-output').textContent = outputText;
         }
