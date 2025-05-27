@@ -70,8 +70,8 @@
         <div style="position: relative; display: flex;flex-direction: row;">
             <div style="position: relative; display: flex; flex-direction: column;">
 
-            <img id="webcam-feed" src="" alt="Webcam Feed" />
-            <div id="dots-container"></div>
+                <img id="webcam-feed" src="" alt="Webcam Feed" />
+                <div id="dots-container"></div>
             </div>
 
             <div class="hsv-controls p-3 border rounded bg-light"
@@ -247,6 +247,40 @@
                 resetPoints();
             }
         });
+        const hsvSliders = [
+            { id: 'h-min', name: 'h_min' },
+            { id: 'h-max', name: 'h_max' },
+            { id: 's-min', name: 's_min' },
+            { id: 's-max', name: 's_max' },
+            { id: 'v-min', name: 'v_min' },
+            { id: 'v-max', name: 'v_max' },
+        ];
+
+        function sendHSV() {
+            if (camera && camera.readyState === WebSocket.OPEN) {
+                const hsv = {};
+                hsvSliders.forEach(({ id, name }) => {
+                    hsv[name] = parseInt(document.getElementById(id).value);
+                });
+
+                camera.send(JSON.stringify({ type: 'hsv', data: hsv }));
+            }
+        }
+
+        hsvSliders.forEach(({ id }) => {
+            const el = document.getElementById(id);
+            const valDisplay = document.getElementById(${ id } - val);
+            el.addEventListener('input', () => {
+                valDisplay.textContent = el.value;
+                sendHSV();
+            });
+        });
+        $('#button-download-camera').click(() => {
+            if (camera !== null) {
+                saveUrlAsFile(imgElement.attr('src'), 'image.jpg');
+            }
+        });
+
 
         connectCamera();
     </script>
