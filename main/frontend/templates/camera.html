@@ -148,6 +148,13 @@
             camera.onmessage = function (event) {
                 const data = JSON.parse(event.data);
                 if (data.message.image) {
+                    document.getElementById('value-center').textContent = data.message.valueCenterOne;
+                    document.getElementById('value-center-two').textContent = data.message.valueCenterTwo;
+
+                    document.getElementById('red-left').textContent = 'Лево: ' + data.message.redLeft;
+                    document.getElementById('red-right').textContent = 'Право: ' + data.message.redRight;
+                    document.getElementById('red-front').textContent = 'Перед: ' + data.message.redFront;
+                    document.getElementById('red-front-two').textContent = 'Перед второй: ' + data.message.redFrontTwo;
                     imgElement.src = `data:image/jpeg;base64,${data.message.image}`;
                 }
             };
