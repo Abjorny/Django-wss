@@ -1,217 +1,202 @@
-<style>
-    * {
-        padding: none;
-    }
+<!DOCTYPE html>
+<html lang="ru">
 
-    .container-camera {
-        display: flex;
-        flex-direction: column;
-        max-width: 640px;
-    }
+<head>
+    <meta charset="UTF-8">
+    <title>Выбор точек на изображении</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
 
-    #webcam-feed {
-        width: 640px;
-    }
+        .container-camera {
+            display: flex;
+            flex-direction: column;
+            max-width: 640px;
+            margin: 0 auto;
+            font-family: sans-serif;
+        }
 
-    .utilis-webcam {
-        display: flex;
-        flex-direction: row;
-        justify-content: start;
-        margin-top: 20px;
-        gap: 20px;
+        #webcam-feed {
+            width: 640px;
+            height: 480px;
+            border: 2px solid #333;
+            cursor: crosshair;
+            position: relative;
+        }
 
-    }
+        .utilis-webcam {
+            display: flex;
+            flex-direction: row;
+            justify-content: start;
+            margin-top: 20px;
+            gap: 20px;
+        }
 
-    .utilis-row-data {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 20px;
-        color: black;
-        font-size: 21px;
-        font-weight: 400;
-        margin-top: 20px;
-    }
+        .utilis-row-data {
+            margin-top: 20px;
+            font-size: 18px;
+            color: black;
+        }
 
-    .row-data {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        gap: 20px;
-    }
-</style>
+        .dot {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: red;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+        }
 
-<div class="container-camera">
-    <div class="row-data">
-        <img id="webcam-feed" alt="Webcam Feed" />
-        <div class="hsv-controls p-3 border rounded bg-light"
-            style="display: flex; flex-direction: column; gap: 10px; max-width: 300px; min-width: 300px;">
-            <label>H Min: <span id="h-min-val">0</span></label>
-            <input type="range" id="h-min" min="0" max="180" value="0" class="form-range" />
+        #points-output {
+            font-family: monospace;
+            margin-top: 10px;
+            word-break: break-word;
+            background: #f1f1f1;
+            padding: 10px;
+            border-radius: 5px;
+        }
 
-            <label>H Max: <span id="h-max-val">180</span></label>
-            <input type="range" id="h-max" min="0" max="180" value="180" class="form-range" />
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+    </style>
+</head>
 
-            <label>S Min: <span id="s-min-val">0</span></label>
-            <input type="range" id="s-min" min="0" max="255" value="0" class="form-range" />
+<body>
+    <div class="container-camera">
+        <div style="position: relative;">
+            <img id="webcam-feed" src="" alt="Webcam Feed" />
+            <div id="dots-container"></div>
+        </div>
 
-            <label>S Max: <span id="s-max-val">255</span></label>
-            <input type="range" id="s-max" min="0" max="255" value="255" class="form-range" />
+        <div class="utilis-webcam">
+            <button id="button-connect-camera" class="btn btn-success">On</button>
+            <button id="button-disconnect-camera" class="btn btn-danger">Off</button>
+            <button id="button-download-camera" class="btn btn-warning">Download</button>
+            <button id="copy-points" class="btn btn-info">Скопировать точки</button>
+        </div>
 
-            <label>V Min: <span id="v-min-val">0</span></label>
-            <input type="range" id="v-min" min="0" max="255" value="0" class="form-range" />
-
-            <label>V Max: <span id="v-max-val">255</span></label>
-            <input type="range" id="v-max" min="0" max="255" value="255" class="form-range" />
+        <div class="utilis-row-data">
+            <strong>Выбранные точки:</strong>
+            <div id="points-output">[]</div>
         </div>
     </div>
-    <div class="utilis-row-data">
-        <div class="row-data">
-            <span id="value-center-two">255</span>
-        </div>
-        <div class="row-data">
-            <span id="value-center">255</span>
-        </div>
-        <div class="row-data">
-            <span id="red-left">Лево: 0</span>
-            <span id="red-right">Право: 0</span>
 
-        </div>
-        <div class="row-data">
-            <span id="red-front">Перед: 0</span>
-            <span id="red-front-two">Перед второй: 0</span>
-        </div>
-    </div>
-    <div class="utilis-webcam">
-        <button id="button-connect-camera" type="button" class="btn btn-success">On</button>
-        <button id="button-disconnect-camera" type="button" class="btn btn-danger">Off</button>
-        <button id="button-download-camera" type="button" class="btn btn-warning">Download</button>
-    </div>
+    <script>
+        let camera = null;
+        const imgElement = document.getElementById('webcam-feed');
+        const dotsContainer = document.getElementById('dots-container');
+        let reconnectAttempts = 0;
+        const maxReconnectAttempts = 10;
+        const reconnectDelayMs = 2000;
+        const points = [];
 
-</div>
+        function connectCamera() {
+            camera = new WebSocket(
+                'ws://' + window.location.host + '/ws/api/get_image'
+            );
 
-<script>
-    let camera = null;
-    const imgElement = $('#webcam-feed');
-    let reconnectAttempts = 0;
-    const maxReconnectAttempts = 10;
-    const reconnectDelayMs = 2000;
+            camera.onmessage = function (event) {
+                const data = JSON.parse(event.data);
+                if (data.message.image) {
+                    imgElement.src = `data:image/jpeg;base64,${data.message.image}`;
+                }
+            };
 
-    function connectCamera() {
-        camera = new WebSocket(
-            'ws://'
-            + window.location.host
-            + '/ws/api/get_image'
-        );
+            camera.onclose = function (e) {
+                console.error('WebSocket closed unexpectedly', e);
+                imgElement.style.display = 'none';
+                camera = null;
 
-        camera.onmessage = function (event) {
-            const data = JSON.parse(event.data);
-            if (data.message.image) {
-                // document.getElementById('value-left').textContent = data.message.valueLeftOne;
-                document.getElementById('value-center').textContent = data.message.valueCenterOne;
-                // document.getElementById('value-right').textContent = data.message.valueRightOne;
+                if (reconnectAttempts < maxReconnectAttempts) {
+                    reconnectAttempts++;
+                    console.log(`Reconnect attempt #${reconnectAttempts} in ${reconnectDelayMs / 1000} seconds...`);
+                    setTimeout(() => {
+                        imgElement.style.display = '';
+                        connectCamera();
+                    }, reconnectDelayMs);
+                } else {
+                    console.warn('Max reconnect attempts reached. Stopping reconnect attempts.');
+                }
+            };
 
-                // document.getElementById('value-left-two').textContent = data.message.valueLeftTwo;
-                document.getElementById('value-center-two').textContent = data.message.valueCenterTwo;
-                // document.getElementById('value-right-two').textContent = data.message.valueRightTwo;
+            camera.onerror = function (error) {
+                console.error('WebSocket error observed:', error);
+                camera.close();
+            };
 
+            camera.onopen = function () {
+                console.log('WebSocket connected');
+                reconnectAttempts = 0;
+                imgElement.style.display = '';
+            };
+        }
 
-
-                document.getElementById('red-left').textContent = 'Лево: ' + data.message.redLeft;
-                document.getElementById('red-right').textContent = 'Право: ' + data.message.redRight;
-                document.getElementById('red-front').textContent = 'Перед: ' + data.message.redFront;
-                document.getElementById('red-front-two').textContent = 'Перед второй: ' + data.message.redFrontTwo;
-
-                imgElement.attr('src', `data:image/jpeg;base64,${data.message.image}`);
+        document.getElementById('button-disconnect-camera').onclick = () => {
+            if (camera !== null) {
+                imgElement.style.display = 'none';
+                camera.close();
+                camera = null;
+                reconnectAttempts = maxReconnectAttempts;
             }
-        }; 
+        };
 
-        camera.onclose = function (e) {
-            console.error('WebSocket closed unexpectedly', e);
-            imgElement.hide();
-            camera = null;
-
-            if (reconnectAttempts < maxReconnectAttempts) {
-                reconnectAttempts++;
-                console.log(`Reconnect attempt #${reconnectAttempts} in ${reconnectDelayMs / 1000} seconds...`);
-                setTimeout(() => {
-                    imgElement.show();
-                    connectCamera();
-                }, reconnectDelayMs);
-            } else {
-                console.warn('Max reconnect attempts reached. Stopping reconnect attempts.');
+        document.getElementById('button-connect-camera').onclick = () => {
+            if (camera == null) {
+                reconnectAttempts = 0;
+                imgElement.style.display = '';
+                connectCamera();
             }
         };
 
-        camera.onerror = function (error) {
-            console.error('WebSocket error observed:', error);
-            camera.close();
+        document.getElementById('button-download-camera').onclick = () => {
+            const link = document.createElement("a");
+            link.setAttribute("href", imgElement.src);
+            link.setAttribute("download", "image.jpg");
+            link.click();
         };
 
-        camera.onopen = function () {
-            console.log('WebSocket connected');
-            reconnectAttempts = 0;
-            imgElement.show();
-        };
-    }
+        imgElement.addEventListener('click', function (event) {
+            if (points.length >= 4) {
+                points.length = 0;
+                dotsContainer.innerHTML = '';
+            }
 
-    function saveUrlAsFile(url, fileName) {
-        var link = document.createElement("a");
-        link.setAttribute("href", url);
-        link.setAttribute("download", fileName);
-        link.click();
-    }
+            const rect = imgElement.getBoundingClientRect();
+            const x = Math.round(event.clientX - rect.left);
+            const y = Math.round(event.clientY - rect.top);
 
-    $("#button-disconnect-camera").click(() => {
-        if (camera !== null) {
-            imgElement.hide();
-            camera.close();
-            camera = null;
-            reconnectAttempts = maxReconnectAttempts;
-        }
-    });
-
-    $("#button-connect-camera").click(() => {
-        if (camera == null) {
-            reconnectAttempts = 0;
-            imgElement.show();
-            connectCamera();
-        }
-    });
-    const hsvSliders = [
-        { id: 'h-min', name: 'h_min' },
-        { id: 'h-max', name: 'h_max' },
-        { id: 's-min', name: 's_min' },
-        { id: 's-max', name: 's_max' },
-        { id: 'v-min', name: 'v_min' },
-        { id: 'v-max', name: 'v_max' },
-    ];
-
-    function sendHSV() {
-        if (camera && camera.readyState === WebSocket.OPEN) {
-            const hsv = {};
-            hsvSliders.forEach(({ id, name }) => {
-                hsv[name] = parseInt(document.getElementById(id).value);
-            });
-
-            camera.send(JSON.stringify({ type: 'hsv', data: hsv }));
-        }
-    }
-
-    // Привязываем к input
-    hsvSliders.forEach(({ id }) => {
-        const el = document.getElementById(id);
-        const valDisplay = document.getElementById(`${id}-val`);
-        el.addEventListener('input', () => {
-            valDisplay.textContent = el.value;
-            sendHSV();
+            points.push([x, y]);
+            updateOutput();
+            addDot(x, y);
         });
-    });
-    $('#button-download-camera').click(() => {
-        if (camera !== null) {
-            saveUrlAsFile(imgElement.attr('src'), 'image.jpg');
-        }
-    });
 
-    connectCamera();
-</script>
+        function updateOutput() {
+            document.getElementById('points-output').textContent = JSON.stringify(points);
+        }
+
+        function addDot(x, y) {
+            const dot = document.createElement('div');
+            dot.className = 'dot';
+            dot.style.left = x + 'px';
+            dot.style.top = y + 'px';
+            dotsContainer.appendChild(dot);
+        }
+
+        document.getElementById('copy-points').addEventListener('click', () => {
+            const text = JSON.stringify(points);
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Скопировано!');
+            }).catch(() => {
+                alert('Ошибка копирования.');
+            });
+        });
+
+        connectCamera();
+    </script>
+</body>
+
+</html>
