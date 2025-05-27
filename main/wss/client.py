@@ -33,4 +33,18 @@ def get_message():
     return asyncio.run(get_message_once())
 
 uart = UartController()
-uart.sendValueAndWait("50")
+message = get_message()
+print(message['valueCenterOne', message['valueCenterTwo']])
+uart.sendValueAndWait("40")
+
+message = get_message()
+print(message['valueCenterOne', message['valueCenterTwo']])
+uart.sendValueAndWait("40")
+
+
+message = get_message()
+print(message['valueCenterOne', message['valueCenterTwo']])
+uart.sendValueAndWait("40")
+
+message = get_message()
+print(message['valueCenterOne', message['valueCenterTwo']])
