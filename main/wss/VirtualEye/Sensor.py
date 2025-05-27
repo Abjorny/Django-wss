@@ -25,8 +25,6 @@ class Roi:
 
 class LibaryHSV:
     def __init__(self):
-        np.array([130, 120, 124])
-
         self.min_red_one = np.array([0, 140, 135])   
         self.max_red_one = np.array([30, 255, 255])
         
@@ -36,8 +34,9 @@ class LibaryHSV:
         self.min_blue = np.array([90, 100, 50])  
         self.max_blue = np.array( [130, 255, 255])  
 
-        self.min_green = np.array([30, 80, 80])  
-        self.max_green = np.array([110, 255, 255])
+        self.min_green = np.array([65, 110, 80])  
+        self.max_green = np.array([90, 255, 255])
+
         self.min_black = np.array([0,0,0]) 
         self.max_black = np.array([180,130,130])  
 
