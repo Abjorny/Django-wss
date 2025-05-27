@@ -76,9 +76,9 @@ red_left_border = RedSensor(
 
 
 red_frontTwo_border = RedSensor(
-    np.array([[290, 230], [390, 230], [390, 260], [290, 260]]),
+    np.array([[172,165],[343,159],[342,181],[167,186]]),
     np.array([[0, 0], [0, 0], [0, 0], [0, 0]]),
-        np.array([[0, 0], [0, 0], [0, 0], [0, 0]]),
+    np.array([[0, 0], [0, 0], [0, 0], [0, 0]]),
     (0, 0, 255)
 )
 
@@ -129,7 +129,8 @@ async def send_periodic_messages():
                 #     value_center_two = 0
 
                 FrameUtilis.display_all_roi_sensors(
-                    [sensor_center_one, sensor_center_two, red_front_border, red_left_border, red_right_border], 
+                    [sensor_center_one, sensor_center_two, red_front_border, red_left_border, red_right_border,
+                     red_frontTwo_border], 
                     frame
                 )
 
