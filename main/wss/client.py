@@ -34,17 +34,17 @@ def get_message():
 
 uart = UartController()
 message = get_message()
-print(message['valueCenterOne', message['valueCenterTwo']])
+print(message['valueCenterOne'], message['valueCenterTwo'])
 uart.sendValueAndWait("40")
 
 message = get_message()
-print(message['valueCenterOne', message['valueCenterTwo']])
+print(message['valueCenterOne'], message['valueCenterTwo'])
 uart.sendValueAndWait("40")
 
 
 message = get_message()
-print(message['valueCenterOne', message['valueCenterTwo']])
+print(message['valueCenterOne'], message['valueCenterTwo'])
 uart.sendValueAndWait("40")
 
 message = get_message()
-print(message['valueCenterOne', message['valueCenterTwo']])
+print(message['valueCenterOne'], message['valueCenterTwo'])
