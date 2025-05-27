@@ -122,14 +122,11 @@ async def send_periodic_messages():
                 red_left = red_left_border.check_border(copyFrame, copyFrame)
                 
                 if red_front:
-                    sensor_center_one.show = False
-                    sensor_center_two.show = False
                     value_center_one = 0
                     value_center_two = 0
 
                 if red_front_two:
                     value_center_two = 0
-                    sensor_center_two.show = False
 
                 FrameUtilis.display_all_roi_sensors(
                     [sensor_center_one, sensor_center_two, red_front_border, red_left_border, red_right_border,
