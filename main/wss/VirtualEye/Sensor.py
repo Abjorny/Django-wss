@@ -308,7 +308,7 @@ class Sensor:
                 elif  red_result.w < red_result.h and not self.isTwo:
                     value = 21
                 
-                elif red_result.w  <= red_result.h and self.isTwo:
+                elif red_result.w  <= red_result.h + 10 and self.isTwo:
                     value = 23
                 
                 elif  self.isTwo :
