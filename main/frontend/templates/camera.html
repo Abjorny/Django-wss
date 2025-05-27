@@ -95,37 +95,37 @@
                 <input type="range" id="v-max" min="0" max="255" value="255" class="form-range" />
             </div>
         </div>
+        <div class="utilis-webcam">
+            <button id="button-connect-camera" class="btn btn-success">On</button>
+            <button id="button-disconnect-camera" class="btn btn-danger">Off</button>
+            <button id="button-download-camera" class="btn btn-warning">Download</button>
+            <button id="copy-points" class="btn btn-info">Скопировать точки</button>
+        </div>
+
+        <div class="utilis-row-data">
+            <strong>Выбранные точки:</strong>
+            <div id="points-output">[]</div>
+        </div>
+        <div class="utilis-row-data">
+            <div class="row-data">
+                <span id="value-center-two">255</span>
+            </div>
+            <div class="row-data">
+                <span id="value-center">255</span>
+            </div>
+            <div class="row-data">
+                <span id="red-left">Лево: 0</span>
+                <span id="red-right">Право: 0</span>
+
+            </div>
+            <div class="row-data">
+                <span id="red-front">Перед: 0</span>
+                <span id="red-front-two">Перед второй: 0</span>
+            </div>
+        </div>
     </div>
 
-    <div class="utilis-webcam">
-        <button id="button-connect-camera" class="btn btn-success">On</button>
-        <button id="button-disconnect-camera" class="btn btn-danger">Off</button>
-        <button id="button-download-camera" class="btn btn-warning">Download</button>
-        <button id="copy-points" class="btn btn-info">Скопировать точки</button>
-    </div>
 
-    <div class="utilis-row-data">
-        <strong>Выбранные точки:</strong>
-        <div id="points-output">[]</div>
-    </div>
-    <div class="utilis-row-data">
-        <div class="row-data">
-            <span id="value-center-two">255</span>
-        </div>
-        <div class="row-data">
-            <span id="value-center">255</span>
-        </div>
-        <div class="row-data">
-            <span id="red-left">Лево: 0</span>
-            <span id="red-right">Право: 0</span>
-
-        </div>
-        <div class="row-data">
-            <span id="red-front">Перед: 0</span>
-            <span id="red-front-two">Перед второй: 0</span>
-        </div>
-    </div>
-    </div>
 
     <script>
         let camera = null;
@@ -269,7 +269,7 @@
 
         hsvSliders.forEach(({ id }) => {
             const el = document.getElementById(id);
-            const valDisplay =document.getElementById(`${id}-val`);
+            const valDisplay = document.getElementById(`${id}-val`);
             el.addEventListener('input', () => {
                 valDisplay.textContent = el.value;
                 sendHSV();
