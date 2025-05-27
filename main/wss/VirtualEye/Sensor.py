@@ -352,7 +352,7 @@ class RedSensor(Sensor):
         area_delta = 0
         for countur in counturs:
             area = cv2.contourArea(countur)
-            if area > 50:
+            if area > 250:
                 x1,y1,w1,h1 = cv2.boundingRect(countur)
                 if w1 * h1 > w * h:
                     area_delta = area
