@@ -130,8 +130,10 @@ class Sensor:
     def checkIsTwo(self, frame):
         roi = self.get_roi_check(frame)
         result: Result = self.get_black(roi)
+        whiteResult: Result = self.get_white(roi)
         self.isTwo = False
-        if result.noblack > result.black:
+
+        if result.area > whiteResult.area:
             self.isTwo = True
             self.color = (255, 255, 255)
         
@@ -146,7 +148,15 @@ class Sensor:
             max = self.hsv.max_black
         )
         return result
-
+    
+    def get_white(self, roi):
+        result: Result = self.search_color(
+            roi = roi,
+            min = self.hsv.min_white,
+            max = self.hsv.max_white
+        )
+        return result
+    
     def get_red(self, roi: Roi, frame_3d):
         result: Result = self.serach_two_color(
             roi = roi,
