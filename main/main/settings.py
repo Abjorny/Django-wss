@@ -82,7 +82,7 @@ CHANNEL_LAYERS = {
         "CONFIG": {
             "hosts": [("127.0.0.1", 6379)],
             "capacity": 1000,  
-            "group_expiry": 60,
+            "group_expiry": 6000,
         },
     },
 }

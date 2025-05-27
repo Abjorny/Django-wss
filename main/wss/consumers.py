@@ -6,6 +6,7 @@ from .VirtualEye.Sensor import Sensor, RedSensor
 from .VirtualEye.FrameUtilis import FrameUtilis
 import numpy as np
 import struct
+import gc
 from io import BytesIO
 from PIL import Image
 import cv2
@@ -93,66 +94,68 @@ def resize_frame(frame, width=FIXED_WIDTH, height=FIXED_HEIGHT):
 async def send_periodic_messages():
     channel_layer = get_channel_layer()
 
+    try:
+        while True:
+                frame = get_frame_from_socket()
+                frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
+                copyFrame = frame.copy()
 
-    while True:
-            frame = get_frame_from_socket()
-            frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
-            copyFrame = frame.copy()
+                # frame0 = first_left.get_roi(frame0, False).roi_frame
 
-            # frame0 = first_left.get_roi(frame0, False).roi_frame
+                # frame0 = resize_frame(frame0)
 
-            # frame0 = resize_frame(frame0)
+                # output_size = (480, 480)
 
-            output_size = (480, 480)
+                value_center_one, isTwo = sensor_center_one.readObject(copyFrame, frame)
 
-            value_center_one, isTwo = sensor_center_one.readObject(copyFrame, frame)
+                value_center_two, isTwo = sensor_center_two.readObject(copyFrame, frame)
 
-            value_center_two, isTwo = sensor_center_two.readObject(copyFrame, frame)
+                red_front = red_front_border.check_border(copyFrame, copyFrame)
+                red_front_two = red_frontTwo_border.check_border(copyFrame, copyFrame)
+                red_right = red_right_border.check_border(copyFrame, copyFrame)
+                red_left = red_left_border.check_border(copyFrame, copyFrame)
+                
+                # if red_front:
+                #     value_center_one = 0
+                #     value_center_two = 0
 
-            red_front = red_front_border.check_border(copyFrame, copyFrame)
-            red_front_two = red_frontTwo_border.check_border(copyFrame, copyFrame)
-            red_right = red_right_border.check_border(copyFrame, copyFrame)
-            red_left = red_left_border.check_border(copyFrame, copyFrame)
-            
-            # if red_front:
-            #     value_center_one = 0
-            #     value_center_two = 0
+                # if red_front_two:
+                #     value_center_two = 0
 
-            # if red_front_two:
-            #     value_center_two = 0
+                FrameUtilis.display_all_roi_sensors(
+                    [sensor_center_one, sensor_center_two], 
+                    frame
+                )
 
-            FrameUtilis.display_all_roi_sensors(
-                [sensor_center_one, sensor_center_two], 
-                frame
-            )
+                hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+                lower = np.array([latest_hsv["h_min"], latest_hsv["s_min"], latest_hsv["v_min"]])
+                upper = np.array([latest_hsv["h_max"], latest_hsv["s_max"], latest_hsv["v_max"]])
+                mask = cv2.inRange(hsv, lower, upper)
+                frame = cv2.bitwise_and(frame, frame, mask=mask)
 
-            hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-            lower = np.array([latest_hsv["h_min"], latest_hsv["s_min"], latest_hsv["v_min"]])
-            upper = np.array([latest_hsv["h_max"], latest_hsv["s_max"], latest_hsv["v_max"]])
-            mask = cv2.inRange(hsv, lower, upper)
-            frame = cv2.bitwise_and(frame, frame, mask=mask)
+                _, buffer = cv2.imencode('.jpg', frame, [int(cv2.IMWRITE_JPEG_QUALITY), 40])
+                image_data = base64.b64encode(buffer).decode('utf-8')
+                await channel_layer.group_send(
+                    "broadcast_group",
+                    {
+                        "type": "broadcast_message",
+                        "message": {
+                            "image": image_data,
+                            "valueCenterOne": value_center_one,
+                            "valueCenterTwo": value_center_two,
+                            "redLeft" : red_left,
+                            "redRight" : red_right,
+                            "redFront" : red_front,
+                            "redFrontTwo": red_front_two  
+                        },
+                    }
+                )
 
-            _, buffer = cv2.imencode('.jpg', frame, [int(cv2.IMWRITE_JPEG_QUALITY), 40])
-            image_data = base64.b64encode(buffer).decode('utf-8')
-            await channel_layer.group_send(
-                "broadcast_group",
-                {
-                    "type": "broadcast_message",
-                    "message": {
-                        "image": image_data,
-                        "valueCenterOne": value_center_one,
-                        "valueCenterTwo": value_center_two,
-                        "redLeft" : red_left,
-                        "redRight" : red_right,
-                        "redFront" : red_front,
-                        "redFrontTwo": red_front_two  
-                    },
-                }
-            )
+                await asyncio.sleep(1/30)
+                gc.collect()
 
-            await asyncio.sleep(1/30)
-
-    
+    except Exception as e:
+        logger.exception(f"Error {e} in send_periodic_messages")
 
 class MyConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -162,7 +165,6 @@ class MyConsumer(AsyncWebsocketConsumer):
         await self.accept()
 
         if task is None or task.done():
-            logger.info("Starting send_periodic_messages task")
             task = asyncio.create_task(send_periodic_messages())
 
     async def disconnect(self, close_code):
