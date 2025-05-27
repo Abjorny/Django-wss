@@ -33,4 +33,4 @@ def get_message():
     return asyncio.run(get_message_once())
 
 uart = UartController()
-uart.sendCommand("50")
+uart.sendValueAndWait("50")
