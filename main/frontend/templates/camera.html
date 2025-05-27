@@ -85,118 +85,130 @@
         </div>
     </div>
 
-    <script>
-        let camera = null;
-        const imgElement = document.getElementById('webcam-feed');
-        const dotsContainer = document.getElementById('dots-container');
-        let reconnectAttempts = 0;
-        const maxReconnectAttempts = 10;
-        const reconnectDelayMs = 2000;
-        const points = [];
+<script>
+    let camera = null;
+    const imgElement = document.getElementById('webcam-feed');
+    const dotsContainer = document.getElementById('dots-container');
+    let reconnectAttempts = 0;
+    const maxReconnectAttempts = 10;
+    const reconnectDelayMs = 2000;
+    const points = [];
 
-        function connectCamera() {
-            camera = new WebSocket(
-                'ws://' + window.location.host + '/ws/api/get_image'
-            );
+    function connectCamera() {
+        camera = new WebSocket(
+            'ws://' + window.location.host + '/ws/api/get_image'
+        );
 
-            camera.onmessage = function (event) {
-                const data = JSON.parse(event.data);
-                if (data.message.image) {
-                    imgElement.src = `data:image/jpeg;base64,${data.message.image}`;
-                }
-            };
+        camera.onmessage = function (event) {
+            const data = JSON.parse(event.data);
+            if (data.message.image) {
+                imgElement.src = `data:image/jpeg;base64,${data.message.image}`;
+            }
+        };
 
-            camera.onclose = function (e) {
-                console.error('WebSocket closed unexpectedly', e);
-                imgElement.style.display = 'none';
-                camera = null;
+        camera.onclose = function (e) {
+            console.error('WebSocket closed unexpectedly', e);
+            imgElement.style.display = 'none';
+            camera = null;
 
-                if (reconnectAttempts < maxReconnectAttempts) {
-                    reconnectAttempts++;
-                    console.log(`Reconnect attempt #${reconnectAttempts} in ${reconnectDelayMs / 1000} seconds...`);
-                    setTimeout(() => {
-                        imgElement.style.display = '';
-                        connectCamera();
-                    }, reconnectDelayMs);
-                } else {
-                    console.warn('Max reconnect attempts reached. Stopping reconnect attempts.');
-                }
-            };
+            if (reconnectAttempts < maxReconnectAttempts) {
+                reconnectAttempts++;
+                console.log(`Reconnect attempt #${reconnectAttempts} in ${reconnectDelayMs / 1000} seconds...`);
+                setTimeout(() => {
+                    imgElement.style.display = '';
+                    connectCamera();
+                }, reconnectDelayMs);
+            } else {
+                console.warn('Max reconnect attempts reached. Stopping reconnect attempts.');
+            }
+        };
 
-            camera.onerror = function (error) {
-                console.error('WebSocket error observed:', error);
-                camera.close();
-            };
+        camera.onerror = function (error) {
+            console.error('WebSocket error observed:', error);
+            camera.close();
+        };
 
-            camera.onopen = function () {
-                console.log('WebSocket connected');
-                reconnectAttempts = 0;
-                imgElement.style.display = '';
-            };
+        camera.onopen = function () {
+            console.log('WebSocket connected');
+            reconnectAttempts = 0;
+            imgElement.style.display = '';
+        };
+    }
+
+    document.getElementById('button-disconnect-camera').onclick = () => {
+        if (camera !== null) {
+            imgElement.style.display = 'none';
+            camera.close();
+            camera = null;
+            reconnectAttempts = maxReconnectAttempts;
+        }
+    };
+
+    document.getElementById('button-connect-camera').onclick = () => {
+        if (camera == null) {
+            reconnectAttempts = 0;
+            imgElement.style.display = '';
+            connectCamera();
+        }
+    };
+
+    document.getElementById('button-download-camera').onclick = () => {
+        const link = document.createElement("a");
+        link.setAttribute("href", imgElement.src);
+        link.setAttribute("download", "image.jpg");
+        link.click();
+    };
+
+    imgElement.addEventListener('click', function (event) {
+        if (points.length >= 4) {
+            resetPoints();
         }
 
-        document.getElementById('button-disconnect-camera').onclick = () => {
-            if (camera !== null) {
-                imgElement.style.display = 'none';
-                camera.close();
-                camera = null;
-                reconnectAttempts = maxReconnectAttempts;
-            }
-        };
+        const rect = imgElement.getBoundingClientRect();
+        const x = Math.round(event.clientX - rect.left);
+        const y = Math.round(event.clientY - rect.top);
 
-        document.getElementById('button-connect-camera').onclick = () => {
-            if (camera == null) {
-                reconnectAttempts = 0;
-                imgElement.style.display = '';
-                connectCamera();
-            }
-        };
+        points.push([x, y]);
+        updateOutput();
+        addDot(x, y);
+    });
 
-        document.getElementById('button-download-camera').onclick = () => {
-            const link = document.createElement("a");
-            link.setAttribute("href", imgElement.src);
-            link.setAttribute("download", "image.jpg");
-            link.click();
-        };
+    function updateOutput() {
+        document.getElementById('points-output').textContent = JSON.stringify(points);
+    }
 
-        imgElement.addEventListener('click', function (event) {
-            if (points.length >= 4) {
-                points.length = 0;
-                dotsContainer.innerHTML = '';
-            }
+    function addDot(x, y) {
+        const dot = document.createElement('div');
+        dot.className = 'dot';
+        dot.style.left = x + 'px';
+        dot.style.top = y + 'px';
+        dotsContainer.appendChild(dot);
+    }
 
-            const rect = imgElement.getBoundingClientRect();
-            const x = Math.round(event.clientX - rect.left);
-            const y = Math.round(event.clientY - rect.top);
+    function resetPoints() {
+        points.length = 0;
+        dotsContainer.innerHTML = '';
+        updateOutput();
+    }
 
-            points.push([x, y]);
-            updateOutput();
-            addDot(x, y);
+    document.getElementById('copy-points').addEventListener('click', () => {
+        const text = JSON.stringify(points);
+        navigator.clipboard.writeText(text).then(() => {
+            alert('Скопировано!');
+        }).catch(() => {
+            alert('Ошибка копирования.');
         });
+    });
 
-        function updateOutput() {
-            document.getElementById('points-output').textContent = JSON.stringify(points);
+    document.addEventListener('keydown', (event) => {
+        if (event.key.toLowerCase() === 'r') {
+            resetPoints();
         }
+    });
 
-        function addDot(x, y) {
-            const dot = document.createElement('div');
-            dot.className = 'dot';
-            dot.style.left = x + 'px';
-            dot.style.top = y + 'px';
-            dotsContainer.appendChild(dot);
-        }
+    connectCamera();
+</script>
 
-        document.getElementById('copy-points').addEventListener('click', () => {
-            const text = JSON.stringify(points);
-            navigator.clipboard.writeText(text).then(() => {
-                alert('Скопировано!');
-            }).catch(() => {
-                alert('Ошибка копирования.');
-            });
-        });
-
-        connectCamera();
-    </script>
 </body>
 
 </html>
