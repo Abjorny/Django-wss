@@ -19,7 +19,7 @@ class FrameUtilis:
     def display_all_roi_sensors(sensors: list[Sensor], frame):
         for sensor in sensors:
             if sensor.show:
-                cv2.polylines(frame, [sensor.mass], isClosed=True, color=sensor.color, thickness=2)
+                cv2.polylines(frame, [sensor.mass_display], isClosed=True, color=sensor.color, thickness=2)
                 # cv2.polylines(frame, [sensor.massTwo], isClosed=True, color=sensor.color, thickness=2)
                 # cv2.polylines(frame, [sensor.massThree], isClosed=True, color=sensor.color, thickness=2)
                 # cv2.polylines(frame, [sensor.massCompress], isClosed=True, color=(255,0,255), thickness=2)
