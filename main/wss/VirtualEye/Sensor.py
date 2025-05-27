@@ -191,9 +191,10 @@ class Sensor:
     def get_roi(self, frame):
         if self.isTwo:
             box = self.massTwo
+            self.mass_display = self.massTwo
         else:
             box = self.mass
-        
+            self.mass_display = self.mass
 
         mask = np.zeros(frame.shape[:2], dtype=np.uint8)
         cv2.fillPoly(mask, [box], 255)  
