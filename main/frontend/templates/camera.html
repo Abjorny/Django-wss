@@ -269,7 +269,7 @@
 
         hsvSliders.forEach(({ id }) => {
             const el = document.getElementById(id);
-            const valDisplay = document.getElementById(${ id } - val);
+            const valDisplay =document.getElementById(`${id}-val`);
             el.addEventListener('input', () => {
                 valDisplay.textContent = el.value;
                 sendHSV();
