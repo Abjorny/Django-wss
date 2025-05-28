@@ -84,6 +84,7 @@ red_frontTwo_border = RedSensor(
 
 FIXED_WIDTH = 640
 FIXED_HEIGHT = 480
+
 latest_hsv = {
     "h_min": 0,
     "h_max": 179,
@@ -131,6 +132,7 @@ async def send_periodic_messages():
 
                 _, buffer = cv2.imencode('.jpg', frame, [int(cv2.IMWRITE_JPEG_QUALITY), 40])
                 image_data = base64.b64encode(buffer).decode('utf-8')
+                
                 await channel_layer.group_send(
                     "broadcast_group",
                     {
