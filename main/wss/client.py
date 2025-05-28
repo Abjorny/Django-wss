@@ -2,10 +2,10 @@ import asyncio
 import websockets
 import json
 import serial
-from WRO_Robot_Api.API import main
-from WRO_Robot_Api.API.ObjectPoint.objectPoint import objectPoint, RobotPoint
-from WRO_Robot_Api.API.LibaryPoints.libaryPoints import LibryPoints
-from WRO_Robot_Api.API.Map.Map import Map
+from .WRO_Robot_Api.API import main
+from .WRO_Robot_Api.API.ObjectPoint.objectPoint import objectPoint, RobotPoint
+from .WRO_Robot_Api.API.LibaryPoints.libaryPoints import LibryPoints
+from .WRO_Robot_Api.API.Map.Map import Map
 import cv2
 
 mapArray = [
