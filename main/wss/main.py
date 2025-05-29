@@ -9,7 +9,6 @@ robotObject.readAll()
 map = Map(robotObject)
 
 
-map.showMap()
 
 mainUtilis = main.FindTheBestPatchMap()
 
@@ -92,7 +91,6 @@ def getPatchPriority(priorityList: list, libary: LibryPoints):
             
         robotObject.readAll()
         map.setImagesMap()
-        map.showMap()
 
     return
    
