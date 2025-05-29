@@ -22,7 +22,7 @@ class Map:
 
     def showMap(self):
         self.setImagesMap()
-        cv2.imshow("Map", self.map)
+        # cv2.imshow("Map", self.map)
         cv2.waitKey()
 
     def tracerCommand(self,  command):
