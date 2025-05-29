@@ -387,39 +387,84 @@ class RobotPoint(objectPoint):
         for elem in data:
             napr = int(elem['napr'])
             object: Message = elem['object']
+            print(self.switchValue(object.valueOne), self.switchValue(object.valueTwo), napr, "Считали")
             
-            if napr == 1:
+            if napr == 3:
                 if  self.mapArray[y-1][x] == 0:
                     self.mapArray[y-1][x] = object.valueOne
-                    self.mapArray[y-2][x] = object.valueTwo
-                    if object.redRight:
-                        self.mapArray[y][x + 1] = -1
+                    if self.switchValue(object.valueOne, napr) not in [40, 23, 24]:
+                        self.mapArray[y-2][x] = object.valueTwo
+                        if object.redRight:
+                            self.mapArray[y][x + 1] = -1
 
-                    if object.redLeft:
-                        self.mapArray[y][x - 1] = -1
-         
-                    if object.redFront:
-                        self.mapArray[y-1][x] = -1
-                         
-                    if object.redFrontTwo:
-                        self.mapArray[y-2][x] = -1
-           
+                        if object.redLeft:
+                            self.mapArray[y][x - 1] = -1
+            
+                        if object.redFront:
+                            self.mapArray[y-1][x] = -1
+                            
+                        if object.redFrontTwo:
+                            self.mapArray[y-2][x] = -1
+
+            elif napr == 1:
+                if  self.mapArray[y+1][x] == 0:
+
+                    self.mapArray[y+1][x] = self.switchValue(object.valueOne, napr)
+                    if self.switchValue(object.valueOne, napr) not in [40, 23, 24]:
+                        self.mapArray[y+2][x] = self.switchValue(object.valueTwo, napr)
+                        
+                        if object.redRight:
+                            self.mapArray[y][x - 1] = -1
+
+                        if object.redLeft:
+                            self.mapArray[y][x + 1] = -1
+            
+                        if object.redFront:
+                            self.mapArray[y+1][x] = -1
+                            
+                        if object.redFrontTwo:
+                            self.mapArray[y+2][x] = -1
+
             elif napr == 2:
-                if  self.mapArray[y-1][x] == 0:
-                    self.mapArray[y-1][x] = self.switchValue(object.valueOne, napr)
-                    self.mapArray[y-2][x] = self.switchValue(object.valueTwo, napr)
-                    
-                    if object.redRight:
-                        self.mapArray[y][x + 1] = -1
+                if  self.mapArray[y][x-1] == 0:
+                    self.mapArray[y][x-1] = self.switchValue(object.valueOne, napr)
+                    if self.switchValue(object.valueOne, napr) not in [40, 23, 24]:
+                        self.mapArray[y][x-2] = self.switchValue(object.valueTwo, napr)
+                        
+                        if object.redRight:
+                            self.mapArray[y - 1][x] = -1
 
-                    if object.redLeft:
-                        self.mapArray[y][x - 1] = -1
-         
-                    if object.redFront:
-                        self.mapArray[y-1][x] = -1
-                         
-                    if object.redFrontTwo:
-                        self.mapArray[y-2][x] = -1
+                        if object.redLeft:
+                            self.mapArray[y + 1][x] = -1
+            
+                        if object.redFront:
+                            self.mapArray[y][x - 1] = -1
+                            
+                        if object.redFrontTwo:
+                            self.mapArray[y][x - 2] = -1
+
+            elif napr == 4:
+                if  self.mapArray[y][x+1] == 0:
+                    self.mapArray[y][x+1] = self.switchValue(object.valueOne, napr)
+                    if self.switchValue(object.valueOne, napr) not in [40, 23, 24]:
+                        self.mapArray[y][x+2] = self.switchValue(object.valueTwo, napr)
+                        
+                        if object.redRight:
+                            self.mapArray[y + 1][x] = -1
+
+                        if object.redLeft:
+                            self.mapArray[y - 1][x] = -1
+            
+                        if object.redFront:
+                            self.mapArray[y][x + 1] = -1
+                            
+                        if object.redFrontTwo:
+                            self.mapArray[y][x + 2] = -1      
+        print("Карта")
+        for row in self.mapArray:
+            print(row)       
+
+        self.uart.sendValueAndWait('1000')
 
 
     def __str__(self):
