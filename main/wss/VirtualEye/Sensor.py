@@ -23,6 +23,7 @@ class Roi:
         frame[frame_y1:frame_y2, frame_x1:frame_x2] = resized
         return frame  
 
+
 class LibaryHSV:
     def __init__(self):
         self.min_red_one = np.array([0, 140, 135])   
