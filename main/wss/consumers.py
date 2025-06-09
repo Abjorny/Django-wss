@@ -55,6 +55,7 @@ latest_hsv = {
     "v_max": 255
 }
 
+robotTwo = False
 
 @sync_to_async
 def get_settings():
@@ -86,7 +87,7 @@ async def send_periodic_messages():
                     settings.hsv_black,
                     settings.hsv_white,
                 )
-                
+
                 sensor_center_one = Sensor(
                     np.array(center_one.area_cord_one),
                     np.array(center_one.area_cord_check),
@@ -207,6 +208,8 @@ class MyConsumer(AsyncWebsocketConsumer):
         data = json.loads(text_data)
         if data.get("type") == "hsv":
             hsv_data = data.get("data", {})
+            robotTwo = data.get("isTwo", False)
+            print(robotTwo)
             latest_hsv.update({
                 "h_min": hsv_data.get("h_min", latest_hsv["h_min"]),
                 "h_max": hsv_data.get("h_max", latest_hsv["h_max"]),
