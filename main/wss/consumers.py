@@ -2,7 +2,7 @@ import asyncio
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.layers import get_channel_layer
 import json
-from .VirtualEye.Sensor import Sensor, RedSensor
+from .VirtualEye.Sensor import Sensor, RedSensor, LibaryHSV
 from .VirtualEye.FrameUtilis import FrameUtilis
 from asgiref.sync import sync_to_async
 import numpy as np
@@ -59,7 +59,10 @@ latest_hsv = {
 @sync_to_async
 def get_settings():
     return Settings.objects.select_related(
-        'sensor_center_one', 'sensor_center_two'
+        'sensor_center_one', 'sensor_center_two',
+        'hsv_red_one', 'hsv_red_two',
+        'hsv_blue', 'hsv_green',
+        'hsv_black', 'hsv_white'
     ).get()
 
 def resize_frame(frame, width=FIXED_WIDTH, height=FIXED_HEIGHT):
@@ -73,19 +76,28 @@ async def send_periodic_messages():
 
         center_one = settings.sensor_center_one
         center_two = settings.sensor_center_two
-
+        lib_hsv = LibaryHSV(
+            settings.hsv_red_one,
+            settings.hsv_red_two,
+            settings.hsv_blue,
+            settings.hsv_green,
+            settings.hsv_black,
+            settings.hsv_white,
+        )
         sensor_center_one = Sensor(
             np.array(center_one.area_cord_one),
             np.array(center_one.area_cord_check),
             np.array(center_one.area_cord_two),
-            (0, 0, 255)
+            (0, 0, 255),
+            lib_hsv
         )
 
         sensor_center_two = Sensor(
             np.array(center_two.area_cord_one),
             np.array(center_two.area_cord_check),
             np.array(center_two.area_cord_two),
-            (0, 0, 255)
+            (0, 0, 255),
+            lib_hsv
         )
 
 
@@ -93,21 +105,24 @@ async def send_periodic_messages():
             np.array([[129,420],[304,420],[307,449],[129,440]]),
             np.array([[0, 0], [0, 0], [0, 0], [0, 0]]),
             np.array([[0, 0], [0, 0], [0, 0], [0, 0]]),
-            (0, 0, 255)
+            (0, 0, 255),
+            lib_hsv
         )
 
         red_right_border = RedSensor(
             np.array([[355,450],[400,450],[400,475],[355,475]]),
             np.array([[0, 0], [0, 0], [0, 0], [0, 0]]),
             np.array([[0, 0], [0, 0], [0, 0], [0, 0]]),
-            (0, 0, 255)
+            (0, 0, 255),
+            lib_hsv
         )
 
         red_left_border = RedSensor(
             np.array([[65,445],[95,445],[95,470],[65,470]]),
             np.array([[0, 0], [0, 0], [0, 0], [0, 0]]),
             np.array([[0, 0], [0, 0], [0, 0], [0, 0]]),
-            (0, 0, 255)
+            (0, 0, 255),
+            lib_hsv
         )
 
 
@@ -115,7 +130,8 @@ async def send_periodic_messages():
             np.array([[170,160],[343,160],[342,185],[167,185]]),
             np.array([[0, 0], [0, 0], [0, 0], [0, 0]]),
             np.array([[0, 0], [0, 0], [0, 0], [0, 0]]),
-            (0, 0, 255)
+            (0, 0, 255),
+            lib_hsv
         )
         while True:
             

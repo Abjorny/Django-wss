@@ -23,41 +23,35 @@ class Roi:
         return frame  
 
 class LibaryHSV:
-    def __init__(self):
-        settings = Settings.objects.select_related(
-            'hsv_red_one', 'hsv_red_two',
-            'hsv_blue', 'hsv_green',
-            'hsv_white', 'hsv_black'
-        ).get()
+    def __init__(self, hsv_red_one, hsv_red_two, hsv_blue, hsv_green, hsv_black, hsv_white):
+        self.min_red_one = np.array(hsv_red_one.min_color_hsv)
+        self.max_red_one = np.array(hsv_red_one.max_color_hsv)
 
-        self.min_red_one = np.array(settings.hsv_red_one.min_color_hsv)
-        self.max_red_one = np.array(settings.hsv_red_one.max_color_hsv)
+        self.min_red_two = np.array(hsv_red_two.min_color_hsv)
+        self.max_red_two = np.array(hsv_red_two.max_color_hsv)
 
-        self.min_red_two = np.array(settings.hsv_red_two.min_color_hsv)
-        self.max_red_two = np.array(settings.hsv_red_two.max_color_hsv)
+        self.min_blue = np.array(hsv_blue.min_color_hsv)
+        self.max_blue = np.array(hsv_blue.max_color_hsv)
 
-        self.min_blue = np.array(settings.hsv_blue.min_color_hsv)
-        self.max_blue = np.array(settings.hsv_blue.max_color_hsv)
+        self.min_green = np.array(hsv_green.min_color_hsv)
+        self.max_green = np.array(hsv_green.max_color_hsv)
 
-        self.min_green = np.array(settings.hsv_green.min_color_hsv)
-        self.max_green = np.array(settings.hsv_green.max_color_hsv)
+        self.min_black = np.array(hsv_black.min_color_hsv)
+        self.max_black = np.array(hsv_black.max_color_hsv)
 
-        self.min_white = np.array(settings.hsv_white.min_color_hsv)
-        self.max_white = np.array(settings.hsv_white.max_color_hsv)
-
-        self.min_black = np.array(settings.hsv_black.min_color_hsv)
-        self.max_black = np.array(settings.hsv_black.max_color_hsv)
+        self.min_white = np.array(hsv_white.min_color_hsv)
+        self.max_white = np.array(hsv_white.max_color_hsv)
 
 class Sensor:
     
-    def __init__(self, mass, massCheck, massTwo, color):
+    def __init__(self, mass, massCheck, massTwo, color, hsv):
         self.mass = mass
         self.massCheck = massCheck
         self.massTwo = massTwo        
 
         self.mass_display = mass
         self.color = color
-        self.hsv = LibaryHSV()
+        self.hsv = hsv
         self.posRobot = 1
         self.show = True
         self.isTwo = False
