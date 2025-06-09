@@ -122,7 +122,8 @@ async def send_periodic_messages():
                     np.array([[0, 0], [0, 0], [0, 0], [0, 0]]),
                     np.array([[0, 0], [0, 0], [0, 0], [0, 0]]),
                     (0, 0, 255),
-                    lib_hsv
+                    lib_hsv,
+                    robotTwo
                 )
 
                 red_left_border = RedSensor(
