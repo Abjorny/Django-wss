@@ -42,7 +42,7 @@ class SensorAdmin(ModelAdmin):
     fieldsets = (
         (None, {"fields": ("name",)}),
         ("Зоны интереса", {
-            "fields": ("area_cord_one", "area_cord_two", "area_cord_check", "area_cordTwo_one", "area_cordTwo_two", " area_cordTwo_check")
+            "fields": ("area_cord_one", "area_cord_two", "area_cord_check", "area_cordTwo_one", "area_cordTwo_two", "area_cordTwo_check")
         }),
     )
 
