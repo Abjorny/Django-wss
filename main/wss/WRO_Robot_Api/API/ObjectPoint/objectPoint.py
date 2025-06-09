@@ -392,9 +392,9 @@ class RobotPoint(objectPoint):
                 print(row)
             if napr == 3:
                 if  self.mapArray[y-1][x] == 0:
-                    self.mapArray[y-1][x] = object.valueOne
+                    self.mapArray[y-1][x] = self.switchValue(object.valueOne, napr)
                     if self.switchValue(object.valueOne, napr) not in [40, 23, 24]:
-                        self.mapArray[y-2][x] = object.valueTwo
+                        self.mapArray[y-2][x] = self.switchValue(object.valueTwo, napr)
                         if object.redRight:
                             self.mapArray[y][x + 1] = -1
 
