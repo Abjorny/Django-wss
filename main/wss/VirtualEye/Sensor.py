@@ -1,9 +1,8 @@
 import cv2
 import numpy as np
 from .Result import Result
+from models import Settings
 import math
-
-
 
 class Roi:
     def __init__(self, data: list):
@@ -23,27 +22,31 @@ class Roi:
         frame[frame_y1:frame_y2, frame_x1:frame_x2] = resized
         return frame  
 
-
 class LibaryHSV:
     def __init__(self):
-        self.min_red_one = np.array([0, 140, 135])   
-        self.max_red_one = np.array([30, 255, 255])
-        
-        self.min_red_two = np.array([130, 120, 120])
-        self.max_red_two = np.array([180, 255, 255])
+        settings = Settings.objects.select_related(
+            'hsv_red_one', 'hsv_red_two',
+            'hsv_blue', 'hsv_green',
+            'hsv_white', 'hsv_black'
+        ).get()
 
-        self.min_blue = np.array([105, 130, 90])  
-        self.max_blue = np.array( [140, 255, 255])  
+        self.min_red_one = np.array(settings.hsv_red_one.min_color_hsv)
+        self.max_red_one = np.array(settings.hsv_red_one.max_color_hsv)
 
-        self.min_green = np.array([65, 150, 80])  
-        self.max_green = np.array([90, 255, 255])
+        self.min_red_two = np.array(settings.hsv_red_two.min_color_hsv)
+        self.max_red_two = np.array(settings.hsv_red_two.max_color_hsv)
 
-        self.min_black = np.array([0,0,0]) 
-        self.max_black = np.array([180,90, 110])  
+        self.min_blue = np.array(settings.hsv_blue.min_color_hsv)
+        self.max_blue = np.array(settings.hsv_blue.max_color_hsv)
 
-        self.min_white = np.array([90, 0, 175])
-        self.max_white = np.array([180, 42, 255])
+        self.min_green = np.array(settings.hsv_green.min_color_hsv)
+        self.max_green = np.array(settings.hsv_green.max_color_hsv)
 
+        self.min_white = np.array(settings.hsv_white.min_color_hsv)
+        self.max_white = np.array(settings.hsv_white.max_color_hsv)
+
+        self.min_black = np.array(settings.hsv_black.min_color_hsv)
+        self.max_black = np.array(settings.hsv_black.max_color_hsv)
 
 class Sensor:
     

@@ -13,6 +13,7 @@ import cv2
 import base64
 import logging
 import socket
+from .models import Settings
 
 logger = logging.getLogger(__name__)
 cap0 = cv2.VideoCapture(0)
@@ -39,48 +40,7 @@ def get_frame_from_socket():
 
 
 
-sensor_center_one =  Sensor(
-    np.array([[137,181],[351,172],[363,449],[91,399]]),
-    np.array([[253,330],[329,329],[325,398],[254,397]]),
-    np.array([[137,181],[351,172],[363,449],[91,399]]),
-    (0, 0, 255) 
-)
 
-sensor_center_two =  Sensor(
-    np.array([[192,60],[339,50],[348,158],[141,166]]), 
-    np.array([[245,67],[331,70],[335,98],[245,99]]), 
-    np.array([[188,29],[335,17],[342,102],[138,114]]),
-    (0, 0, 255) 
-)
-
-red_front_border = RedSensor(
-    np.array([[129,420],[304,420],[307,449],[129,440]]),
-    np.array([[0, 0], [0, 0], [0, 0], [0, 0]]),
-    np.array([[0, 0], [0, 0], [0, 0], [0, 0]]),
-    (0, 0, 255)
-)
-
-red_right_border = RedSensor(
-    np.array([[355,450],[400,450],[400,475],[355,475]]),
-    np.array([[0, 0], [0, 0], [0, 0], [0, 0]]),
-    np.array([[0, 0], [0, 0], [0, 0], [0, 0]]),
-    (0, 0, 255)
-)
-
-red_left_border = RedSensor(
-    np.array([[65,445],[95,445],[95,470],[65,470]]),
-    np.array([[0, 0], [0, 0], [0, 0], [0, 0]]),
-    np.array([[0, 0], [0, 0], [0, 0], [0, 0]]),
-    (0, 0, 255)
-)
-
-
-red_frontTwo_border = RedSensor(
-    np.array([[170,160],[343,160],[342,185],[167,185]]),
-    np.array([[0, 0], [0, 0], [0, 0], [0, 0]]),
-    np.array([[0, 0], [0, 0], [0, 0], [0, 0]]),
-    (0, 0, 255)
-)
 
 FIXED_WIDTH = 640
 FIXED_HEIGHT = 480
@@ -102,7 +62,56 @@ async def send_periodic_messages():
     channel_layer = get_channel_layer()
 
     try:
+        settings = Settings.objects.select_related('sensor_center_one', 'sensor_center_two').get()
+
+        center_one = settings.sensor_center_one
+        center_two = settings.sensor_center_two
+
+        sensor_center_one = Sensor(
+            np.array(center_one.area_cord_one),
+            np.array(center_one.area_cord_check),
+            np.array(center_one.area_cord_two),
+            (0, 0, 255)
+        )
+
+        sensor_center_two = Sensor(
+            np.array(center_two.area_cord_one),
+            np.array(center_two.area_cord_check),
+            np.array(center_two.area_cord_two),
+            (0, 0, 255)
+        )
+
+
+        red_front_border = RedSensor(
+            np.array([[129,420],[304,420],[307,449],[129,440]]),
+            np.array([[0, 0], [0, 0], [0, 0], [0, 0]]),
+            np.array([[0, 0], [0, 0], [0, 0], [0, 0]]),
+            (0, 0, 255)
+        )
+
+        red_right_border = RedSensor(
+            np.array([[355,450],[400,450],[400,475],[355,475]]),
+            np.array([[0, 0], [0, 0], [0, 0], [0, 0]]),
+            np.array([[0, 0], [0, 0], [0, 0], [0, 0]]),
+            (0, 0, 255)
+        )
+
+        red_left_border = RedSensor(
+            np.array([[65,445],[95,445],[95,470],[65,470]]),
+            np.array([[0, 0], [0, 0], [0, 0], [0, 0]]),
+            np.array([[0, 0], [0, 0], [0, 0], [0, 0]]),
+            (0, 0, 255)
+        )
+
+
+        red_frontTwo_border = RedSensor(
+            np.array([[170,160],[343,160],[342,185],[167,185]]),
+            np.array([[0, 0], [0, 0], [0, 0], [0, 0]]),
+            np.array([[0, 0], [0, 0], [0, 0], [0, 0]]),
+            (0, 0, 255)
+        )
         while True:
+            
                 frame = get_frame_from_socket()
                 frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
                 copyFrame = frame.copy()
