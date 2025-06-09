@@ -64,8 +64,8 @@ def get_settings():
         'hsv_red_one', 'hsv_red_two',
         'hsv_blue', 'hsv_green',
         'hsv_black', 'hsv_white',
-        'red_left', 'red_right',
-        'red_front', 'red_front_two'
+        'sensor_red_left', 'sensor_red_right',
+        'sensor_red_front', 'sensor_red_front_two'
 
     ).get()
 
