@@ -72,69 +72,71 @@ async def send_periodic_messages():
     channel_layer = get_channel_layer()
 
     try:
-        settings = await get_settings()
-
-        center_one = settings.sensor_center_one
-        center_two = settings.sensor_center_two
-        lib_hsv = LibaryHSV(
-            settings.hsv_red_one,
-            settings.hsv_red_two,
-            settings.hsv_blue,
-            settings.hsv_green,
-            settings.hsv_black,
-            settings.hsv_white,
-        )
-        sensor_center_one = Sensor(
-            np.array(center_one.area_cord_one),
-            np.array(center_one.area_cord_check),
-            np.array(center_one.area_cord_two),
-            (0, 0, 255),
-            lib_hsv
-        )
-
-        sensor_center_two = Sensor(
-            np.array(center_two.area_cord_one),
-            np.array(center_two.area_cord_check),
-            np.array(center_two.area_cord_two),
-            (0, 0, 255),
-            lib_hsv
-        )
-
-
-        red_front_border = RedSensor(
-            np.array([[129,420],[304,420],[307,449],[129,440]]),
-            np.array([[0, 0], [0, 0], [0, 0], [0, 0]]),
-            np.array([[0, 0], [0, 0], [0, 0], [0, 0]]),
-            (0, 0, 255),
-            lib_hsv
-        )
-
-        red_right_border = RedSensor(
-            np.array([[355,450],[400,450],[400,475],[355,475]]),
-            np.array([[0, 0], [0, 0], [0, 0], [0, 0]]),
-            np.array([[0, 0], [0, 0], [0, 0], [0, 0]]),
-            (0, 0, 255),
-            lib_hsv
-        )
-
-        red_left_border = RedSensor(
-            np.array([[65,445],[95,445],[95,470],[65,470]]),
-            np.array([[0, 0], [0, 0], [0, 0], [0, 0]]),
-            np.array([[0, 0], [0, 0], [0, 0], [0, 0]]),
-            (0, 0, 255),
-            lib_hsv
-        )
-
-
-        red_frontTwo_border = RedSensor(
-            np.array([[170,160],[343,160],[342,185],[167,185]]),
-            np.array([[0, 0], [0, 0], [0, 0], [0, 0]]),
-            np.array([[0, 0], [0, 0], [0, 0], [0, 0]]),
-            (0, 0, 255),
-            lib_hsv
-        )
         while True:
-            
+                settings = await get_settings()
+
+                center_one = settings.sensor_center_one
+                center_two = settings.sensor_center_two
+
+                lib_hsv = LibaryHSV(
+                    settings.hsv_red_one,
+                    settings.hsv_red_two,
+                    settings.hsv_blue,
+                    settings.hsv_green,
+                    settings.hsv_black,
+                    settings.hsv_white,
+                )
+                
+                sensor_center_one = Sensor(
+                    np.array(center_one.area_cord_one),
+                    np.array(center_one.area_cord_check),
+                    np.array(center_one.area_cord_two),
+                    (0, 0, 255),
+                    lib_hsv
+                )
+
+                sensor_center_two = Sensor(
+                    np.array(center_two.area_cord_one),
+                    np.array(center_two.area_cord_check),
+                    np.array(center_two.area_cord_two),
+                    (0, 0, 255),
+                    lib_hsv
+                )
+
+
+                red_front_border = RedSensor(
+                    np.array([[129,420],[304,420],[307,449],[129,440]]),
+                    np.array([[0, 0], [0, 0], [0, 0], [0, 0]]),
+                    np.array([[0, 0], [0, 0], [0, 0], [0, 0]]),
+                    (0, 0, 255),
+                    lib_hsv
+                )
+
+                red_right_border = RedSensor(
+                    np.array([[355,450],[400,450],[400,475],[355,475]]),
+                    np.array([[0, 0], [0, 0], [0, 0], [0, 0]]),
+                    np.array([[0, 0], [0, 0], [0, 0], [0, 0]]),
+                    (0, 0, 255),
+                    lib_hsv
+                )
+
+                red_left_border = RedSensor(
+                    np.array([[65,445],[95,445],[95,470],[65,470]]),
+                    np.array([[0, 0], [0, 0], [0, 0], [0, 0]]),
+                    np.array([[0, 0], [0, 0], [0, 0], [0, 0]]),
+                    (0, 0, 255),
+                    lib_hsv
+                )
+
+
+                red_frontTwo_border = RedSensor(
+                    np.array([[170,160],[343,160],[342,185],[167,185]]),
+                    np.array([[0, 0], [0, 0], [0, 0], [0, 0]]),
+                    np.array([[0, 0], [0, 0], [0, 0], [0, 0]]),
+                    (0, 0, 255),
+                    lib_hsv
+                )
+                    
                 frame = get_frame_from_socket()
                 frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
                 copyFrame = frame.copy()
