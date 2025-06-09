@@ -387,7 +387,7 @@ class RobotPoint(objectPoint):
         for elem in data:
             napr = int(elem['napr'])
             object: Message = elem['object']
-            print(self.switchValue(object.valueOne, napr), self.switchValue(object.valueTwo, napr), napr, "Считали")
+            print([self.switchValue(object.valueOne, napr), object.valueOne,], [self.switchValue(object.valueTwo, napr), object.valueTwo], napr, "Считали")
             
             if napr == 3:
                 if  self.mapArray[y-1][x] == 0:
