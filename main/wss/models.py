@@ -15,9 +15,16 @@ class HsvObject(models.Model):
 
 class Sensor(models.Model):
     name = models.CharField(max_length=100, verbose_name="Заголовок для админ панели")
-    area_cord_one = models.JSONField("Зона интереса для первого этажа")
-    area_cord_two = models.JSONField("Зона интереса для второго этажа")
-    area_cord_check = models.JSONField("Зона интереса для проверки второго этажа")
+
+    area_cord_one = models.JSONField("Зона интереса для первого этажа", null = True, blank = True)
+    area_cord_two = models.JSONField("Зона интереса для второго этажа", null = True, blank = True)
+
+    area_cordTwo_one = models.JSONField("Зона интереса для первого этажа, когда робот на втором", null = True, blank = True)
+    area_cordTwo_two = models.JSONField("Зона интереса для второго этажа, когда робот на втором", null = True, blank = True)
+    
+    area_cord_check = models.JSONField("Зона интереса для проверки второго этажа", null = True, blank = True)
+
+
 
     def __str__(self):
         return self.name

@@ -48,7 +48,7 @@ class Sensor:
         self.mass = mass
         self.massCheck = massCheck
         self.massTwo = massTwo        
-
+        self.robotTwo = robotTwo
         self.mass_display = mass
         self.color = color
         self.hsv = hsv

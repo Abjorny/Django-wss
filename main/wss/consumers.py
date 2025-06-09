@@ -74,7 +74,6 @@ async def send_periodic_messages():
     
     try:
         while True:
-                print(robotTwo)
                 settings = await get_settings()
 
                 center_one = settings.sensor_center_one
