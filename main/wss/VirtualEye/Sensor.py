@@ -56,6 +56,7 @@ class Sensor:
 
         self.robotTwo = robotTwo
         self.mass_display = mass
+        self.mass_display_check = massCheck
         self.color = color
         self.hsv = hsv
         self.posRobot = 1
@@ -246,6 +247,7 @@ class Sensor:
             box = self.massCheckTwo
         else:
             box = self.massCheck
+        self.mass_display_check = box
         mask = np.zeros(frame.shape[:2], dtype=np.uint8)
         cv2.fillPoly(mask, [box], 255)  
         roi = cv2.bitwise_and(frame, frame, mask=mask)
