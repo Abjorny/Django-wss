@@ -262,9 +262,15 @@ class Sensor:
     
     def calculate_centroid(self):
         if self.isTwo: 
-            points = np.vstack([self.massTwo, self.massTwo[0]])
+            if self.robotTwo:
+                points = np.vstack([self.massTwoForTwo, self.massTwoForTwo[0]])
+            else:
+                points = np.vstack([self.massTwo, self.massTwo[0]])
         else:
-            points = np.vstack([self.mass, self.mass[0]])
+            if self.robotTwo:
+                points = np.vstack([self.massTwoForOne, self.massTwoForOne[0]])
+            else:
+                points = np.vstack([self.mass, self.mass[0]])
 
         def polygon_area(points):
             x = points[:, 0]
