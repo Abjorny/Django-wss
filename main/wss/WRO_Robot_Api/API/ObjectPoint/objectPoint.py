@@ -388,7 +388,8 @@ class RobotPoint(objectPoint):
             napr = int(elem['napr'])
             object: Message = elem['object']
             print([self.switchValue(object.valueOne, napr), object.valueOne,], [self.switchValue(object.valueTwo, napr), object.valueTwo], napr, "Считали")
-            
+            for row in self.mapArray:
+                print(row)
             if napr == 3:
                 if  self.mapArray[y-1][x] == 0:
                     self.mapArray[y-1][x] = object.valueOne
@@ -460,6 +461,8 @@ class RobotPoint(objectPoint):
                             
                         if object.redFrontTwo:
                             self.mapArray[y][x + 2] = -1      
+            else:
+                print("Сбой направление")
         print("Карта")
         for row in self.mapArray:
             print(row)       
