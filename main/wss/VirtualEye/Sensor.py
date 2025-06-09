@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 from .Result import Result
-from models import Settings
+from wss.models import Settings
 import math
 
 class Roi:
