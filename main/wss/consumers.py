@@ -208,8 +208,9 @@ class MyConsumer(AsyncWebsocketConsumer):
         data = json.loads(text_data)
         if data.get("type") == "hsv":
             hsv_data = data.get("data", {})
-            robotTwo = data.get("isTwo", False)
-            print(data)
+            print(robotTwo)
+            robotTwo = hsv_data.get("isTwo", False)
+            print(robotTwo)
             latest_hsv.update({
                 "h_min": hsv_data.get("h_min", latest_hsv["h_min"]),
                 "h_max": hsv_data.get("h_max", latest_hsv["h_max"]),
