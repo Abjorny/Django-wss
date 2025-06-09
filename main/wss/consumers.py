@@ -209,7 +209,7 @@ class MyConsumer(AsyncWebsocketConsumer):
         if data.get("type") == "hsv":
             hsv_data = data.get("data", {})
             robotTwo = data.get("isTwo", False)
-            print(robotTwo)
+            print(data)
             latest_hsv.update({
                 "h_min": hsv_data.get("h_min", latest_hsv["h_min"]),
                 "h_max": hsv_data.get("h_max", latest_hsv["h_max"]),
