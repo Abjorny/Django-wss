@@ -44,10 +44,13 @@ class LibaryHSV:
 
 class Sensor:
     
-    def __init__(self, mass, massCheck, massTwo, color, hsv, robotTwo):
+    def __init__(self, mass, massCheck, massTwo, massTwoForOne, massTwoForTwo, color, hsv, robotTwo):
         self.mass = mass
         self.massCheck = massCheck
-        self.massTwo = massTwo        
+        self.massTwo = massTwo  
+        self.massTwoForOne = massTwoForOne
+        self.massTwoForTwo = massTwoForTwo
+
         self.robotTwo = robotTwo
         self.mass_display = mass
         self.color = color
@@ -198,12 +201,17 @@ class Sensor:
 
     def get_roi(self, frame):
         if self.isTwo:
-            box = self.massTwo
-            self.mass_display = self.massTwo
+            if self.robotTwo:
+                box = self.massTwoForTwo
+            else:
+                box = self.massTwo
         else:
-            box = self.mass
-            self.mass_display = self.mass
+            if self.robotTwo:
+                box = self.massTwoForOne
+            else:
+                box = self.mass
 
+        self.mass_display = box
         mask = np.zeros(frame.shape[:2], dtype=np.uint8)
         cv2.fillPoly(mask, [box], 255)  
         roi = cv2.bitwise_and(frame, frame, mask=mask)
