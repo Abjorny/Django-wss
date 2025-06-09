@@ -292,7 +292,7 @@ class Sensor:
 
 
         if green_result.noblack != 0 and not self.isTwo :
-            green_x, green_y = green_result.x2_absolute - green_result.w, green_result.y2_absolute - green_result.h
+            green_x, green_y = green_result.x1_absolute , green_result.y1_absolute
             x, y = self.calculate_centroid()
             
             if green_x > x and green_y > y:
