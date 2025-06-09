@@ -100,6 +100,10 @@
             <button id="button-disconnect-camera" class="btn btn-danger">Off</button>
             <button id="button-download-camera" class="btn btn-warning">Download</button>
             <button id="copy-points" class="btn btn-info">Скопировать точки</button>
+            <label>
+                <input type="checkbox" id="is-two-checkbox" />
+                isTwo
+            </label>
         </div>
 
         <div class="utilis-row-data">
@@ -148,13 +152,13 @@
             camera.onmessage = function (event) {
                 const data = JSON.parse(event.data);
                 if (data.message.image) {
-                document.getElementById('value-center').textContent = data.message.valueCenterOne;
-                document.getElementById('value-center-two').textContent = data.message.valueCenterTwo;
+                    document.getElementById('value-center').textContent = data.message.valueCenterOne;
+                    document.getElementById('value-center-two').textContent = data.message.valueCenterTwo;
 
-                document.getElementById('red-left').textContent = 'Лево: ' + data.message.redLeft;
-                document.getElementById('red-right').textContent = 'Право: ' + data.message.redRight;
-                document.getElementById('red-front').textContent = 'Перед: ' + data.message.redFront;
-                document.getElementById('red-front-two').textContent = 'Перед второй: ' + data.message.redFrontTwo;
+                    document.getElementById('red-left').textContent = 'Лево: ' + data.message.redLeft;
+                    document.getElementById('red-right').textContent = 'Право: ' + data.message.redRight;
+                    document.getElementById('red-front').textContent = 'Перед: ' + data.message.redFront;
+                    document.getElementById('red-front-two').textContent = 'Перед второй: ' + data.message.redFrontTwo;
                     imgElement.src = `data:image/jpeg;base64,${data.message.image}`;
                 }
             };
@@ -274,9 +278,14 @@
                     hsv[name] = parseInt(document.getElementById(id).value);
                 });
 
+                hsv.isTwo = document.getElementById('is-two-checkbox').checked;
+
                 camera.send(JSON.stringify({ type: 'hsv', data: hsv }));
             }
         }
+        document.getElementById('is-two-checkbox').addEventListener('change', () => {
+            sendHSV();
+        });
         function updateHSVOutput() {
             const hMin = parseInt(document.getElementById('h-min').value);
             const sMin = parseInt(document.getElementById('s-min').value);
