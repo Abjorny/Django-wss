@@ -116,7 +116,7 @@ async def send_periodic_messages():
 
 
                 red_front_border = RedSensor(
-                    np.array([[129,420],[304,420],[307,449],[129,440]]),
+                    np.array(red_front.area_cord_one),
                     np.array([[0, 0], [0, 0], [0, 0], [0, 0]]),
                     np.array([[0, 0], [0, 0], [0, 0], [0, 0]]),
                     (0, 0, 255),
@@ -125,7 +125,7 @@ async def send_periodic_messages():
                 )
 
                 red_right_border = RedSensor(
-                    np.array([[355,450],[400,450],[400,475],[355,475]]),
+                    np.array(red_right.area_cord_one),
                     np.array([[0, 0], [0, 0], [0, 0], [0, 0]]),
                     np.array([[0, 0], [0, 0], [0, 0], [0, 0]]),
                     (0, 0, 255),
@@ -134,7 +134,7 @@ async def send_periodic_messages():
                 )
 
                 red_left_border = RedSensor(
-                    np.array([[65,445],[95,445],[95,470],[65,470]]),
+                    np.array(red_left.area_cord_one),
                     np.array([[0, 0], [0, 0], [0, 0], [0, 0]]),
                     np.array([[0, 0], [0, 0], [0, 0], [0, 0]]),
                     (0, 0, 255),
@@ -144,7 +144,7 @@ async def send_periodic_messages():
 
 
                 red_frontTwo_border = RedSensor(
-                    np.array([[170,160],[343,160],[342,185],[167,185]]),
+                    np.array(red_front_two.area_cord_one),
                     np.array([[0, 0], [0, 0], [0, 0], [0, 0]]),
                     np.array([[0, 0], [0, 0], [0, 0], [0, 0]]),
                     (0, 0, 255),
