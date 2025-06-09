@@ -63,7 +63,10 @@ def get_settings():
         'sensor_center_one', 'sensor_center_two',
         'hsv_red_one', 'hsv_red_two',
         'hsv_blue', 'hsv_green',
-        'hsv_black', 'hsv_white'
+        'hsv_black', 'hsv_white',
+        'red_left', 'red_right',
+        'red_front', 'red_front_two'
+
     ).get()
 
 def resize_frame(frame, width=FIXED_WIDTH, height=FIXED_HEIGHT):
@@ -78,6 +81,11 @@ async def send_periodic_messages():
 
                 center_one = settings.sensor_center_one
                 center_two = settings.sensor_center_two
+                
+                red_left = settings.sensor_red_left
+                red_front = settings.sensor_red_front
+                red_right = settings.sensor_red_right
+                red_front_two = settings.sensor_red_front_two
 
                 lib_hsv = LibaryHSV(
                     settings.hsv_red_one,
@@ -224,6 +232,7 @@ class MyConsumer(AsyncWebsocketConsumer):
                 "v_max": hsv_data.get("v_max", latest_hsv["v_max"]),
             })
             logger.info(f"Updated HSV: {latest_hsv}")
+    
     async def broadcast_message(self, event):
         message = event["message"]
         await self.send(text_data=json.dumps({

@@ -53,6 +53,9 @@ class SettingsAdmin(ModelAdmin):
         ("Центральные датчики", {
             "fields": ("sensor_center_one", "sensor_center_two")
         }),
+        ("Красные датчики", {
+            "fields": ("sensor_red_front", "sensor_red_front_two", "sensor_red_left", "sensor_red_right")
+        }),
         ("HSV Настройки", {
             "fields": (
                 "hsv_red_one", "hsv_red_two",

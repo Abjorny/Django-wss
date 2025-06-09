@@ -38,6 +38,11 @@ class Settings(models.Model):
     sensor_center_one = models.ForeignKey(Sensor, on_delete=models.CASCADE, verbose_name="Первый датчик по центру", related_name='center_one')
     sensor_center_two = models.ForeignKey(Sensor, on_delete=models.CASCADE, verbose_name="Второй датчик по центру", related_name='center_two')
 
+    sensor_red_front = models.ForeignKey(Sensor, on_delete=models.CASCADE, verbose_name="Первый красный датчик спереди", related_name='red_front', null = True, blank = True)
+    sensor_red_front_two = models.ForeignKey(Sensor, on_delete=models.CASCADE, verbose_name="Второй красный датчик спереди", related_name='red_front_two', null = True, blank = True)
+    sensor_red_left = models.ForeignKey(Sensor, on_delete=models.CASCADE, verbose_name="Красный датчик слева", related_name='red_left', null = True, blank = True)
+    sensor_red_right = models.ForeignKey(Sensor, on_delete=models.CASCADE, verbose_name="Красный датчик српава", related_name='red_right', null = True, blank = True)
+
     hsv_red_one = models.ForeignKey(HsvObject, on_delete=models.CASCADE, verbose_name="HSV красного первый", related_name='hsv_red_one')
     hsv_red_two = models.ForeignKey(HsvObject, on_delete=models.CASCADE, verbose_name="HSV красного второй", related_name='hsv_red_two')
 
