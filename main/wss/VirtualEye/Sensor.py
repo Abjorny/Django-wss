@@ -44,7 +44,7 @@ class LibaryHSV:
 
 class Sensor:
     
-    def __init__(self, mass, massCheck, massTwo, color, hsv):
+    def __init__(self, mass, massCheck, massTwo, color, hsv, robotTwo):
         self.mass = mass
         self.massCheck = massCheck
         self.massTwo = massTwo        

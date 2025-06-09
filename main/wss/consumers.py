@@ -71,9 +71,10 @@ def resize_frame(frame, width=FIXED_WIDTH, height=FIXED_HEIGHT):
 
 async def send_periodic_messages():
     channel_layer = get_channel_layer()
-
+    
     try:
         while True:
+                print(robotTwo)
                 settings = await get_settings()
 
                 center_one = settings.sensor_center_one
@@ -93,7 +94,8 @@ async def send_periodic_messages():
                     np.array(center_one.area_cord_check),
                     np.array(center_one.area_cord_two),
                     (0, 0, 255),
-                    lib_hsv
+                    lib_hsv,
+                    robotTwo
                 )
 
                 sensor_center_two = Sensor(
@@ -101,7 +103,8 @@ async def send_periodic_messages():
                     np.array(center_two.area_cord_check),
                     np.array(center_two.area_cord_two),
                     (0, 0, 255),
-                    lib_hsv
+                    lib_hsv,
+                    robotTwo
                 )
 
 
@@ -110,7 +113,8 @@ async def send_periodic_messages():
                     np.array([[0, 0], [0, 0], [0, 0], [0, 0]]),
                     np.array([[0, 0], [0, 0], [0, 0], [0, 0]]),
                     (0, 0, 255),
-                    lib_hsv
+                    lib_hsv,
+                    robotTwo
                 )
 
                 red_right_border = RedSensor(
@@ -126,7 +130,8 @@ async def send_periodic_messages():
                     np.array([[0, 0], [0, 0], [0, 0], [0, 0]]),
                     np.array([[0, 0], [0, 0], [0, 0], [0, 0]]),
                     (0, 0, 255),
-                    lib_hsv
+                    lib_hsv,
+                    robotTwo
                 )
 
 
@@ -135,7 +140,8 @@ async def send_periodic_messages():
                     np.array([[0, 0], [0, 0], [0, 0], [0, 0]]),
                     np.array([[0, 0], [0, 0], [0, 0], [0, 0]]),
                     (0, 0, 255),
-                    lib_hsv
+                    lib_hsv,
+                    robotTwo
                 )
                     
                 frame = get_frame_from_socket()
@@ -208,9 +214,7 @@ class MyConsumer(AsyncWebsocketConsumer):
         data = json.loads(text_data)
         if data.get("type") == "hsv":
             hsv_data = data.get("data", {})
-            print(robotTwo)
             robotTwo = hsv_data.get("isTwo", False)
-            print(robotTwo)
             latest_hsv.update({
                 "h_min": hsv_data.get("h_min", latest_hsv["h_min"]),
                 "h_max": hsv_data.get("h_max", latest_hsv["h_max"]),
