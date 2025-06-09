@@ -4,6 +4,7 @@ from channels.layers import get_channel_layer
 import json
 from .VirtualEye.Sensor import Sensor, RedSensor
 from .VirtualEye.FrameUtilis import FrameUtilis
+from asgiref.sync import sync_to_async
 import numpy as np
 import struct
 import gc
@@ -55,6 +56,12 @@ latest_hsv = {
 }
 
 
+@sync_to_async
+def get_settings():
+    return Settings.objects.select_related(
+        'sensor_center_one', 'sensor_center_two'
+    ).get()
+
 def resize_frame(frame, width=FIXED_WIDTH, height=FIXED_HEIGHT):
     return cv2.resize(frame, (width, height))
 
@@ -62,7 +69,7 @@ async def send_periodic_messages():
     channel_layer = get_channel_layer()
 
     try:
-        settings = Settings.objects.select_related('sensor_center_one', 'sensor_center_two').get()
+        settings = await get_settings()
 
         center_one = settings.sensor_center_one
         center_two = settings.sensor_center_two
