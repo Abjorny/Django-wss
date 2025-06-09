@@ -23,6 +23,7 @@ class Sensor(models.Model):
     area_cordTwo_two = models.JSONField("Зона интереса для второго этажа, когда робот на втором", null = True, blank = True)
     
     area_cord_check = models.JSONField("Зона интереса для проверки второго этажа", null = True, blank = True)
+    area_cordTwo_check = models.JSONField("Зона интереса для проверки второго этажа, когда робот на втором", null = True, blank = True)
 
 
 
