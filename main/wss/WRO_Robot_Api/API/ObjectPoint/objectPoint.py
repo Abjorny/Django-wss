@@ -385,11 +385,11 @@ class RobotPoint(objectPoint):
             napr = int(elem['napr'])
             object: Message = elem['object']
 
-
             if napr == 3:
-                if  self.mapArray[y-1][x] == 0:
+
+                if self.mapArray[y-1][x] == 0:
                     self.mapArray[y-1][x] = self.switchValue(object.valueOne, napr)
-                    if self.switchValue(object.valueOne, napr) not in [40, 23, 24]:
+                    if self.switchValue(object.valueOne, napr) not in [40, 23, 24] and not object.redFront:
                         self.mapArray[y-2][x] = self.switchValue(object.valueTwo, napr)
                         if object.redRight:
                             self.mapArray[y][x + 1] = -1
@@ -407,7 +407,7 @@ class RobotPoint(objectPoint):
                 if  self.mapArray[y+1][x] == 0:
 
                     self.mapArray[y+1][x] = self.switchValue(object.valueOne, napr)
-                    if self.switchValue(object.valueOne, napr) not in [40, 23, 24]:
+                    if self.switchValue(object.valueOne, napr) not in [40, 23, 24] and not object.redFront:
                         self.mapArray[y+2][x] = self.switchValue(object.valueTwo, napr)
                         
                         if object.redRight:
@@ -425,7 +425,7 @@ class RobotPoint(objectPoint):
             elif napr == 2:
                 if  self.mapArray[y][x-1] == 0:
                     self.mapArray[y][x-1] = self.switchValue(object.valueOne, napr)
-                    if self.switchValue(object.valueOne, napr) not in [40, 23, 24]:
+                    if self.switchValue(object.valueOne, napr) not in [40, 23, 24] and not object.redFront:
                         self.mapArray[y][x-2] = self.switchValue(object.valueTwo, napr)
                         
                         if object.redRight:
@@ -443,7 +443,7 @@ class RobotPoint(objectPoint):
             elif napr == 4:
                 if  self.mapArray[y][x+1] == 0:
                     self.mapArray[y][x+1] = self.switchValue(object.valueOne, napr)
-                    if self.switchValue(object.valueOne, napr) not in [40, 23, 24]:
+                    if self.switchValue(object.valueOne, napr) not in [40, 23, 24] and not object.redFront:
                         self.mapArray[y][x+2] = self.switchValue(object.valueTwo, napr)
                         
                         if object.redRight:
