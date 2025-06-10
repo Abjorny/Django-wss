@@ -197,6 +197,10 @@ async def send_periodic_messages():
                 # mask = cv2.inRange(hsv, lower, upper)
                 # frame = cv2.bitwise_and(frame, frame, mask=mask)
                 frame = cv2.resize(frame, (640, 480))
+                first = frame[0:480, 0: 200]
+                two = frame[0:480, 435: 640]
+                frame = np.hstack((first, two))
+
                 _, buffer = cv2.imencode('.jpg', frame, [int(cv2.IMWRITE_JPEG_QUALITY), 40])
                 image_data = base64.b64encode(buffer).decode('utf-8')
                 
