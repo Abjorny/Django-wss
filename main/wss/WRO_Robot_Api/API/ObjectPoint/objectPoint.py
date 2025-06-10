@@ -453,7 +453,7 @@ class RobotPoint(objectPoint):
                                 row[x-2] = -1
 
             elif napr == 4:
-                print("карта", [self.y, self.x])
+                print("карта", [self.y, self.x], self.mapArray[y], [y, x])
                 for row in self.mapArray:
                     print(row)
 
