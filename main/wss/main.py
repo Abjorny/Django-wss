@@ -32,7 +32,7 @@ def get_priority(cords, libary: LibryPoints):
 
         this_point = libary.get_point_coord(x, y)
         count = 0
-        if this_point == None or this_point.value in [0, -1] or libary.mass_mover[y][x] == 100 : return None
+        if this_point == None or this_point.value in [0, -1, 51, 52, 53, 54, 21, 22, 23, 24] or libary.mass_mover[y][x] == 100 : return None
 
         point_up_one = libary.get_point_coord(x, y - 1)
 
@@ -84,6 +84,8 @@ def getPatchPriority(priorityList: list, libary: LibryPoints):
     target_point = objectPoint(x,y,libary.maper.mapArray[y][x])
     comands = mainUtilis.get_patch_target(target_point, libary)
     
+    print (f"Робот едет на точку с x: {x}, y: {y} ее значение {target_point.value}")
+
     if comands is not None:
         for index , comand in enumerate( comands):
             map.tracerCommand(comand)
