@@ -337,8 +337,7 @@ class RobotPoint(objectPoint):
         return value 
 
     def readAll(self):
-        y = self.y
-        x = self.x
+
         
         data = []
         
@@ -385,7 +384,8 @@ class RobotPoint(objectPoint):
             napr = int(elem['napr'])
             object: Message = elem['object']
 
-
+            y = self.y
+            x = self.x
             if napr == 3:
 
                 if self.mapArray[y-1][x] == 0:
@@ -453,9 +453,9 @@ class RobotPoint(objectPoint):
                                 row[x-2] = -1
 
             elif napr == 4:
-                print("карта", [self.y, self.x], self.mapArray[y], [y, x])
-                for row in self.mapArray:
-                    print(row)
+                # print("карта", [self.y, self.x], self.mapArray[y], [y, x])
+                # for row in self.mapArray:
+                #     print(row)
 
                 if  self.mapArray[y][x+1] == 0:
                     self.mapArray[y][x+1] = self.switchValue(object.valueOne, napr)
