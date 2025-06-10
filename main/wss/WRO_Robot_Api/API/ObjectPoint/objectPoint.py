@@ -384,9 +384,6 @@ class RobotPoint(objectPoint):
         for elem in data:
             napr = int(elem['napr'])
             object: Message = elem['object']
-            print("карта", [self.y, self.x])
-            for row in self.mapArray:
-                print(row)
 
 
             if napr == 3:
@@ -456,6 +453,10 @@ class RobotPoint(objectPoint):
                                 row[x-2] = -1
 
             elif napr == 4:
+                print("карта", [self.y, self.x])
+                for row in self.mapArray:
+                    print(row)
+
                 if  self.mapArray[y][x+1] == 0:
                     self.mapArray[y][x+1] = self.switchValue(object.valueOne, napr)
                     if self.switchValue(object.valueOne, napr) not in [40, 23, 24] and not object.redFront:
