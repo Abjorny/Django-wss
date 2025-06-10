@@ -467,7 +467,6 @@ class RobotPoint(objectPoint):
         for row in self.mapArray:
             print(row)       
 
-        self.uart.sendValueAndWait('1000')
 
 
     def __str__(self):
