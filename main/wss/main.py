@@ -56,19 +56,19 @@ def get_priority(cords, libary: LibryPoints):
                     count += 1
 
         if count != 0:
-            patch = mainUtilis.get_patch_target(this_point, libary)
-            if patch is None:
-                return None
-            lt = 0
-            for command in patch:
-                key_command = int(str(command)[0])
-                value_command = int(str(command)[1:])
-                if key_command == 1:
-                    lt += value_command
-                else:
-                    lt +=1
+            # patch = mainUtilis.get_patch_target(this_point, libary)
+            # if patch is None:
+            #     return None
+            # lt = 0
+            # for command in patch:
+            #     key_command = int(str(command)[0])
+            #     value_command = int(str(command)[1:])
+            #     if key_command == 1:
+            #         lt += value_command
+            #     else:
+            #         lt +=1
             data = {
-                lt: [x, y]
+                count: [x, y]
             }
 
             return data
@@ -113,7 +113,7 @@ while 1:
                         priority,
                     )
   
-    priorityList_sorted = sorted(priorityList, key=lambda d: list(d.keys())[0])
+    priorityList_sorted = sorted(priorityList, key=lambda d: list(d.keys())[0], reverse = True)
     getPatchPriority(priorityList_sorted, libary)
     
     robotObject.left = 0
