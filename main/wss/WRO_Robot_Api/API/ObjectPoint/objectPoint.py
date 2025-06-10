@@ -389,13 +389,12 @@ class RobotPoint(objectPoint):
 
             y = self.y
             x = self.x
-
             if napr == 3:
 
-                if self.mapArray[y+1][x] == 0:
-                    self.mapArray[y+1][x] = self.switchValue(object.valueOne, napr)
-                    if self.switchValue(object.valueOne, napr) not in [40, 23, 24] and not object.redFront and self.mapArray[y+1][x] != -1:
-                        self.mapArray[y+2][x] = self.switchValue(object.valueTwo, napr)
+                if self.mapArray[y-1][x] == 0:
+                    self.mapArray[y-1][x] = self.switchValue(object.valueOne, napr)
+                    if self.switchValue(object.valueOne, napr) not in [40, 23, 24] and not object.redFront and self.mapArray[y-1][x] != -1:
+                        self.mapArray[y-2][x] = self.switchValue(object.valueTwo, napr)
                         if object.redRight:
                             for row in self.mapArray:
                                 row[x+1] = -1
@@ -412,10 +411,10 @@ class RobotPoint(objectPoint):
                                 self.mapArray[y  -2 ][x] = -1
 
             elif napr == 1:
-                if  self.mapArray[y-1][x] == 0:
+                if  self.mapArray[y+1][x] == 0:
 
-                    self.mapArray[y-1][x] = self.switchValue(object.valueOne, napr)
-                    if self.switchValue(object.valueOne, napr) not in [40, 23, 24] and not object.redFront and self.mapArray[y-1][x] != -1:
+                    self.mapArray[y+1][x] = self.switchValue(object.valueOne, napr)
+                    if self.switchValue(object.valueOne, napr) not in [40, 23, 24] and not object.redFront and self.mapArray[y+1][x] != -1:
                         self.mapArray[y+2][x] = self.switchValue(object.valueTwo, napr)
                         
                         if object.redRight:
@@ -428,11 +427,11 @@ class RobotPoint(objectPoint):
             
                         if object.redFront:
                             for x in range (len(self.mapArray[y + 1])):
-                                self.mapArray[y - 1][x] = -1
+                                self.mapArray[y + 1][x] = -1
                             
                         if object.redFrontTwo:
                             for x in range (len(self.mapArray[y + 2])):
-                                self.mapArray[y - 2][x] = -1
+                                self.mapArray[y + 2][x] = -1
 
             elif napr == 2:
                 if  self.mapArray[y][x-1] == 0:
@@ -441,12 +440,12 @@ class RobotPoint(objectPoint):
                         self.mapArray[y][x-2] = self.switchValue(object.valueTwo, napr)
                         
                         if object.redRight:
-                            for x in range (len(self.mapArray[y + 1])):
-                                self.mapArray[y + 1][x] = -1
-
-                        if object.redLeft:
                             for x in range (len(self.mapArray[y - 1])):
                                 self.mapArray[y - 1][x] = -1
+
+                        if object.redLeft:
+                            for x in range (len(self.mapArray[y + 1])):
+                                self.mapArray[y + 1][x] = -1
             
                         if object.redFront:
                             for row in self.mapArray:
@@ -463,12 +462,12 @@ class RobotPoint(objectPoint):
                         self.mapArray[y][x+2] = self.switchValue(object.valueTwo, napr)
                         
                         if object.redRight:
-                            for x in range (len(self.mapArray[y - 1])):
-                                self.mapArray[y - 1][x] = -1
+                            for x in range (len(self.mapArray[y + 1])):
+                                self.mapArray[y+ 1][x] = -1
 
                         if object.redLeft:
-                            for x in range (len(self.mapArray[y + 1])):
-                                self.mapArray[y + 1][x] = -1
+                            for x in range (len(self.mapArray[y - 1])):
+                                self.mapArray[y - 1][x] = -1
             
                         if object.redFront:
                             for row in self.mapArray:
