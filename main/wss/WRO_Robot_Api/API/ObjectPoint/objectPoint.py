@@ -397,11 +397,11 @@ class RobotPoint(objectPoint):
                         self.mapArray[y-2][x] = self.switchValue(object.valueTwo, napr)
                         if object.redRight:
                             for row in self.mapArray:
-                                row[x+1] = -1
+                                row[x-1] = -1
 
                         if object.redLeft:
                             for row in self.mapArray:
-                                row[x-1] = -1
+                                row[x+1] = -1
             
                         if object.redFront:
                              for x in range (len(self.mapArray[y - 1])):
@@ -419,11 +419,11 @@ class RobotPoint(objectPoint):
                         
                         if object.redRight:
                             for row in self.mapArray:
-                                row[x-1] = -1
+                                row[x+1] = -1
 
                         if object.redLeft:
                             for row in self.mapArray:
-                                row[x+1] = -1
+                                row[x-1] = -1
             
                         if object.redFront:
                             for x in range (len(self.mapArray[y + 1])):
