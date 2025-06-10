@@ -384,7 +384,7 @@ class RobotPoint(objectPoint):
         for elem in data:
             napr = int(elem['napr'])
             object: Message = elem['object']
-            print("карта")
+            print("карта", [self.y, self.x])
             for row in self.mapArray:
                 print(row)
 
