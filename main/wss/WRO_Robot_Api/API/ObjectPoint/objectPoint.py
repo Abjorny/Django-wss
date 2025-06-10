@@ -384,6 +384,10 @@ class RobotPoint(objectPoint):
         for elem in data:
             napr = int(elem['napr'])
             object: Message = elem['object']
+            print("карта")
+            for row in self.mapArray:
+                print(row)
+
 
             if napr == 3:
 
