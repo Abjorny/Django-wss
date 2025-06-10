@@ -196,7 +196,7 @@ async def send_periodic_messages():
                 # upper = np.array([latest_hsv["h_max"], latest_hsv["s_max"], latest_hsv["v_max"]])
                 # mask = cv2.inRange(hsv, lower, upper)
                 # frame = cv2.bitwise_and(frame, frame, mask=mask)
-
+                frame = cv2.resize(frame, (640, 480))
                 _, buffer = cv2.imencode('.jpg', frame, [int(cv2.IMWRITE_JPEG_QUALITY), 40])
                 image_data = base64.b64encode(buffer).decode('utf-8')
                 
