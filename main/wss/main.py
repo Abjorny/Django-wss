@@ -9,7 +9,6 @@ robotObject.readAll()
 map = Map(robotObject)
 
 
-
 mainUtilis = main.FindTheBestPatchMap()
 
 def check_map(mapArray):
