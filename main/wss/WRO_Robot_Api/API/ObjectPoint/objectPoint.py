@@ -98,10 +98,7 @@ class RobotPoint(objectPoint):
         self.value_pod = 1
 
         self.setRobot()
-
-    def __str__(self):
-        return "6" 
-
+        
     def turnRight(self):
         self.uart.sendValueAndWait(30)
         self.napr = self.napr + 1
@@ -385,23 +382,34 @@ class RobotPoint(objectPoint):
 
         for elem in data:
             napr = int(elem['napr'])
+            if napr == 1:
+                napr = 3
+            elif napr == 2:
+                napr = 4
+            elif napr == 3:
+                napr = 1
+            elif napr == 4:
+                napr = 2
+        
             object: Message = elem['object']
 
             y = self.y
             x = self.x
+
+
             if napr == 3:
 
                 if self.mapArray[y-1][x] == 0:
                     self.mapArray[y-1][x] = self.switchValue(object.valueOne, napr)
-                    if self.switchValue(object.valueOne, napr) not in [40, 23, 24] and not object.redFront and self.mapArray[y-1][x] != -1:
+                    if self.switchValue(object.valueOne, napr) not in [40, 23, 24] and not object.redFront:
                         self.mapArray[y-2][x] = self.switchValue(object.valueTwo, napr)
                         if object.redRight:
                             for row in self.mapArray:
-                                row[x-1] = -1
+                                row[x+1] = -1
 
                         if object.redLeft:
                             for row in self.mapArray:
-                                row[x+1] = -1
+                                row[x-1] = -1
             
                         if object.redFront:
                              for x in range (len(self.mapArray[y - 1])):
@@ -414,16 +422,16 @@ class RobotPoint(objectPoint):
                 if  self.mapArray[y+1][x] == 0:
 
                     self.mapArray[y+1][x] = self.switchValue(object.valueOne, napr)
-                    if self.switchValue(object.valueOne, napr) not in [40, 23, 24] and not object.redFront and self.mapArray[y+1][x] != -1:
+                    if self.switchValue(object.valueOne, napr) not in [40, 23, 24] and not object.redFront:
                         self.mapArray[y+2][x] = self.switchValue(object.valueTwo, napr)
                         
                         if object.redRight:
                             for row in self.mapArray:
-                                row[x+1] = -1
+                                row[x-1] = -1
 
                         if object.redLeft:
                             for row in self.mapArray:
-                                row[x-1] = -1
+                                row[x+1] = -1
             
                         if object.redFront:
                             for x in range (len(self.mapArray[y + 1])):
