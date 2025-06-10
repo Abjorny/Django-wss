@@ -203,6 +203,8 @@ async def send_periodic_messages():
                 value_center_one, isTwo = sensor_center_one.readObject(copyFrame, frame)
 
                 value_center_two, isTwo = sensor_center_two.readObject(copyFrame, frame)
+                value_left, isTwo = sensor_center_left.readObject(copyFrame, frame)
+                value_right, isTwo = sensor_center_left.readObject(copyFrame, frame)
 
                 red_front = red_front_border.check_border(copyFrame, copyFrame)
                 red_front_two = red_frontTwo_border.check_border(copyFrame, copyFrame)
@@ -234,6 +236,8 @@ async def send_periodic_messages():
                             "image": image_data,
                             "valueCenterOne": value_center_one,
                             "valueCenterTwo": value_center_two,
+                            "valueCenterLeft": value_left,
+                            "valueCenterRight": value_right,
                             "redLeft" : red_left,
                             "redRight" : red_right,
                             "redFront" : red_front,
