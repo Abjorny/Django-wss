@@ -98,7 +98,10 @@ class RobotPoint(objectPoint):
         self.value_pod = 1
 
         self.setRobot()
-        
+
+    def __str__(self):
+        return "6" 
+
     def turnRight(self):
         self.uart.sendValueAndWait(30)
         self.napr = self.napr + 1
