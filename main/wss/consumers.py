@@ -65,7 +65,8 @@ def get_settings():
         'hsv_blue', 'hsv_green',
         'hsv_black', 'hsv_white',
         'sensor_red_left', 'sensor_red_right',
-        'sensor_red_front', 'sensor_red_front_two'
+        'sensor_red_front', 'sensor_red_front_two',
+        'sensor_left', 'sensor_right'
 
     ).get()
 
@@ -81,7 +82,9 @@ async def send_periodic_messages():
 
                 center_one = settings.sensor_center_one
                 center_two = settings.sensor_center_two
-                
+                center_left = settings.sensor_left
+                center_right = settings.sensor_right
+
                 red_left = settings.sensor_red_left
                 red_front = settings.sensor_red_front
                 red_right = settings.sensor_red_right
@@ -107,7 +110,28 @@ async def send_periodic_messages():
                     lib_hsv,
                     robotTwo
                 )
-
+                sensor_center_left = Sensor(
+                    np.array(center_left.area_cord_one),
+                    np.array(center_left.area_cord_check),
+                    np.array(center_left.area_cord_two),
+                    np.array(center_left.area_cordTwo_one),
+                    np.array(center_left.area_cordTwo_two),
+                    np.array(center_left.area_cordTwo_check),
+                    (0, 0, 255),
+                    lib_hsv,
+                    robotTwo
+                )
+                sensor_center_right = Sensor(
+                    np.array(center_right.area_cord_one),
+                    np.array(center_right.area_cord_check),
+                    np.array(center_right.area_cord_two),
+                    np.array(center_right.area_cordTwo_one),
+                    np.array(center_right.area_cordTwo_two),
+                    np.array(center_right.area_cordTwo_check),
+                    (0, 0, 255),
+                    lib_hsv,
+                    robotTwo
+                )
                 sensor_center_two = Sensor(
                     np.array(center_two.area_cord_one),
                     np.array(center_two.area_cord_check),
@@ -189,7 +213,7 @@ async def send_periodic_messages():
 
                 FrameUtilis.display_all_roi_sensors(
                     [sensor_center_one, sensor_center_two, red_front_border, red_left_border, red_right_border,
-                     red_frontTwo_border], 
+                     red_frontTwo_border, sensor_center_right, sensor_center_left], 
                     frame
                 )
 
