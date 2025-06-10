@@ -32,7 +32,7 @@ def get_priority(cords, libary: LibryPoints):
 
         this_point = libary.get_point_coord(x, y)
         count = 0
-        if this_point == None or this_point.value in [0] or libary.mass_mover[y][x] == 100 : return None
+        if this_point == None or this_point.value in [0, -1] or libary.mass_mover[y][x] == 100 : return None
 
         point_up_one = libary.get_point_coord(x, y - 1)
 

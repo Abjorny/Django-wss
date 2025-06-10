@@ -390,7 +390,7 @@ class RobotPoint(objectPoint):
 
                 if self.mapArray[y-1][x] == 0:
                     self.mapArray[y-1][x] = self.switchValue(object.valueOne, napr)
-                    if self.switchValue(object.valueOne, napr) not in [40, 23, 24] and not object.redFront:
+                    if self.switchValue(object.valueOne, napr) not in [40, 23, 24] and not object.redFront and self.mapArray[y-1][x] != -1:
                         self.mapArray[y-2][x] = self.switchValue(object.valueTwo, napr)
                         if object.redRight:
                             for row in self.mapArray:
@@ -411,7 +411,7 @@ class RobotPoint(objectPoint):
                 if  self.mapArray[y+1][x] == 0:
 
                     self.mapArray[y+1][x] = self.switchValue(object.valueOne, napr)
-                    if self.switchValue(object.valueOne, napr) not in [40, 23, 24] and not object.redFront:
+                    if self.switchValue(object.valueOne, napr) not in [40, 23, 24] and not object.redFront and self.mapArray[y+1][x] != -1:
                         self.mapArray[y+2][x] = self.switchValue(object.valueTwo, napr)
                         
                         if object.redRight:
@@ -433,7 +433,7 @@ class RobotPoint(objectPoint):
             elif napr == 2:
                 if  self.mapArray[y][x-1] == 0:
                     self.mapArray[y][x-1] = self.switchValue(object.valueOne, napr)
-                    if self.switchValue(object.valueOne, napr) not in [40, 23, 24] and not object.redFront:
+                    if self.switchValue(object.valueOne, napr) not in [40, 23, 24] and not object.redFront and self.mapArray[y][x-1] != -1:
                         self.mapArray[y][x-2] = self.switchValue(object.valueTwo, napr)
                         
                         if object.redRight:
@@ -453,13 +453,9 @@ class RobotPoint(objectPoint):
                                 row[x-2] = -1
 
             elif napr == 4:
-                # print("карта", [self.y, self.x], self.mapArray[y], [y, x])
-                # for row in self.mapArray:
-                #     print(row)
-
                 if  self.mapArray[y][x+1] == 0:
                     self.mapArray[y][x+1] = self.switchValue(object.valueOne, napr)
-                    if self.switchValue(object.valueOne, napr) not in [40, 23, 24] and not object.redFront:
+                    if self.switchValue(object.valueOne, napr) not in [40, 23, 24] and not object.redFront and self.mapArray[y][x+1] != -1:
                         self.mapArray[y][x+2] = self.switchValue(object.valueTwo, napr)
                         
                         if object.redRight:
