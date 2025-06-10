@@ -174,9 +174,6 @@ class RobotPoint(objectPoint):
             return [y, x, self.mapArray[y][x]]
         return None
 
-
-
-
     def callbackBorder(self, is_bottom, is_left, is_right, is_front):
         def slice_rows(start, end):
             return [row[:] for row in self.mapArray[start:end]]
@@ -387,7 +384,6 @@ class RobotPoint(objectPoint):
         for elem in data:
             napr = int(elem['napr'])
             object: Message = elem['object']
-            print([self.switchValue(object.valueOne, napr), object.valueOne,], [self.switchValue(object.valueTwo, napr), object.valueTwo], napr, [object.redLeft, object.redRight, object.redFront, object.redFrontTwo])
 
 
             if napr == 3:
@@ -463,6 +459,9 @@ class RobotPoint(objectPoint):
                             self.mapArray[y][x + 2] = -1      
             else:
                 print("Сбой направление")
+
+        print([self.switchValue(object.valueOne, napr), object.valueOne,], [self.switchValue(object.valueTwo, napr), object.valueTwo], napr, [object.redLeft, object.redRight, object.redFront, object.redFrontTwo], "\n", [self.x, self.y])
+
         print("Карта")
         for row in self.mapArray:
             print(row)       
