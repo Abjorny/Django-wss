@@ -334,11 +334,11 @@ class Sensor:
                 red_result = self.get_red(roi, frame_copy)
 
                 
-                if  red_result.w < red_result.h + 30 and not self.isTwo:
+                if  red_result.w < red_result.h + 15 and not self.isTwo:
                     value = 21
                 elif red_result.w > red_result.h and not self.isTwo:
                         value = 22
-                elif red_result.w  <= red_result.h +30 and self.isTwo:
+                elif red_result.w  <= red_result.h +15 and self.isTwo:
                     value = 23
                 
                 elif  self.isTwo :
