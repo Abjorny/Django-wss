@@ -382,14 +382,6 @@ class RobotPoint(objectPoint):
 
         for elem in data:
             napr = int(elem['napr'])
-            if napr == 1:
-                napr = 3
-            elif napr == 2:
-                napr = 4
-            elif napr == 3:
-                napr = 1
-            elif napr == 4:
-                napr = 2
         
             object: Message = elem['object']
 
