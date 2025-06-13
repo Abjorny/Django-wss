@@ -326,6 +326,7 @@ class RobotPoint(objectPoint):
         for elem in data:
             napr = int(elem['napr'])
             valid_napr = self.validation_napr(napr)
+            napr = valid_napr
             object: Message = elem['object']
 
             y = self.y
