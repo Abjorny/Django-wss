@@ -1,6 +1,6 @@
 from ..ObjectPoint.objectPoint import objectPoint,RobotPoint
 from ..config import availibls
-from ..Map.Map import Map
+from Map.Map import Map
 import cv2
 
 class LibryPoints:
