@@ -1,7 +1,7 @@
 import cv2
 import os
 import numpy as np
-from ..ObjectPoint.objectPoint import RobotPoint, objectPoint
+from  WRO_Robot_Api.API.ObjectPoint.objectPoint import objectPoint, RobotPoint
 
 
 
