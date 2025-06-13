@@ -8,6 +8,8 @@ class Message:
     def __init__(self, data: list):
         self.valueOne = data['valueCenterOne']
         self.valueTwo = data['valueCenterTwo']
+        self.valueLeft = data['valueCenterLeft']
+        self.valueRight = data['valueCenterRight']
 
         self.redLeft = data['redLeft']
         self.redRight = data['redRight']
@@ -152,7 +154,6 @@ class RobotPoint(objectPoint):
             self.value_pod = 1
         self.mapArray[self.y][self.x] = self
 
-
     def move(self, count):
         if self.napr == 1:
             self.y = self.y - count
@@ -174,77 +175,6 @@ class RobotPoint(objectPoint):
             return [y, x, self.mapArray[y][x]]
         return None
 
-    def callbackBorder(self, is_bottom, is_left, is_right, is_front):
-        def slice_rows(start, end):
-            return [row[:] for row in self.mapArray[start:end]]
-
-        def slice_columns(start, end):
-            return [row[start:end] for row in self.mapArray]
-
-        x = self.x
-        y = self.y
-
-        if is_bottom:
-            if self.napr == 1:
-                self.mapArray = slice_rows(y, y + 8)
-                self.y = 0
-            elif self.napr == 2:
-                self.mapArray = slice_columns(x - 8, x)
-                self.x = 7
-            elif self.napr == 3:
-                self.mapArray = slice_rows(y - 8, y)
-                self.y = 7
-            elif self.napr == 4:
-                self.mapArray = slice_columns(x, x + 8)
-                self.x = 0
-            self.setRobot()
-
-        else:
-            if is_front:
-                if self.napr == 1:
-                    self.mapArray = slice_rows(y - 1, y + 7)
-                    self.y = 1
-                elif self.napr == 2:
-                    self.mapArray = slice_columns(x - 7, x + 1)
-                    self.x = 6
-                elif self.napr == 3:
-                    self.mapArray = slice_rows(y - 7, y + 1)
-                    self.y = 6
-                elif self.napr == 4:
-                    self.mapArray = slice_columns(x - 1, x + 7)
-                    self.x = 1
-                self.setRobot()
-
-            if is_right:
-                if self.napr == 1:
-                    self.mapArray = slice_columns(x - 8, x)
-                    self.x = 7
-                elif self.napr == 2:
-                    self.mapArray = slice_rows(y - 8, y)
-                    self.y = 7
-                elif self.napr == 3:
-                    self.mapArray = slice_columns(x, x + 8)
-                    self.x = 0
-                elif self.napr == 4:
-                    self.mapArray = slice_rows(y, y + 8)
-                    self.y = 0
-                self.setRobot()
-
-        if is_left:
-            if self.napr == 1:
-                self.mapArray = slice_columns(x, x + 8)
-                self.x = 0
-            elif self.napr == 2:
-                self.mapArray = slice_rows(y, y + 8)
-                self.y = 0
-            elif self.napr == 3:
-                self.mapArray = slice_columns(x - 8, x)
-                self.x = 7
-            elif self.napr == 4:
-                self.mapArray = slice_rows(y - 8, y)
-                self.y = 7
-            self.setRobot()
-    
     def switchValue(self, value, napr):
         if napr == 2:
             if value == 51:
@@ -301,6 +231,7 @@ class RobotPoint(objectPoint):
             
             elif value == 34:
                 value = 32
+        
         elif napr == 4:
             if value == 51:
                 value = 52
@@ -334,13 +265,11 @@ class RobotPoint(objectPoint):
             
             elif value == 24:
                 value = 23
+        
         return value 
 
-    def readAll(self):
-
-        
+    def arround_read(self):
         data = []
-        
         time.sleep(0.5)
         one = get_message()
         data.append(
@@ -379,103 +308,134 @@ class RobotPoint(objectPoint):
         )
 
         self.turnRight()
+        return data
+    
+    def validation_napr(self, napr):
+        if napr == 1: return 3
+        elif napr == 2: return 4
+        elif napr == 3: return 1
+        elif napr == 4: return 2
 
+    def check_null_to_write(self, x, y, value):
+        if len(self.mapArray) > y and len(self.mapArray[0]) > x:
+            if self.mapArray[y][x] == 0: self.mapArray[y][x] = value
+
+    def readAll(self):
+        data = self.arround_read()
+        
         for elem in data:
             napr = int(elem['napr'])
-        
+            valid_napr = self.validation_napr(napr)
             object: Message = elem['object']
 
             y = self.y
             x = self.x
 
+            valueLeft = self.switchValue(object.valueLeft, valid_napr)
+            valueRight = self.switchValue(object.valueRight, valid_napr)
+            valueCenterOne = self.switchValue(object.valueOne, valid_napr)
+            valueCenterTwo = self.switchValue(object.valueTwo, valid_napr)
 
-            if napr == 3:
+            if napr == 1:
+                self.check_null_to_write(x, y - 1, valueCenterOne)
+                
+                if object.redFrontTwo:
+                    for x in range (len(self.mapArray[y - 3])):
+                        self.mapArray[y - 3][x] = -1
 
-                if self.mapArray[y-1][x] == 0:
-                    self.mapArray[y-1][x] = self.switchValue(object.valueOne, napr)
-                    if self.switchValue(object.valueOne, napr) not in [40, 23, 24] and not object.redFront:
-                        self.mapArray[y-2][x] = self.switchValue(object.valueTwo, napr)
-                        if object.redRight:
-                            for row in self.mapArray:
-                                row[x+1] = -1
+                if object.redFront == False and valueCenterOne not in [41, 23, 24]:
+                    self.check_null_to_write(x, y - 2, valueCenterTwo)
+                else:
+                    for x in range (len(self.mapArray[y - 2])):
+                        self.mapArray[y - 2][x] = -1
 
-                        if object.redLeft:
-                            for row in self.mapArray:
-                                row[x-1] = -1
+                if object.redLeft == False:
+                    self.check_null_to_write(x - 1, y , valueLeft)
+                else:
+                    for row in self.mapArray:
+                        row[x-1] = -1
+                
+                if object.redRight == False:
+                    self.check_null_to_write(x + 1, y , valueRight)
+                else:
+                    for row in self.mapArray:
+                        row[x+1] = -1
+
+            elif napr == 3 and valueCenterOne not in [41, 23, 24]:
+                self.check_null_to_write(x, y + 1, valueCenterOne)
+
+                if object.redFrontTwo:
+                    for x in range (len(self.mapArray[y + 3])):
+                        self.mapArray[y + 3][x] = -1
+
+                if object.redFront == False:
+                    self.check_null_to_write(x, y + 2, valueCenterTwo)
+                else:
+                    for x in range (len(self.mapArray[y + 2])):
+                        self.mapArray[y + 2][x] = -1
+                
+                if object.redLeft == False:
+                    self.check_null_to_write(x + 1, y , valueLeft)
+                else:
+                    for row in self.mapArray:
+                        row[x + 1] = -1
+                if object.redRight == False:
+                    self.check_null_to_write(x - 1, y , valueRight) 
+                else:
+                    for row in self.mapArray:
+                        row[x - 1] = -1      
+
+            elif napr == 2 and valueCenterOne not in [41, 23, 24]:
+                self.check_null_to_write(x + 1, y, valueCenterOne)
+                if object.redFrontTwo:
+                    for row in self.mapArray:
+                        row[x + 3] = -1  
+
+                if object.redFront == False:
+                    self.check_null_to_write(x + 2, y, valueCenterTwo)
+                else:
+                    for row in self.mapArray:
+                        row[x + 2] = -1  
+
+                if object.redLeft == False:
+                    self.check_null_to_write(x, y - 1 , valueLeft)
+                else:
+                    for x in range (len(self.mapArray[y - 1])):
+                        self.mapArray[y - 1][x] = -1
+
+                if object.redRight == False:
+                    self.check_null_to_write(x, y + 1 , valueRight)
+                else:
+                    for x in range (len(self.mapArray[y + 1])):
+                        self.mapArray[y + 1][x] = -1
+
+            elif napr == 4 and valueCenterOne not in [41, 23, 24]:
+                self.check_null_to_write(x - 1, y, valueCenterOne)
+                
+                if object.redFrontTwo:
+                    for row in self.mapArray:
+                        row[x - 3] = -1  
+
+                if object.redFront == False:
+                    self.check_null_to_write(x - 2, y, valueCenterTwo)
+                else:
+                    for row in self.mapArray:
+                        row[x - 2] = -1  
+
+                if object.redLeft == False:
+                    self.check_null_to_write(x, y + 1 , valueLeft)
+                else:
+                    for x in range (len(self.mapArray[y + 1])):
+                        self.mapArray[y + 1][x] = -1
+                
+                if object.redRight == False:
+                    self.check_null_to_write(x, y - 1 , valueRight)  
+                else:
+                    for x in range (len(self.mapArray[y - 1])):
+                        self.mapArray[y - 1][x] = -1
             
-                        if object.redFront:
-                             for x in range (len(self.mapArray[y - 1])):
-                                self.mapArray[y - 1][x] = -1
-                        if object.redFrontTwo:
-                            for x in range (len(self.mapArray[y - 2])):
-                                self.mapArray[y  -2 ][x] = -1
-
-            elif napr == 1:
-                if  self.mapArray[y+1][x] == 0:
-
-                    self.mapArray[y+1][x] = self.switchValue(object.valueOne, napr)
-                    if self.switchValue(object.valueOne, napr) not in [40, 23, 24] and not object.redFront:
-                        self.mapArray[y+2][x] = self.switchValue(object.valueTwo, napr)
-                        
-                        if object.redRight:
-                            for row in self.mapArray:
-                                row[x-1] = -1
-
-                        if object.redLeft:
-                            for row in self.mapArray:
-                                row[x+1] = -1
+       
             
-                        if object.redFront:
-                            for x in range (len(self.mapArray[y + 1])):
-                                self.mapArray[y + 1][x] = -1
-                            
-                        if object.redFrontTwo:
-                            for x in range (len(self.mapArray[y + 2])):
-                                self.mapArray[y + 2][x] = -1
-
-            elif napr == 2:
-                if  self.mapArray[y][x-1] == 0:
-                    self.mapArray[y][x-1] = self.switchValue(object.valueOne, napr)
-                    if self.switchValue(object.valueOne, napr) not in [40, 23, 24] and not object.redFront and self.mapArray[y][x-1] != -1:
-                        self.mapArray[y][x-2] = self.switchValue(object.valueTwo, napr)
-                        
-                        if object.redRight:
-                            for x in range (len(self.mapArray[y - 1])):
-                                self.mapArray[y - 1][x] = -1
-
-                        if object.redLeft:
-                            for x in range (len(self.mapArray[y + 1])):
-                                self.mapArray[y + 1][x] = -1
-            
-                        if object.redFront:
-                            for row in self.mapArray:
-                                row[x-1] = -1
-                            
-                        if object.redFrontTwo:
-                            for row in self.mapArray:
-                                row[x-2] = -1
-
-            elif napr == 4:
-                if  self.mapArray[y][x+1] == 0:
-                    self.mapArray[y][x+1] = self.switchValue(object.valueOne, napr)
-                    if self.switchValue(object.valueOne, napr) not in [40, 23, 24] and not object.redFront and self.mapArray[y][x+1] != -1:
-                        self.mapArray[y][x+2] = self.switchValue(object.valueTwo, napr)
-                        
-                        if object.redRight:
-                            for x in range (len(self.mapArray[y + 1])):
-                                self.mapArray[y+ 1][x] = -1
-
-                        if object.redLeft:
-                            for x in range (len(self.mapArray[y - 1])):
-                                self.mapArray[y - 1][x] = -1
-            
-                        if object.redFront:
-                            for row in self.mapArray:
-                                row[x+1] = -1
-                            
-                        if object.redFrontTwo:
-                            for row in self.mapArray:
-                                row[x+2] = -1  
             else:
                 print("Сбой направление")
 
@@ -484,7 +444,6 @@ class RobotPoint(objectPoint):
         print("Карта")
         for row in self.mapArray:
             print(row)       
-
 
 
     def __str__(self):

@@ -110,6 +110,7 @@ async def send_periodic_messages():
                     lib_hsv,
                     robotTwo
                 )
+                
                 sensor_center_left = Sensor(
                     np.array(center_left.area_cord_one),
                     np.array(center_left.area_cord_check),
@@ -196,7 +197,7 @@ async def send_periodic_messages():
                     
                 frame = get_frame_from_socket()
                 frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
-                frame = cv2.resize(frame, (640, 480))
+                # frame = cv2.resize(frame, (640, 480))
 
                 copyFrame = frame.copy()
 

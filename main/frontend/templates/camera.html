@@ -62,6 +62,12 @@
             padding: 10px 20px;
             font-size: 16px;
         }
+
+        .colown-data {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
     </style>
 </head>
 
@@ -100,12 +106,13 @@
             <button id="button-disconnect-camera" class="btn btn-danger">Off</button>
             <button id="button-download-camera" class="btn btn-warning">Download</button>
             <button id="copy-points" class="btn btn-info">Скопировать точки</button>
-<div class="form-check">
-  <input class="form-check-input" type="checkbox" id="is-two-checkbox" style="width: 100%; height: 100%;"/>
-  <label class="form-check-label" for="is-two-checkbox ">
-    isTwo
-  </label>
-</div>
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="is-two-checkbox"
+                    style="width: 100%; height: 100%;" />
+                <label class="form-check-label" for="is-two-checkbox ">
+                    isTwo
+                </label>
+            </div>
         </div>
 
         <div class="utilis-row-data">
@@ -118,11 +125,29 @@
         </div>
         <div class="utilis-row-data">
             <div class="row-data">
-                <span id="value-center-two">255</span>
+                <div class="row-data">
+                    <span id="value-center-left">255</span>
+                </div>
+                <div class="colown-data">
+
+                    <div class="row-data">
+                        <span id="value-center-two">255</span>
+
+                    </div>
+
+                    <div class="row-data">
+                        <span id="value-center">255</span>
+
+                    </div>
+                </div>
+                <div class="row-data">
+                    <span id="value-right">255</span>
+                </div>
+
             </div>
-            <div class="row-data">
-                <span id="value-center">255</span>
-            </div>
+
+
+
             <div class="row-data">
                 <span id="red-left">Лево: 0</span>
                 <span id="red-right">Право: 0</span>
@@ -156,6 +181,9 @@
                 if (data.message.image) {
                     document.getElementById('value-center').textContent = data.message.valueCenterOne;
                     document.getElementById('value-center-two').textContent = data.message.valueCenterTwo;
+
+                    document.getElementById('value-center-left').textContent = data.message.valueCenterLeft;
+                    document.getElementById('value-center-right').textContent = data.message.valueCenterRight;
 
                     document.getElementById('red-left').textContent = 'Лево: ' + data.message.redLeft;
                     document.getElementById('red-right').textContent = 'Право: ' + data.message.redRight;

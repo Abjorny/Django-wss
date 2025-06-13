@@ -147,7 +147,7 @@ class FindTheBestPatchMap:
             delta_commands.append(command)
             index +=1
         return delta_commands
-        
+        colown
     @staticmethod 
     def get_patch_target(pointTarget: objectPoint, libary:LibryPoints):
         robot_point = libary.get_robot_point()
