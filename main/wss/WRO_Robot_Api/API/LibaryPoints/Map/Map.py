@@ -1,14 +1,13 @@
 import cv2
 import os
 import numpy as np
-from  WRO_Robot_Api.API.ObjectPoint.objectPoint import objectPoint, RobotPoint
 
 
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
 
 class Map:
-    def __init__(self, robot: RobotPoint):
+    def __init__(self, robot):
         self.mapArray = robot.mapArray
         self.robot = robot
         self.tile_size = 40
