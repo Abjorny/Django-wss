@@ -1,7 +1,7 @@
 from WRO_Robot_Api import main
 from WRO_Robot_Api.API.ObjectPoint.objectPoint import objectPoint, RobotPoint
 from WRO_Robot_Api.API.LibaryPoints.libaryPoints import LibryPoints
-from WRO_Robot_Api.API.Map.Map import Map
+from WRO_Robot_Api.API.LibaryPoints.Map import Map
 import cv2
 
 robotObject =  RobotPoint(8, 8)
