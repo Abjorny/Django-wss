@@ -59,6 +59,10 @@ latest_hsv = {
 
 robotTwo = False
 
+lib_hsv, sensor_center_one, sensor_center_left, sensor_center_right,\
+sensor_center_two, red_front_border, red_right_border, red_left_border,\
+red_frontTwo_border = None
+
 @sync_to_async
 def get_settings():
     return Settings.objects.select_related(
@@ -75,130 +79,139 @@ def get_settings():
 def resize_frame(frame, width=FIXED_WIDTH, height=FIXED_HEIGHT):
     return cv2.resize(frame, (width, height))
 
+async def update_settings():
+    global lib_hsv, sensor_center_one, sensor_center_left, sensor_center_right,\
+            sensor_center_two, red_front_border, red_right_border, red_left_border,\
+            red_frontTwo_border
+    settings = await get_settings()
+
+    center_one = settings.sensor_center_one
+    center_two = settings.sensor_center_two
+    center_left = settings.sensor_left
+    center_right = settings.sensor_right
+
+    red_left = settings.sensor_red_left
+    red_front = settings.sensor_red_front
+    red_right = settings.sensor_red_right
+    red_front_two = settings.sensor_red_front_two
+
+    lib_hsv = LibaryHSV(
+        settings.hsv_red_one,
+        settings.hsv_red_two,
+        settings.hsv_blue,
+        settings.hsv_green,
+        settings.hsv_black,
+        settings.hsv_white,
+    )
+
+    sensor_center_one = Sensor(
+        np.array(center_one.area_cord_one),
+        np.array(center_one.area_cord_check),
+        np.array(center_one.area_cord_two),
+        np.array(center_one.area_cordTwo_one),
+        np.array(center_one.area_cordTwo_two),
+        np.array(center_one.area_cordTwo_check),
+        (0, 0, 255),
+        lib_hsv,
+        robotTwo
+    )
+    
+    sensor_center_left = Sensor(
+        np.array(center_left.area_cord_one),
+        np.array(center_left.area_cord_check),
+        np.array(center_left.area_cord_two),
+        np.array(center_left.area_cordTwo_one),
+        np.array(center_left.area_cordTwo_two),
+        np.array(center_left.area_cordTwo_check),
+        (0, 0, 255),
+        lib_hsv,
+        robotTwo
+    )
+    
+    sensor_center_right = Sensor(
+        np.array(center_right.area_cord_one),
+        np.array(center_right.area_cord_check),
+        np.array(center_right.area_cord_two),
+        np.array(center_right.area_cordTwo_one),
+        np.array(center_right.area_cordTwo_two),
+        np.array(center_right.area_cordTwo_check),
+        (0, 0, 255),
+        lib_hsv,
+        robotTwo
+    )
+    
+    sensor_center_two = Sensor(
+        np.array(center_two.area_cord_one),
+        np.array(center_two.area_cord_check),
+        np.array(center_two.area_cord_two),
+        np.array(center_two.area_cordTwo_one),
+        np.array(center_two.area_cordTwo_two),
+        np.array(center_two.area_cordTwo_check),
+        (0, 0, 255),
+        lib_hsv,
+        robotTwo
+    )
+
+
+    red_front_border = RedSensor(
+        np.array(red_front.area_cord_one),
+        np.array(red_front.area_cord_one),
+        np.array(red_front.area_cord_one),
+        np.array(red_front.area_cord_one),
+        np.array(red_front.area_cord_one),
+        np.array(red_front.area_cord_one),
+        (0, 0, 255),
+        lib_hsv,
+        robotTwo
+    )
+
+    red_right_border = RedSensor(
+        np.array(red_right.area_cord_one),
+        np.array(red_right.area_cord_one),
+        np.array(red_right.area_cord_one),
+        np.array(red_right.area_cord_one),
+        np.array(red_right.area_cord_one),
+        np.array(red_right.area_cord_one),
+        (0, 0, 255),
+        lib_hsv,
+        robotTwo
+    )
+
+    red_left_border = RedSensor(
+        np.array(red_left.area_cord_one),
+        np.array(red_left.area_cord_one),
+        np.array(red_left.area_cord_one),
+        np.array(red_left.area_cord_one),
+        np.array(red_left.area_cord_one),
+        np.array(red_left.area_cord_one),
+        (0, 0, 255),
+        lib_hsv,
+        robotTwo
+    )
+
+
+    red_frontTwo_border = RedSensor(
+        np.array(red_front_two.area_cord_one),
+        np.array(red_front_two.area_cord_one),
+        np.array(red_front_two.area_cord_one),
+        np.array(red_front_two.area_cord_one),
+        np.array(red_front_two.area_cord_one),
+        np.array(red_front_two.area_cord_one),
+        (0, 0, 255),
+        lib_hsv,
+        robotTwo
+    )
+
 async def read_data():
     
     try:
-    
-        settings = await get_settings()
-
-        center_one = settings.sensor_center_one
-        center_two = settings.sensor_center_two
-        center_left = settings.sensor_left
-        center_right = settings.sensor_right
-
-        red_left = settings.sensor_red_left
-        red_front = settings.sensor_red_front
-        red_right = settings.sensor_red_right
-        red_front_two = settings.sensor_red_front_two
-
-        lib_hsv = LibaryHSV(
-            settings.hsv_red_one,
-            settings.hsv_red_two,
-            settings.hsv_blue,
-            settings.hsv_green,
-            settings.hsv_black,
-            settings.hsv_white,
-        )
-
-        sensor_center_one = Sensor(
-            np.array(center_one.area_cord_one),
-            np.array(center_one.area_cord_check),
-            np.array(center_one.area_cord_two),
-            np.array(center_one.area_cordTwo_one),
-            np.array(center_one.area_cordTwo_two),
-            np.array(center_one.area_cordTwo_check),
-            (0, 0, 255),
-            lib_hsv,
-            robotTwo
-        )
-        
-        sensor_center_left = Sensor(
-            np.array(center_left.area_cord_one),
-            np.array(center_left.area_cord_check),
-            np.array(center_left.area_cord_two),
-            np.array(center_left.area_cordTwo_one),
-            np.array(center_left.area_cordTwo_two),
-            np.array(center_left.area_cordTwo_check),
-            (0, 0, 255),
-            lib_hsv,
-            robotTwo
-        )
-        sensor_center_right = Sensor(
-            np.array(center_right.area_cord_one),
-            np.array(center_right.area_cord_check),
-            np.array(center_right.area_cord_two),
-            np.array(center_right.area_cordTwo_one),
-            np.array(center_right.area_cordTwo_two),
-            np.array(center_right.area_cordTwo_check),
-            (0, 0, 255),
-            lib_hsv,
-            robotTwo
-        )
-        sensor_center_two = Sensor(
-            np.array(center_two.area_cord_one),
-            np.array(center_two.area_cord_check),
-            np.array(center_two.area_cord_two),
-            np.array(center_two.area_cordTwo_one),
-            np.array(center_two.area_cordTwo_two),
-            np.array(center_two.area_cordTwo_check),
-            (0, 0, 255),
-            lib_hsv,
-            robotTwo
-        )
+        global lib_hsv, sensor_center_one, sensor_center_left, sensor_center_right,\
+            sensor_center_two, red_front_border, red_right_border, red_left_border,\
+            red_frontTwo_border
 
 
-        red_front_border = RedSensor(
-            np.array(red_front.area_cord_one),
-            np.array(red_front.area_cord_one),
-            np.array(red_front.area_cord_one),
-            np.array(red_front.area_cord_one),
-            np.array(red_front.area_cord_one),
-            np.array(red_front.area_cord_one),
-            (0, 0, 255),
-            lib_hsv,
-            robotTwo
-        )
-
-        red_right_border = RedSensor(
-            np.array(red_right.area_cord_one),
-            np.array(red_right.area_cord_one),
-            np.array(red_right.area_cord_one),
-            np.array(red_right.area_cord_one),
-            np.array(red_right.area_cord_one),
-            np.array(red_right.area_cord_one),
-            (0, 0, 255),
-            lib_hsv,
-            robotTwo
-        )
-
-        red_left_border = RedSensor(
-            np.array(red_left.area_cord_one),
-            np.array(red_left.area_cord_one),
-            np.array(red_left.area_cord_one),
-            np.array(red_left.area_cord_one),
-            np.array(red_left.area_cord_one),
-            np.array(red_left.area_cord_one),
-            (0, 0, 255),
-            lib_hsv,
-            robotTwo
-        )
-
-
-        red_frontTwo_border = RedSensor(
-            np.array(red_front_two.area_cord_one),
-            np.array(red_front_two.area_cord_one),
-            np.array(red_front_two.area_cord_one),
-            np.array(red_front_two.area_cord_one),
-            np.array(red_front_two.area_cord_one),
-            np.array(red_front_two.area_cord_one),
-            (0, 0, 255),
-            lib_hsv,
-            robotTwo
-        )
-            
         frame = get_frame_from_socket()
         frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
-        # frame = cv2.resize(frame, (640, 480))
 
         copyFrame = frame.copy()
 
@@ -213,8 +226,6 @@ async def read_data():
         red_right = red_right_border.check_border(copyFrame, copyFrame)
         red_left = red_left_border.check_border(copyFrame, copyFrame)
         
-
-
         FrameUtilis.display_all_roi_sensors(
             [sensor_center_one, sensor_center_two, red_front_border, red_left_border, red_right_border,
             red_frontTwo_border, sensor_center_right, sensor_center_left], 
@@ -228,9 +239,7 @@ async def read_data():
         frame = cv2.bitwise_and(frame, frame, mask=mask)
 
         _, buffer = cv2.imencode('.jpg', frame, [int(cv2.IMWRITE_JPEG_QUALITY), 40])
-        image_data = base64.b64encode(buffer).decode('utf-8')
-        
-
+        image_data = base64.b64encode(buffer).decode('utf-8')        
 
         message = Message(
             {
@@ -246,6 +255,7 @@ async def read_data():
             }
         )
         return image_data, message
+    
     except Exception as e:
         logger.exception(f"Error {e} in send_periodic_messages")
 
@@ -286,6 +296,7 @@ class MyConsumer(AsyncWebsocketConsumer):
         await self.accept()
 
         if task is None or task.done():
+            await update_settings()
             task = asyncio.create_task(send_periodic_messages())
 
     async def disconnect(self, close_code):
