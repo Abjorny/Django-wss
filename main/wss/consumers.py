@@ -15,12 +15,14 @@ import base64
 import logging
 import socket
 from .models import Settings
+from .WRO_Robot_Api.API.UTIL.UartController import UartControllerAsync
 
+uartController = UartControllerAsync()
 logger = logging.getLogger(__name__)
 cap0 = cv2.VideoCapture(0)
 
 task = None
-
+task_slam = None
 
 def get_frame_from_socket():
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
@@ -253,7 +255,11 @@ async def send_periodic_messages():
     except Exception as e:
         logger.exception(f"Error {e} in send_periodic_messages")
 
+async def slam():
+    await uartController.sendValueAndWait("1000")
+
 class MyConsumer(AsyncWebsocketConsumer):
+    
     async def connect(self):
         global task
         self.group_name = "broadcast_group"
@@ -267,7 +273,7 @@ class MyConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_discard(self.group_name, self.channel_name)
 
     async def receive(self, text_data):
-        global latest_hsv, robotTwo
+        global latest_hsv, robotTwo, task_slam
         data = json.loads(text_data)
         if data.get("type") == "hsv":
             hsv_data = data.get("data", {})
@@ -281,6 +287,9 @@ class MyConsumer(AsyncWebsocketConsumer):
                 "v_max": hsv_data.get("v_max", latest_hsv["v_max"]),
             })
             logger.info(f"Updated HSV: {latest_hsv}")
+        elif data.get("type") == "slam":
+            if task_slam is None or task_slam.done():
+                task_slam = asyncio.create_task(slam())
     
     async def broadcast_message(self, event):
         message = event["message"]

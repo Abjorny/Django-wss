@@ -118,6 +118,7 @@
                     isTwo
                 </label>
             </div>
+            <button id="start-point" class="btn btn btn-dark" onclick="startProgram()">Запустить</button>
         </div>
 
         <div class="utilis-row-data">
@@ -305,7 +306,11 @@
             { id: 'v-min', name: 'v_min' },
             { id: 'v-max', name: 'v_max' },
         ];
-
+        function startProgram (){
+         if (camera && camera.readyState === WebSocket.OPEN) {
+            return camera.send(JSON.stringify({ type: 'slam'}));
+         }
+        }
         function sendHSV() {
             if (camera && camera.readyState === WebSocket.OPEN) {
                 const hsv = {};
