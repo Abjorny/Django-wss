@@ -85,6 +85,16 @@ def get_settings():
 def resize_frame(frame, width=FIXED_WIDTH, height=FIXED_HEIGHT):
     return cv2.resize(frame, (width, height))
 
+async def printLog(message):
+    channel_layer = get_channel_layer()
+    return await channel_layer.group_send(
+        "broadcast_group",
+        {
+            "type": "info_message",  
+            "text": message,
+        }
+    )
+
 async def update_settings():
     global lib_hsv, sensor_center_one, sensor_center_left, sensor_center_right,\
             sensor_center_two, red_front_border, red_right_border, red_left_border,\
@@ -289,7 +299,6 @@ async def send_periodic_messages():
         await asyncio.sleep(1/30)
         gc.collect()
 
-
 async def slam():
     await uartController.sendValueAndWait("1000")
 
@@ -328,16 +337,10 @@ class MyConsumer(AsyncWebsocketConsumer):
         elif type_message == "slam":
             if task_slam is None or task_slam.done():
                 task_slam = asyncio.create_task(slam())
+        
         elif type_message == "update":
-            channel_layer = get_channel_layer()
             await update_settings()
-            await channel_layer.group_send(
-                "broadcast_group",
-                {
-                    "type": "info_message",  
-                    "text": "Настройки обновлены",
-                }
-            )
+            await printLog("Настройки обновлены")
 
     async def info_message(self, event):
         await self.send(text_data=json.dumps({
