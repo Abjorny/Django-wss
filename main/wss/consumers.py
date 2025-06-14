@@ -276,7 +276,7 @@ def load_model(model_path):
         'target_size': model_data.get('target_size', (200, 200))
     }
 
-async def extract_features(image, hog_params, target_size):
+def extract_features(image, hog_params, target_size):
     """Извлечение HOG-признаков с проверкой размерностей"""
     # Конвертация в grayscale если нужно
     if len(image.shape) == 3:
