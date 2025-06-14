@@ -59,9 +59,9 @@ latest_hsv = {
 
 robotTwo = False
 
-lib_hsv, sensor_center_one, sensor_center_left, sensor_center_right,\
-sensor_center_two, red_front_border, red_right_border, red_left_border,\
-red_frontTwo_border = None, None, None, None, None, None,None ,None ,None
+lib_hsv, sensor_center_one, sensor_center_left, sensor_center_right,
+sensor_center_two, red_front_border, red_right_border, red_left_border,
+red_frontTwo_border = None
 
 @sync_to_async
 def get_settings():
