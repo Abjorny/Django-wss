@@ -219,84 +219,83 @@ async def update_settings():
     )
 
 async def read_data():
+    global lib_hsv, sensor_center_one, sensor_center_left, sensor_center_right,\
+        sensor_center_two, red_front_border, red_right_border, red_left_border,\
+        red_frontTwo_border
+
+
+    frame = get_frame_from_socket()
+    frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
+
+    copyFrame = frame.copy()
+
+    value_center_one, isTwo = sensor_center_one.readObject(copyFrame, frame)
+
+    value_center_two, isTwo = sensor_center_two.readObject(copyFrame, frame)
+    value_left, isTwo = sensor_center_left.readObject(copyFrame, frame)
+    value_right, isTwo = sensor_center_right.readObject(copyFrame, frame)
+
+    red_front = red_front_border.check_border(copyFrame, copyFrame)
+    red_front_two = red_frontTwo_border.check_border(copyFrame, copyFrame)
+    red_right = red_right_border.check_border(copyFrame, copyFrame)
+    red_left = red_left_border.check_border(copyFrame, copyFrame)
     
-    try:
-        global lib_hsv, sensor_center_one, sensor_center_left, sensor_center_right,\
-            sensor_center_two, red_front_border, red_right_border, red_left_border,\
-            red_frontTwo_border
+    # FrameUtilis.display_all_roi_sensors(
+    #     [sensor_center_one, sensor_center_two, red_front_border, red_left_border, red_right_border,
+    #     red_frontTwo_border, sensor_center_right, sensor_center_left], 
+    #     frame
+    # )
 
+    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+    lower = np.array([latest_hsv["h_min"], latest_hsv["s_min"], latest_hsv["v_min"]])
+    upper = np.array([latest_hsv["h_max"], latest_hsv["s_max"], latest_hsv["v_max"]])
+    mask = cv2.inRange(hsv, lower, upper)
+    frame = cv2.bitwise_and(frame, frame, mask=mask)
 
-        frame = get_frame_from_socket()
-        frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
+    _, buffer = cv2.imencode('.jpg', frame, [int(cv2.IMWRITE_JPEG_QUALITY), 40])
+    image_data = base64.b64encode(buffer).decode('utf-8')        
 
-        copyFrame = frame.copy()
+    message = Message(
+        {
+            "valueCenterOne" : value_center_one,
+            "valueCenterTwo" : value_center_two,
+            "valueCenterLeft" : value_left,
+            "valueCenterRight" : value_right,
+            "redLeft" : red_left,
+            "redRight" : red_right,
+            "redFront" : red_front,
+            "redFrontTwo" : red_front_two,
 
-        value_center_one, isTwo = sensor_center_one.readObject(copyFrame, frame)
-
-        value_center_two, isTwo = sensor_center_two.readObject(copyFrame, frame)
-        value_left, isTwo = sensor_center_left.readObject(copyFrame, frame)
-        value_right, isTwo = sensor_center_right.readObject(copyFrame, frame)
-
-        red_front = red_front_border.check_border(copyFrame, copyFrame)
-        red_front_two = red_frontTwo_border.check_border(copyFrame, copyFrame)
-        red_right = red_right_border.check_border(copyFrame, copyFrame)
-        red_left = red_left_border.check_border(copyFrame, copyFrame)
-        
-        FrameUtilis.display_all_roi_sensors(
-            [sensor_center_one, sensor_center_two, red_front_border, red_left_border, red_right_border,
-            red_frontTwo_border, sensor_center_right, sensor_center_left], 
-            frame
-        )
-
-        hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-        lower = np.array([latest_hsv["h_min"], latest_hsv["s_min"], latest_hsv["v_min"]])
-        upper = np.array([latest_hsv["h_max"], latest_hsv["s_max"], latest_hsv["v_max"]])
-        mask = cv2.inRange(hsv, lower, upper)
-        frame = cv2.bitwise_and(frame, frame, mask=mask)
-
-        _, buffer = cv2.imencode('.jpg', frame, [int(cv2.IMWRITE_JPEG_QUALITY), 40])
-        image_data = base64.b64encode(buffer).decode('utf-8')        
-
-        message = Message(
-            {
-                "valueCenterOne" : value_center_one,
-                "valueCenterTwo" : value_center_two,
-                "valueCenterLeft" : value_left,
-                "valueCenterRight" : value_right,
-                "redLeft" : red_left,
-                "redRight" : red_right,
-                "redFront" : red_front,
-                "redFrontTwo" : red_front_two,
-
-            }
-        )
-        return image_data, message
+        }
+    )
+    return image_data, message
     
-    except Exception as e:
-        logger.exception(f"Error {e} in send_periodic_messages")
 
 async def send_periodic_messages():
     channel_layer = get_channel_layer()
     while True:
-        image_data, message = await read_data()
-        await channel_layer.group_send(
-            "broadcast_group",
-            {
-                "type": "broadcast_message",
-                "message": {
-                    "image": image_data,
-                    "valueCenterOne": message.valueOne,
-                    "valueCenterTwo": message.valueTwo,
-                    "valueCenterLeft": message.valueLeft,
-                    "valueCenterRight": message.valueRight,
-                    "redLeft" : message.redLeft,
-                    "redRight" : message.redRight,
-                    "redFront" : message.redFront,
-                    "redFrontTwo": message.redFrontTwo  
-                },
-            }
-        )
-        await asyncio.sleep(1/30)
+        try:
+            image_data, message = await read_data()
+            await channel_layer.group_send(
+                "broadcast_group",
+                {
+                    "type": "broadcast_message",
+                    "message": {
+                        "image": image_data,
+                        "valueCenterOne": message.valueOne,
+                        "valueCenterTwo": message.valueTwo,
+                        "valueCenterLeft": message.valueLeft,
+                        "valueCenterRight": message.valueRight,
+                        "redLeft" : message.redLeft,
+                        "redRight" : message.redRight,
+                        "redFront" : message.redFront,
+                        "redFrontTwo": message.redFrontTwo  
+                    },
+                }
+            )
+            await asyncio.sleep(1/30)
+        except Exception as e:
+            await printLog(f"Ошибка в функции считывания датчиков:\n{e}")
         gc.collect()
 
 async def slam():
