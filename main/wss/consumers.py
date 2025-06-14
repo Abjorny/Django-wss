@@ -240,11 +240,11 @@ async def read_data():
     red_right = red_right_border.check_border(copyFrame, copyFrame)
     red_left = red_left_border.check_border(copyFrame, copyFrame)
     
-    FrameUtilis.display_all_roi_sensors(
-        [sensor_center_one, sensor_center_two, red_front_border, red_left_border, red_right_border,
-        red_frontTwo_border, sensor_center_right, sensor_center_left], 
-        frame
-    )
+    # FrameUtilis.display_all_roi_sensors(
+    #     [sensor_center_one, sensor_center_two, red_front_border, red_left_border, red_right_border,
+    #     red_frontTwo_border, sensor_center_right, sensor_center_left], 
+    #     frame
+    # )
 
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
     lower = np.array([latest_hsv["h_min"], latest_hsv["s_min"], latest_hsv["v_min"]])
