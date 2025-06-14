@@ -328,24 +328,20 @@ class MyConsumer(AsyncWebsocketConsumer):
         elif type_message == "slam":
             if task_slam is None or task_slam.done():
                 task_slam = asyncio.create_task(slam())
-        elif type_message == "type_message":
+        elif type_message == "update":
             channel_layer = get_channel_layer()
             await update_settings()
             await channel_layer.group_send(
                 "broadcast_group",
                 {
-                    "type": "info_message",
-                    "message": {
-                        "text": "Настройки обнавлены",
-
-                    },
+                    "type": "info_message",  
+                    "text": "Настройки обновлены",
                 }
             )
 
     async def info_message(self, event):
-        message = event["message"]
         await self.send(text_data=json.dumps({
-            "message": message
+            "message": event["text"]  
         }))
         
     async def broadcast_message(self, event):
