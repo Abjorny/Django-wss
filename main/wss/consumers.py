@@ -339,10 +339,10 @@ async def read_data():
 
     copyFrame = frame.copy()
     
-    roi1 = await sensor_center_one.get_roi(frame).roi_frame
-    roi2 = await sensor_center_two.get_roi(frame).roi_frame
-    roi3 = await sensor_center_left.get_roi(frame).roi_frame
-    roi4 = await sensor_center_right.get_roi(frame).roi_frame
+    roi1 =  sensor_center_one.get_roi(frame).roi_frame
+    roi2 =  sensor_center_two.get_roi(frame).roi_frame
+    roi3 =  sensor_center_left.get_roi(frame).roi_frame
+    roi4 =  sensor_center_right.get_roi(frame).roi_frame
 
     value_center_one = await predict_image_class(roi1, model_data)
     value_center_two = await predict_image_class(roi2, model_data)
