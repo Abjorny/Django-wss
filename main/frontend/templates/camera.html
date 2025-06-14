@@ -68,6 +68,7 @@
             flex-direction: column;
             gap: 10px;
         }
+
         .row-data {
             display: flex;
             flex-direction: row;
@@ -120,6 +121,10 @@
                 </label>
             </div>
             <button id="start-point" class="btn btn btn-dark" onclick="startProgram()">Запустить</button>
+            <button id="start-point" class="btn btn btn btn-primary" onclick="updateSettings()">Обнавить
+                настройки</button>
+            <div class="alert alert-info" role="alert" id = "message-info">
+            </div>
         </div>
 
         <div class="utilis-row-data">
@@ -185,7 +190,10 @@
 
             camera.onmessage = function (event) {
                 const data = JSON.parse(event.data);
-                if (data.message.image) {
+                if (data.message.text){
+                    document.getElementById('message-info').textContent = data.message.text;
+                }
+                else if (data.message.image) {
                     document.getElementById('value-center').textContent = data.message.valueCenterOne;
                     document.getElementById('value-center-two').textContent = data.message.valueCenterTwo;
 
@@ -307,10 +315,15 @@
             { id: 'v-min', name: 'v_min' },
             { id: 'v-max', name: 'v_max' },
         ];
-        function startProgram (){
-         if (camera && camera.readyState === WebSocket.OPEN) {
-            return camera.send(JSON.stringify({ type: 'slam'}));
-         }
+        function startProgram() {
+            if (camera && camera.readyState === WebSocket.OPEN) {
+                return camera.send(JSON.stringify({ type: 'slam' }));
+            }
+        }
+        function updateSettings() {
+            if (camera && camera.readyState === WebSocket.OPEN) {
+                return camera.send(JSON.stringify({ type: 'update' }));
+            }
         }
         function sendHSV() {
             if (camera && camera.readyState === WebSocket.OPEN) {

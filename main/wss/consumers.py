@@ -311,7 +311,8 @@ class MyConsumer(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         global latest_hsv, robotTwo, task_slam
         data = json.loads(text_data)
-        if data.get("type") == "hsv":
+        type_message = data.get("type")
+        if  type_message == "hsv":
             hsv_data = data.get("data", {})
             robotTwo = hsv_data.get("isTwo", False)
             latest_hsv.update({
@@ -323,10 +324,30 @@ class MyConsumer(AsyncWebsocketConsumer):
                 "v_max": hsv_data.get("v_max", latest_hsv["v_max"]),
             })
             logger.info(f"Updated HSV: {latest_hsv}")
-        elif data.get("type") == "slam":
+        
+        elif type_message == "slam":
             if task_slam is None or task_slam.done():
                 task_slam = asyncio.create_task(slam())
-    
+        elif type_message == "type_message":
+            channel_layer = get_channel_layer()
+            await update_settings()
+            await channel_layer.group_send(
+                "broadcast_group",
+                {
+                    "type": "info_message",
+                    "message": {
+                        "text": "Настройки обнавлены",
+
+                    },
+                }
+            )
+
+    async def info_message(self, event):
+        message = event["message"]
+        await self.send(text_data=json.dumps({
+            "message": message
+        }))
+        
     async def broadcast_message(self, event):
         message = event["message"]
         await self.send(text_data=json.dumps({
