@@ -1,1 +1,18 @@
+# Python
 venv/
+*.pkl
+*.pyc
+__pycache__/
+*.egg-info/
+
+# Данные и модели
+dataset/
+*.joblib
+*.h5
+
+
+.DS_Store
+.idea/
+.vscode/
+.sqlite3
+main/wss/hog_svm_model.pkl
