@@ -232,27 +232,27 @@ async def download():
     
     timestamp = int(time.time() * 1000)
 
-    sensor_center_one.isTwo = True
+    sensor_center_one.isTwo = False
     sensor_center_one.robotTwo = robotTwo
     roi1 = sensor_center_one.get_roi(frame).roi_frame
     if roi1 is not None:
         cv2.imwrite(f'data/center_one_{timestamp}.png', roi1)
     
-    sensor_center_left.isTwo = True  # Пример настройки
+    sensor_center_left.isTwo = False  # Пример настройки
     sensor_center_left.robotTwo = robotTwo  # Пример настройки
     roi2 = sensor_center_left.get_roi(frame).roi_frame
     if roi2 is not None:
         cv2.imwrite(f'data/center_left_{timestamp}.png', roi2)
     
     # Датчик 3 (правый)
-    sensor_center_right.isTwo = True  # Пример настройки
+    sensor_center_right.isTwo = False  # Пример настройки
     sensor_center_right.robotTwo = robotTwo  # Пример настройки
     roi3 = sensor_center_right.get_roi(frame).roi_frame
     if roi3 is not None:
         cv2.imwrite(f'data/center_right_{timestamp}.png', roi3)
     
     # Датчик 4
-    sensor_center_two.isTwo = True  # Пример настройки
+    sensor_center_two.isTwo = False  # Пример настройки
     sensor_center_two.robotTwo = robotTwo  # Пример настройки
     roi4 = sensor_center_two.get_roi(frame).roi_frame
     if roi4 is not None:
