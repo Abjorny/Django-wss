@@ -14,6 +14,7 @@ import cv2
 import base64
 import logging
 import socket
+import os
 from .models import Settings
 from .WRO_Robot_Api.API.UTIL.UartController import UartControllerAsync
 from .WRO_Robot_Api.API.ObjectPoint.objectPoint import Message
@@ -218,6 +219,46 @@ async def update_settings():
         robotTwo
     )
 
+import os
+import cv2
+import time
+
+async def download():
+    global sensor_center_one, sensor_center_left, sensor_center_right, sensor_center_two
+    
+    frame = get_frame_from_socket()
+    frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
+    os.makedirs('data', exist_ok=True)
+    
+    timestamp = int(time.time() * 1000)
+
+    sensor_center_one.isTwo = True
+    sensor_center_one.robotTwo = False
+    roi1 = sensor_center_one.get_roi(frame)
+    if roi1 is not None:
+        cv2.imwrite(f'data/center_one_{timestamp}.png', roi1)
+    
+    sensor_center_left.isTwo = True  # Пример настройки
+    sensor_center_left.robotTwo = False  # Пример настройки
+    roi2 = sensor_center_left.get_roi(frame)
+    if roi2 is not None:
+        cv2.imwrite(f'data/center_left_{timestamp}.png', roi2)
+    
+    # Датчик 3 (правый)
+    sensor_center_right.isTwo = True  # Пример настройки
+    sensor_center_right.robotTwo = False  # Пример настройки
+    roi3 = sensor_center_right.get_roi(frame)
+    if roi3 is not None:
+        cv2.imwrite(f'data/center_right_{timestamp}.png', roi3)
+    
+    # Датчик 4
+    sensor_center_two.isTwo = True  # Пример настройки
+    sensor_center_two.robotTwo = False  # Пример настройки
+    roi4 = sensor_center_two.get_roi(frame)
+    if roi4 is not None:
+        cv2.imwrite(f'data/center_two_{timestamp}.png', roi4)
+
+
 async def read_data():
     global lib_hsv, sensor_center_one, sensor_center_left, sensor_center_right,\
         sensor_center_two, red_front_border, red_right_border, red_left_border,\
@@ -341,11 +382,16 @@ class MyConsumer(AsyncWebsocketConsumer):
             await update_settings()
             await printLog("Настройки обновлены")
 
+        elif type_message == "download":
+            await download()
+            await printLog("Изображения скачены")
+            
     async def info_message(self, event):
         await self.send(text_data=json.dumps({
             "message": event["text"]  
         }))
-        
+
+    
     async def broadcast_message(self, event):
         message = event["message"]
         await self.send(text_data=json.dumps({

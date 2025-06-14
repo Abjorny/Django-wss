@@ -123,6 +123,8 @@
             <button id="start-point" class="btn btn btn-dark" onclick="startProgram()">Запустить</button>
             <button id="start-point" class="btn btn btn btn-primary" onclick="updateSettings()">Обнавить
                 настройки</button>
+                            <button id="start-point" class="btn btn btn btn-primary" onclick="download()">
+                Скачать</button>
 
         </div>
         <div class="alert alert-info" role="alert" id="message-info" style="margin-top: 40px;">
@@ -318,6 +320,11 @@
         function startProgram() {
             if (camera && camera.readyState === WebSocket.OPEN) {
                 return camera.send(JSON.stringify({ type: 'slam' }));
+            }
+        }
+                function download() {
+            if (camera && camera.readyState === WebSocket.OPEN) {
+                return camera.send(JSON.stringify({ type: 'download' }));
             }
         }
         function updateSettings() {
