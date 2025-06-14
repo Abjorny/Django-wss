@@ -294,7 +294,7 @@ async def extract_features(image, hog_params, target_size):
     
     return features
 
-async def predict_image_class(img_path, model_data):
+def predict_image_class(img_path, model_data):
     """Основная функция предсказания"""
     try:
         # Загрузка изображения
@@ -344,10 +344,10 @@ async def read_data():
     roi3 =  sensor_center_left.get_roi(frame).roi_frame
     roi4 =  sensor_center_right.get_roi(frame).roi_frame
 
-    value_center_one = await predict_image_class(roi1, model_data)
-    value_center_two = await predict_image_class(roi2, model_data)
-    value_left =await  predict_image_class(roi3, model_data)
-    value_right = await predict_image_class(roi4, model_data)
+    value_center_one =  predict_image_class(roi1, model_data)
+    value_center_two =  predict_image_class(roi2, model_data)
+    value_left =  predict_image_class(roi3, model_data)
+    value_right =  predict_image_class(roi4, model_data)
 
     # value_center_one, isTwo = sensor_center_one.readObject(copyFrame, frame)
 
