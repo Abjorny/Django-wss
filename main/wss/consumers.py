@@ -312,7 +312,7 @@ async def predict_image_class(img_path, model_data):
         # Предсказание
         class_id = model_data['model'].predict(features)[0]
         proba = model_data['model'].predict_proba(features)[0]
-        return class_id
+        return int(class_id)
         # return {
         #     'class': int(class_id),  # Конвертируем в int (если метки числовые)
         #     'probability': float(np.max(proba)),
