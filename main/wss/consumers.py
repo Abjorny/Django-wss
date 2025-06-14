@@ -18,6 +18,10 @@ import os
 from .models import Settings
 from .WRO_Robot_Api.API.UTIL.UartController import UartControllerAsync
 from .WRO_Robot_Api.API.ObjectPoint.objectPoint import Message
+from skimage.feature import hog
+import joblib
+from pathlib import Path
+
 uartController = UartControllerAsync()
 logger = logging.getLogger(__name__)
 cap0 = cv2.VideoCapture(0)
@@ -257,24 +261,99 @@ async def download():
     roi4 = sensor_center_two.get_roi(frame).roi_frame
     if roi4 is not None:
         cv2.imwrite(f'data/center_two_{timestamp}.png', roi4)
+import cv2
+import numpy as np
+from skimage.feature import hog
+import joblib
+from pathlib import Path
 
+def load_model(model_path):
+    model_data = joblib.load(model_path)
+    return {
+        'model': model_data['model'],
+        'hog_params': model_data['hog_params'],
+        'scaler': model_data.get('scaler', None),
+        'target_size': model_data.get('target_size', (200, 200))
+    }
+
+async def extract_features(image, hog_params, target_size):
+    """Извлечение HOG-признаков с проверкой размерностей"""
+    # Конвертация в grayscale если нужно
+    if len(image.shape) == 3:
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    
+    # Ресайз до целевого размера
+    image = cv2.resize(image, target_size)
+    
+    # Извлечение признаков
+    features = hog(image, **hog_params)
+    
+    # Проверка и преобразование размерности
+    if features.ndim == 1:
+        features = features.reshape(1, -1)
+    
+    return features
+
+async def predict_image_class(img_path, model_data):
+    """Основная функция предсказания"""
+    try:
+        # Загрузка изображения
+        image =img_path
+
+        features = extract_features(
+            image, 
+            model_data['hog_params'], 
+            model_data['target_size']
+        )
+        
+        if model_data['scaler'] is not None:
+            features = model_data['scaler'].transform(features)
+        
+        # Предсказание
+        class_id = model_data['model'].predict(features)[0]
+        proba = model_data['model'].predict_proba(features)[0]
+        return class_id
+        # return {
+        #     'class': int(class_id),  # Конвертируем в int (если метки числовые)
+        #     'probability': float(np.max(proba)),
+        #     'all_probabilities': {int(k): float(v) for k, v in zip(model_data['model'].classes_, proba)}
+        # }
+        
+    except Exception as e:
+        return {'error': str(e)}
+
+
+model_data = load_model('hog_svm_model.pkl')
 
 async def read_data():
     global lib_hsv, sensor_center_one, sensor_center_left, sensor_center_right,\
         sensor_center_two, red_front_border, red_right_border, red_left_border,\
         red_frontTwo_border
-
+    sensor_center_one.isTwo = False
+    sensor_center_two.isTwo = False
+    sensor_center_left.isTwo = False
+    sensor_center_right.isTwo = False
 
     frame = get_frame_from_socket()
     frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
 
     copyFrame = frame.copy()
+    
+    roi1 = sensor_center_one.get_roi(frame).roi_frame
+    roi2 = sensor_center_two.get_roi(frame).roi_frame
+    roi3 = sensor_center_left.get_roi(frame).roi_frame
+    roi4 = sensor_center_right.get_roi(frame).roi_frame
 
-    value_center_one, isTwo = sensor_center_one.readObject(copyFrame, frame)
+    value_center_one = predict_image_class(roi1, model_data)
+    value_center_two = predict_image_class(roi2, model_data)
+    value_left = predict_image_class(roi3, model_data)
+    value_right = predict_image_class(roi4, model_data)
 
-    value_center_two, isTwo = sensor_center_two.readObject(copyFrame, frame)
-    value_left, isTwo = sensor_center_left.readObject(copyFrame, frame)
-    value_right, isTwo = sensor_center_right.readObject(copyFrame, frame)
+    # value_center_one, isTwo = sensor_center_one.readObject(copyFrame, frame)
+
+    # value_center_two, isTwo = sensor_center_two.readObject(copyFrame, frame)
+    # value_left, isTwo = sensor_center_left.readObject(copyFrame, frame)
+    # value_right, isTwo = sensor_center_right.readObject(copyFrame, frame)
 
     red_front = red_front_border.check_border(copyFrame, copyFrame)
     red_front_two = red_frontTwo_border.check_border(copyFrame, copyFrame)
@@ -311,7 +390,6 @@ async def read_data():
     )
     return image_data, message
     
-
 async def send_periodic_messages():
     channel_layer = get_channel_layer()
     while True:
