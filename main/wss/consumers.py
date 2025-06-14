@@ -59,8 +59,14 @@ latest_hsv = {
 
 robotTwo = False
 
-lib_hsv, sensor_center_one, sensor_center_left, sensor_center_right,
-sensor_center_two, red_front_border, red_right_border, red_left_border,
+lib_hsv = None
+sensor_center_one = None
+sensor_center_left = None
+sensor_center_right = None
+sensor_center_two = None
+red_front_border = None
+red_right_border = None
+red_left_border = None
 red_frontTwo_border = None
 
 @sync_to_async
