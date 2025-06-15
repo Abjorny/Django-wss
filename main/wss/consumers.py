@@ -273,7 +273,7 @@ def load_model(model_path):
         'model': model_data['model'],
         'hog_params': model_data['hog_params'],
         'scaler': model_data.get('scaler', None),
-        'target_size': model_data.get('target_size', (200, 200))
+        'target_size': model_data.get('target_size', (224, 224))
     }
 
 def extract_features(image, hog_params, target_size):
