@@ -382,7 +382,7 @@ async def read_data():
 async def send_periodic_messages():
     channel_layer = get_channel_layer()
     while True:
-        try:
+        # try:
             image_data, message = await read_data()
             print(message.valueTwo)
             await channel_layer.group_send(
@@ -403,8 +403,8 @@ async def send_periodic_messages():
                 }
             )
             await asyncio.sleep(1/30)
-        except Exception as e:
-            await printLog(f"Ошибка в функции считывания датчиков:\n{e}")
+        # except Exception as e:
+        #     await printLog(f"Ошибка в функции считывания датчиков:\n{e}")
         gc.collect()
 
 async def slam():
