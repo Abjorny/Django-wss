@@ -2,7 +2,7 @@ import numpy as np
 import cv2
 import tflite_runtime.interpreter as tflite
 
-TFLITE_PATH = "mobilenet_model.tflite"
+TFLITE_PATH = "/home/abjorny/Django-wss/main/mobilenet_model.tflite"
 IMAGE_SIZE = (224, 224)
 lab = ['1', '21', '22', '23', '24', '31', '32', '34', '41', '51', '52', '53', '54']
 
