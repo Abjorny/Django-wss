@@ -21,7 +21,7 @@ from .WRO_Robot_Api.API.ObjectPoint.objectPoint import Message
 from skimage.feature import hog
 import joblib
 from pathlib import Path
-
+from .tenser import predict
 uartController = UartControllerAsync()
 logger = logging.getLogger(__name__)
 cap0 = cv2.VideoCapture(0)
@@ -313,11 +313,11 @@ def predict_image_class(image_path):
     
     return class_pred, dict(zip(model.classes_, proba))
 
-
 async def read_data():
     global lib_hsv, sensor_center_one, sensor_center_left, sensor_center_right,\
         sensor_center_two, red_front_border, red_right_border, red_left_border,\
         red_frontTwo_border
+    
     sensor_center_one.isTwo = False
     sensor_center_two.isTwo = False
     sensor_center_left.isTwo = False
@@ -333,10 +333,10 @@ async def read_data():
     roi3 =  sensor_center_left.get_roi(frame).roi_frame
     roi4 =  sensor_center_right.get_roi(frame).roi_frame
 
-    value_center_one =  predict_image_class(roi1)
-    value_center_two =  predict_image_class(roi2)
-    value_left =  predict_image_class(roi3)
-    value_right =  predict_image_class(roi4)
+    value_center_one =  predict(roi1)
+    value_center_two =  predict(roi2)
+    value_left =  predict(roi3)
+    value_right =  predict(roi4)
 
     # value_center_one, isTwo = sensor_center_one.readObject(copyFrame, frame)
 
