@@ -295,7 +295,7 @@ def extract_features(image, target_size, hog_params):
 
     return np.hstack([hog_feat, color_hist])
 
-def predict_image(image_path, model_path='hog_svm_model.pkl'):
+def predict_image_class(image_path, model_path='hog_svm_model.pkl'):
     data = joblib.load(model_path)
     model = data['model']
     scaler = data['scaler']
