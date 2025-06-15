@@ -21,5 +21,5 @@ def predict(img):
     interpreter.set_tensor(input_details[0]['index'], input_data)
     interpreter.invoke()
     output = interpreter.get_tensor(output_details[0]['index'])
-    class_id = np.argmax(output)
-    return class_id
+    class_id = int(np.argmax(output)) 
+    return lab[class_id]
