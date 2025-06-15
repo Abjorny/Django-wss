@@ -383,26 +383,26 @@ async def send_periodic_messages():
     channel_layer = get_channel_layer()
     while True:
         # try:
-            image_data, message = await read_data()
-            print(message.valueTwo)
-            await channel_layer.group_send(
-                "broadcast_group",
-                {
-                    "type": "broadcast_message",
-                    "message": {
-                        "image": image_data,
-                        "valueCenterOne": message.valueOne,
-                        "valueCenterTwo": message.valueTwo,
-                        "valueCenterLeft": message.valueLeft,
-                        "valueCenterRight": message.valueRight,
-                        "redLeft" : message.redLeft,
-                        "redRight" : message.redRight,
-                        "redFront" : message.redFront,
-                        "redFrontTwo": message.redFrontTwo  
-                    },
-                }
-            )
-            await asyncio.sleep(1/30)
+        image_data, message = await read_data()
+        print(message.valueTwo)
+        await channel_layer.group_send(
+            "broadcast_group",
+            {
+                "type": "broadcast_message",
+                "message": {
+                    "image": image_data,
+                    "valueCenterOne": message.valueOne,
+                    "valueCenterTwo": message.valueTwo,
+                    "valueCenterLeft": message.valueLeft,
+                    "valueCenterRight": message.valueRight,
+                    "redLeft" : message.redLeft,
+                    "redRight" : message.redRight,
+                    "redFront" : message.redFront,
+                    "redFrontTwo": message.redFrontTwo  
+                },
+            }
+        )
+        await asyncio.sleep(1/30)
         # except Exception as e:
         #     await printLog(f"Ошибка в функции считывания датчиков:\n{e}")
         gc.collect()
