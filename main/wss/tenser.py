@@ -22,4 +22,4 @@ def predict(img):
     interpreter.invoke()
     output = interpreter.get_tensor(output_details[0]['index'])
     class_id = np.argmax(output)
-    return class_id, float(np.max(output))
+    return class_id
