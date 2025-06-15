@@ -333,10 +333,10 @@ async def read_data():
     roi3 =  sensor_center_left.get_roi(frame).roi_frame
     roi4 =  sensor_center_right.get_roi(frame).roi_frame
 
-    value_center_one =  predict(roi1)
-    value_center_two =  predict(roi2)
-    value_left =  predict(roi3)
-    value_right =  predict(roi4)
+    value_center_one,confidence_one =  predict(roi1)
+    value_center_two, confidence_two =  predict(roi2)
+    value_left, confidence_left =  predict(roi3)
+    value_right, confidence_right =  predict(roi4)
 
     # value_center_one, isTwo = sensor_center_one.readObject(copyFrame, frame)
 
@@ -370,11 +370,16 @@ async def read_data():
             "valueCenterTwo" : value_center_two,
             "valueCenterLeft" : value_left,
             "valueCenterRight" : value_right,
+            
             "redLeft" : red_left,
             "redRight" : red_right,
             "redFront" : red_front,
             "redFrontTwo" : red_front_two,
 
+            "cofOne": confidence_one,
+            "cofTwo": confidence_two,
+            "cofThree": confidence_left,
+            "cofFour": confidence_right
         }
     )
     return image_data, message
@@ -390,10 +395,10 @@ async def send_periodic_messages():
                 "type": "broadcast_message",
                 "message": {
                     "image": image_data,
-                    "valueCenterOne": message.valueOne,
-                    "valueCenterTwo": message.valueTwo,
-                    "valueCenterLeft": message.valueLeft,
-                    "valueCenterRight": message.valueRight,
+                    "valueCenterOne": f"{message.valueOne}, {message.cofOne}",
+                    "valueCenterTwo": f"{message.valueTwo}, {message.cofTwo}",
+                    "valueCenterLeft": f"{message.valueLeft}, {message.cofThree}",
+                    "valueCenterRight": f"{message.valueRight}, {message.cofFour}",
                     "redLeft" : message.redLeft,
                     "redRight" : message.redRight,
                     "redFront" : message.redFront,

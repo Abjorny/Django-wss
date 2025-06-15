@@ -22,4 +22,5 @@ def predict(img):
     interpreter.invoke()
     output = interpreter.get_tensor(output_details[0]['index'])
     class_id = int(np.argmax(output)) 
-    return lab[class_id]
+    confidence = float(np.max(output))
+    return lab[class_id], confidence

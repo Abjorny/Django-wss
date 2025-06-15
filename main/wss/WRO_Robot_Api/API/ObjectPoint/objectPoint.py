@@ -15,6 +15,11 @@ class Message:
         self.redRight = data['redRight']
         self.redFront = data['redFront']
         self.redFrontTwo = data['redFrontTwo']
+
+        self.cofOne = data['cofOne']
+        self.cofTwo = data['cofTwo']
+        self.cofThree = data['cofThree']
+        self.cofFour = data['cofFour']
         
 async def get_message_once():
     uri = "ws://127.0.0.1:4000/ws/api/get_image"
