@@ -295,12 +295,13 @@ def extract_features(image, target_size, hog_params):
 
     return np.hstack([hog_feat, color_hist])
 
-def predict_image_class(image_path, model_path='hog_svm_model.pkl'):
-    data = joblib.load(model_path)
-    model = data['model']
-    scaler = data['scaler']
-    hog_params = data['hog_params']
-    target_size = data['target_size']
+model_data = load_model('hog_svm_model.pkl')
+
+def predict_image_class(image_path):
+    model = model_data['model']
+    scaler = model_data['scaler']
+    hog_params = model_data['hog_params']
+    target_size = model_data['target_size']
     
     img = image_path
 
@@ -312,7 +313,6 @@ def predict_image_class(image_path, model_path='hog_svm_model.pkl'):
     
     return class_pred, dict(zip(model.classes_, proba))
 
-model_data = load_model('hog_svm_model.pkl')
 
 async def read_data():
     global lib_hsv, sensor_center_one, sensor_center_left, sensor_center_right,\
@@ -333,10 +333,10 @@ async def read_data():
     roi3 =  sensor_center_left.get_roi(frame).roi_frame
     roi4 =  sensor_center_right.get_roi(frame).roi_frame
 
-    value_center_one =  predict_image_class(roi1, model_data)
-    value_center_two =  predict_image_class(roi2, model_data)
-    value_left =  predict_image_class(roi3, model_data)
-    value_right =  predict_image_class(roi4, model_data)
+    value_center_one =  predict_image_class(roi1)
+    value_center_two =  predict_image_class(roi2)
+    value_left =  predict_image_class(roi3)
+    value_right =  predict_image_class(roi4)
 
     # value_center_one, isTwo = sensor_center_one.readObject(copyFrame, frame)
 
