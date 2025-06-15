@@ -276,52 +276,41 @@ def load_model(model_path):
         'target_size': model_data.get('target_size', (224, 224))
     }
 
-def extract_features(image, hog_params, target_size):
-    """Извлечение HOG-признаков с проверкой размерностей"""
-    # Конвертация в grayscale если нужно
-    if len(image.shape) == 3:
-        image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    
-    # Ресайз до целевого размера
-    image = cv2.resize(image, target_size)
-    
-    # Извлечение признаков
-    features = hog(image, **hog_params)
-    
-    # Проверка и преобразование размерности
-    if features.ndim == 1:
-        features = features.reshape(1, -1)
-    
-    return features
+def extract_color_histograms(hsv_image, bins=32):
+    h_hist = cv2.calcHist([hsv_image], [0], None, [bins], [0, 180])
+    s_hist = cv2.calcHist([hsv_image], [1], None, [bins], [0, 256])
+    h_hist = cv2.normalize(h_hist, h_hist).flatten()
+    s_hist = cv2.normalize(s_hist, s_hist).flatten()
+    return np.hstack([h_hist, s_hist])
 
-def predict_image_class(img_path, model_data):
-    """Основная функция предсказания"""
-    try:
-        # Загрузка изображения
-        image =img_path
+def extract_features(image, target_size, hog_params):
+    image_resized = cv2.resize(image, tuple(target_size), interpolation=cv2.INTER_AREA)
+    gray = cv2.cvtColor(image_resized, cv2.COLOR_BGR2GRAY)
+    hog_feat = hog(gray, **hog_params)
+    
+    hsv = cv2.cvtColor(image_resized, cv2.COLOR_BGR2HSV)
+    clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
+    hsv[:, :, 2] = clahe.apply(hsv[:, :, 2])
+    color_hist = extract_color_histograms(hsv)
 
-        features = extract_features(
-            image, 
-            model_data['hog_params'], 
-            model_data['target_size']
-        )
-        
-        if model_data['scaler'] is not None:
-            features = model_data['scaler'].transform(features)
-        
-        # Предсказание
-        class_id = model_data['model'].predict(features)[0]
-        proba = model_data['model'].predict_proba(features)[0]
-        return int(class_id)
-        # return {
-        #     'class': int(class_id),  # Конвертируем в int (если метки числовые)
-        #     'probability': float(np.max(proba)),
-        #     'all_probabilities': {int(k): float(v) for k, v in zip(model_data['model'].classes_, proba)}
-        # }
-        
-    except Exception as e:
-        return {'error': str(e)}
+    return np.hstack([hog_feat, color_hist])
 
+def predict_image(image_path, model_path='hog_svm_model.pkl'):
+    data = joblib.load(model_path)
+    model = data['model']
+    scaler = data['scaler']
+    hog_params = data['hog_params']
+    target_size = data['target_size']
+    
+    img = image_path
+
+    features = extract_features(img, target_size, hog_params).reshape(1, -1)
+    features_scaled = scaler.transform(features)
+    
+    class_pred = model.predict(features_scaled)[0]
+    proba = model.predict_proba(features_scaled)[0]
+    
+    return class_pred, dict(zip(model.classes_, proba))
 
 model_data = load_model('hog_svm_model.pkl')
 
