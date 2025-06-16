@@ -450,6 +450,7 @@ class RobotPoint(objectPoint):
         print("Карта")
         for row in self.mapArray:
             print(row)       
+        self.setRobot()
 
 
     def __str__(self):

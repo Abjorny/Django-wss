@@ -89,8 +89,9 @@ def getPatchPriority(priorityList: list, libary: LibryPoints):
     if comands is not None:
         for index , comand in enumerate( comands):
             map.tracerCommand(comand)
-            
+        
         robotObject.readAll()
+        
         map.setImagesMap()
 
     return
