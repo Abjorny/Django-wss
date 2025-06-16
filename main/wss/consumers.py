@@ -330,15 +330,13 @@ async def read_data():
     frame_rgb = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
     brightness = np.sum(frame_rgb, axis=2)
     max_idx = np.unravel_index(np.argmax(brightness), brightness.shape)
-    max_pixel = frame_rgb[max_idx]  # RGB-значения
+    max_per_channel = np.max(frame_rgb, axis=(0, 1)) + 1e-6  # [max_R, max_G, max_B]
 
-    # 3. Нормализация
-    max_pixel = max_pixel + 1e-6  # чтобы избежать деления на 0
-    frame_normalized = frame_rgb / max_pixel  # теперь в диапазоне [0, ~1]
+    # 3. Нормализуем каждый канал по своему максимуму и умножаем на 255
+    frame_normalized = (frame_rgb / max_per_channel) * 255.0
 
-    # 4. Ограничиваем значения и переводим в 0–255 для отображения
-    frame_normalized = np.clip(frame_normalized, 0.0, 1.0)
-    frame = (frame_normalized * 255).astype(np.uint8)
+    # 4. Ограничиваем диапазон и переводим обратно в uint8
+    frame_normalized = np.clip(frame_normalized, 0, 255).astype(np.uint8)
     copyFrame = frame.copy()
     
     roi1 =  sensor_center_one.get_roi(frame).roi_frame
