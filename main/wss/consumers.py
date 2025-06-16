@@ -328,7 +328,7 @@ async def read_data():
 
     frame = get_frame_from_socket() 
     frame_rgb = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
-    roi_delta = frame_rgb[460:480, 0, 1280]
+    roi_delta = frame_rgb[460:480, 0:1280]
     # Получаем максимумы по каналам
     max_r = np.max(roi_delta[:, :, 0])
     max_g = np.max(roi_delta[:, :, 1])
