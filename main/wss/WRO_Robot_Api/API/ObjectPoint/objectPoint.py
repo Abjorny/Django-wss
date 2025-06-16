@@ -284,7 +284,7 @@ class RobotPoint(objectPoint):
             }
         )
         self.turnRight()
-        time.sleep(0.5)
+        time.sleep(0.7)
         two = get_message()
         data.append(
             {
@@ -293,7 +293,7 @@ class RobotPoint(objectPoint):
             }
         )
         self.turnRight()
-        time.sleep(0.5)
+        time.sleep(0.7)
         three = get_message()
         data.append(
             {
@@ -302,7 +302,7 @@ class RobotPoint(objectPoint):
             }
         )
         self.turnRight()
-        time.sleep(0.5)
+        time.sleep(0.7)
         four = get_message()
         
         data.append(
@@ -336,7 +336,7 @@ class RobotPoint(objectPoint):
 
             y = self.y
             x = self.x
-
+            print(x, y)
             valueLeft = self.switchValue(object.valueLeft, napr)
             valueRight = self.switchValue(object.valueRight, napr)
             valueCenterOne = self.switchValue(object.valueOne, napr)
