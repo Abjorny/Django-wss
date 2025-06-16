@@ -328,10 +328,7 @@ async def read_data():
 
     frame = get_frame_from_socket() 
     frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
-    gamma = 0.8  # <1 — осветление, >1 — затемнение
-    inv_gamma = 1.0 / gamma
-    table = np.array([((i / 255.0) ** inv_gamma) * 255 for i in np.arange(0, 256)]).astype("uint8")
-    frame = cv2.LUT(frame, table)
+
     copyFrame = frame.copy()
 
     roi1 =  sensor_center_one.get_roi(frame).roi_frame
