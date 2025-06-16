@@ -330,17 +330,17 @@ class RobotPoint(objectPoint):
         
         for elem in data:
             napr = int(elem['napr'])
-            valid_napr = self.validation_napr(napr)
-            napr = valid_napr
+            # valid_napr = self.validation_napr(napr)
+            napr = napr
             object: Message = elem['object']
 
             y = self.y
             x = self.x
 
-            valueLeft = self.switchValue(object.valueLeft, valid_napr)
-            valueRight = self.switchValue(object.valueRight, valid_napr)
-            valueCenterOne = self.switchValue(object.valueOne, valid_napr)
-            valueCenterTwo = self.switchValue(object.valueTwo, valid_napr)
+            valueLeft = self.switchValue(object.valueLeft, napr)
+            valueRight = self.switchValue(object.valueRight, napr)
+            valueCenterOne = self.switchValue(object.valueOne, napr)
+            valueCenterTwo = self.switchValue(object.valueTwo, napr)
 
             if napr == 1:
                 self.check_null_to_write(x, y - 1, valueCenterOne)
