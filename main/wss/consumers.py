@@ -326,13 +326,13 @@ async def read_data():
     sensor_center_left.isTwo = False
     sensor_center_right.isTwo = False
 
-    frame = get_frame_from_socket()  # Получаем BGR-изображение
-    frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB).astype(np.float32)
-
+    frame = get_frame_from_socket() 
+    frame_rgb = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
+    roi_delta = frame_rgb[460:480, 0, 1280]
     # Получаем максимумы по каналам
-    max_r = np.max(frame_rgb[:, :, 0])
-    max_g = np.max(frame_rgb[:, :, 1])
-    max_b = np.max(frame_rgb[:, :, 2]) 
+    max_r = np.max(roi_delta[:, :, 0])
+    max_g = np.max(roi_delta[:, :, 1])
+    max_b = np.max(roi_delta[:, :, 2]) 
     print(max_r, max_g, max_b)
     # Нормализуем каждый канал отдельно
     frame_rgb[:, :, 0] = (frame_rgb[:, :, 0] / max_r) * 255.0  # R
@@ -340,7 +340,7 @@ async def read_data():
     frame_rgb[:, :, 2] = (frame_rgb[:, :, 2] / max_b) * 255.0  # B
 
     # Ограничим и приведём к uint8
-    frame = np.clip(frame_rgb, 0, 255).astype(np.uint8)
+    frame = np.clip(frame_rgb, 0, 255)
     copyFrame = frame.copy()
     roi1 =  sensor_center_one.get_roi(frame).roi_frame
     roi2 =  sensor_center_two.get_roi(frame).roi_frame
