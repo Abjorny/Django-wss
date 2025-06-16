@@ -330,14 +330,9 @@ async def read_data():
     frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB).astype(np.float32)
 
     # Получаем максимумы по каналам
-    r_channel = frame_rgb[:, :, 0].flatten()
-    g_channel = frame_rgb[:, :, 1].flatten()
-    b_channel = frame_rgb[:, :, 2].flatten()
-
-    # Отсортируем и возьмём 99.9-й перцентиль вместо абсолютного максимума
-    max_r = np.percentile(r_channel, 99.9) + 1e-6
-    max_g = np.percentile(g_channel, 99.9) + 1e-6
-    max_b = np.percentile(b_channel, 99.9) + 1e-6
+    max_r = np.max(frame_rgb[:, :, 0])
+    max_g = np.max(frame_rgb[:, :, 1])
+    max_b = np.max(frame_rgb[:, :, 2]) 
     print(max_r, max_g, max_b)
     # Нормализуем каждый канал отдельно
     frame_rgb[:, :, 0] = (frame_rgb[:, :, 0] / max_r) * 255.0  # R
