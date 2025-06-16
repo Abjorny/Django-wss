@@ -6,10 +6,10 @@ import json
 
 class Message:
     def __init__(self, data: list):
-        self.valueOne = data['valueCenterOne']
-        self.valueTwo = data['valueCenterTwo']
-        self.valueLeft = data['valueCenterLeft']
-        self.valueRight = data['valueCenterRight']
+        self.valueOne = int(data['valueCenterOne'])
+        self.valueTwo = int(data['valueCenterTwo'])
+        self.valueLeft = int(data['valueCenterLeft'])
+        self.valueRight = int(data['valueCenterRight'])
 
         self.redLeft = data['redLeft']
         self.redRight = data['redRight']
