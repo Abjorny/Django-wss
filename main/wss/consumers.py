@@ -336,13 +336,12 @@ async def read_data():
     roi3 =  sensor_center_left.get_roi(frame).roi_frame
     roi4 =  sensor_center_right.get_roi(frame).roi_frame
 
-    value_center_one,confidence_one =  predict_image_classpredict(roi1)
-    value_center_two, confidence_two =  predict_image_classpredict(roi2)
-    value_left, confidence_left =  predict_image_classpredict(roi3)
-    value_right, confidence_right =  predict_image_classpredict(roi4)
-
+    int(value_center_one), confidence_one =  predict_image_classpredict(roi1)
+    int(value_center_two), confidence_two =  predict_image_classpredict(roi2)
+    int(value_left), confidence_left =  predict_image_classpredict(roi3)
+    int(value_right), confidence_right =  predict_image_classpredict(roi4)
     if value_center_one in [51, 52, 53, 54]:
-        value_center_one,confidence_one =  predict_image_class(roi1)
+        value_center_one, confidence_one =  predict_image_class(roi1)
     
 
     if value_center_two in [51, 52, 53, 54]:
@@ -354,11 +353,7 @@ async def read_data():
     if value_right in [51, 52, 53, 54]:
         value_right, confidence_right =  predict_image_class(roi3)
 
-    # value_center_one, isTwo = sensor_center_one.readObject(copyFrame, frame)
 
-    # value_center_two, isTwo = sensor_center_two.readObject(copyFrame, frame)
-    # value_left, isTwo = sensor_center_left.readObject(copyFrame, frame)
-    # value_right, isTwo = sensor_center_right.readObject(copyFrame, frame)
 
     red_front = red_front_border.check_border(copyFrame, copyFrame)
     red_front_two = red_frontTwo_border.check_border(copyFrame, copyFrame)
