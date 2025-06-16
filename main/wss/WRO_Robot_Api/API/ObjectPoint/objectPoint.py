@@ -359,12 +359,14 @@ class RobotPoint(objectPoint):
                     self.check_null_to_write(x - 1, y , valueLeft)
                 else:
                     for row in self.mapArray:
+
                         row[x-1] = -1
                 
                 if object.redRight == False:
                     self.check_null_to_write(x + 1, y , valueRight)
                 else:
                     for row in self.mapArray:
+                        print(row, x-1)
                         row[x+1] = -1
 
             elif napr == 3 and valueCenterOne not in [41, 23, 24]:
