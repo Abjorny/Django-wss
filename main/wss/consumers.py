@@ -330,22 +330,15 @@ async def read_data():
     frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
     roi = sensor_center_one.get_roi(frame).roi_frame.astype(np.float32)
 
-    # Получаем максимумы по каналам из ROI
-    max_b = np.max(roi[:, :, 0]) + 1e-6
-    max_g = np.max(roi[:, :, 1]) + 1e-6
-    max_r = np.max(roi[:, :, 2]) + 1e-6
-    print(f"ROI max_r={max_r}, max_g={max_g}, max_b={max_b}")
+    max_b = np.max(roi[:, :, 0])
+    max_g = np.max(roi[:, :, 1]) 
+    max_r = np.max(roi[:, :, 2]) 
 
-    # Преобразуем основное изображение в float32
-    frame = frame.astype(np.float32)
+    frame[:, :, 0] = (frame[:, :, 0] / max_b) * 255.0 
+    frame[:, :, 1] = (frame[:, :, 1] / max_g) * 255.0  
+    frame[:, :, 2] = (frame[:, :, 2] / max_r) * 255.0  # Red
 
-    # Нормализуем по максимумам из ROI
-    frame[:, :, 0] = (frame[:, :, 0] / max_b) * 255.0  # B
-    frame[:, :, 1] = (frame[:, :, 1] / max_g) * 255.0  # G
-    frame[:, :, 2] = (frame[:, :, 2] / max_r) * 255.0  # R
-
-    # Ограничим и приведём к uint8
-    frame = np.clip(frame, 0, 255).astype(np.uint8)
+    # frame = np.clip(frame, 0, 255).astype(np.uint8)
     copyFrame = frame.copy()
     roi1 =  sensor_center_one.get_roi(frame).roi_frame
     roi2 =  sensor_center_two.get_roi(frame).roi_frame
