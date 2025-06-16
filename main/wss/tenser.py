@@ -25,7 +25,7 @@ def create_color_masks(img):
     
     return np.stack([red_mask, blue_mask, green_mask, white_mask, black_mask], axis=-1)
 
-def preprocess_image(img):
+def preprocess_image(img_path):
     img = cv2.resize(img, (224, 224))
     img = img.astype(np.float32) / 255.0
     
@@ -39,6 +39,6 @@ def predict(img):
     interpreter.set_tensor(input_details[0]['index'], input_data)
     interpreter.invoke()
     output = interpreter.get_tensor(output_details[0]['index'])
-    class_id = np.argmax(output)
+    class_id = int(np.argmax(output)) 
     confidence = round(float(np.max(output)), 2)
     return lab[class_id], confidence
