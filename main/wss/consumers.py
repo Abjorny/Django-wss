@@ -334,9 +334,9 @@ async def read_data():
     max_g = np.max(roi[:, :, 1]) 
     max_r = np.max(roi[:, :, 2]) 
 
-    frame[:, :, 0] = (frame[:, :, 0] / max_b) * 255.0 
+    frame[:, :, 2] = (frame[:, :, 0] / max_b) * 255.0 
     frame[:, :, 1] = (frame[:, :, 1] / max_g) * 255.0  
-    frame[:, :, 2] = (frame[:, :, 2] / max_r) * 255.0  # Red
+    frame[:, :, 0] = (frame[:, :, 2] / max_r) * 255.0  # Red
 
     # frame = np.clip(frame, 0, 255).astype(np.uint8)
     copyFrame = frame.copy()
