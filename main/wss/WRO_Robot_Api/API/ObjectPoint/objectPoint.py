@@ -358,13 +358,13 @@ class RobotPoint(objectPoint):
                 if object.redLeft == False:
                     self.check_null_to_write(x - 1, y , valueLeft)
                 else:
-                    for row in self.mapArray[y]:
+                    for row in self.mapArray:
                         row[x-1] = -1
                 
                 if object.redRight == False:
                     self.check_null_to_write(x + 1, y , valueRight)
                 else:
-                    for row in self.mapArray[y]:
+                    for row in self.mapArray:
                         row[x+1] = -1
 
             elif napr == 3 and valueCenterOne not in [41, 23, 24]:
@@ -383,24 +383,24 @@ class RobotPoint(objectPoint):
                 if object.redLeft == False:
                     self.check_null_to_write(x + 1, y , valueLeft)
                 else:
-                    for row in self.mapArray[y]:
+                    for row in self.mapArray:
                         row[x + 1] = -1
                 if object.redRight == False:
                     self.check_null_to_write(x - 1, y , valueRight) 
                 else:
-                    for row in self.mapArray[y]:
+                    for row in self.mapArray:
                         row[x - 1] = -1      
 
             elif napr == 2 and valueCenterOne not in [41, 23, 24]:
                 self.check_null_to_write(x + 1, y, valueCenterOne)
                 if object.redFrontTwo:
-                    for row in self.mapArray[y]:
+                    for row in self.mapArray:
                         row[x + 3] = -1  
 
                 if object.redFront == False:
                     self.check_null_to_write(x + 2, y, valueCenterTwo)
                 else:
-                    for row in self.mapArray[y]:
+                    for row in self.mapArray:
                         row[x + 2] = -1  
 
                 if object.redLeft == False:
@@ -419,13 +419,13 @@ class RobotPoint(objectPoint):
                 self.check_null_to_write(x - 1, y, valueCenterOne)
                 
                 if object.redFrontTwo:
-                    for row in self.mapArray[y]:
+                    for row in self.mapArray:
                         row[x - 3] = -1  
 
                 if object.redFront == False:
                     self.check_null_to_write(x - 2, y, valueCenterTwo)
                 else:
-                    for row in self.mapArray[y]:
+                    for row in self.mapArray:
                         row[x - 2] = -1  
 
                 if object.redLeft == False:
@@ -448,7 +448,7 @@ class RobotPoint(objectPoint):
         print([self.switchValue(object.valueOne, napr), object.valueOne,], [self.switchValue(object.valueTwo, napr), object.valueTwo], napr, [object.redLeft, object.redRight, object.redFront, object.redFrontTwo], "\n", [self.x, self.y])
 
         print("Карта")
-        for row in self.mapArray[y]:
+        for row in self.mapArray:
             print(row)       
         self.setRobot()
 
