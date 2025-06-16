@@ -332,11 +332,9 @@ async def read_data():
     max_idx = np.unravel_index(np.argmax(brightness), brightness.shape)
     max_per_channel = np.max(frame_rgb, axis=(0, 1)) + 1e-6  # [max_R, max_G, max_B]
 
-    # 3. Нормализуем каждый канал по своему максимуму и умножаем на 255
     frame_normalized = (frame_rgb / max_per_channel) * 255.0
 
-    # 4. Ограничиваем диапазон и переводим обратно в uint8
-    frame_normalized = np.clip(frame_normalized, 0, 255).astype(np.uint8)
+    frame = np.clip(frame_normalized, 0, 255).astype(np.uint8)
     copyFrame = frame.copy()
     
     roi1 =  sensor_center_one.get_roi(frame).roi_frame
