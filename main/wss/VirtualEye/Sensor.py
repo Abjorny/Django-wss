@@ -305,17 +305,17 @@ class Sensor:
         return int(C_x), int(C_y)
     
     def readObject(self, frame_copy, frame):
-        self.checkIsTwo(frame_copy)
+        # self.checkIsTwo(frame_copy)
         roi = self.get_roi(frame_copy)
 
 
         green_result: Result = self.get_green(roi, frame)
-        blue_result: Result = self.get_blue(roi, frame)
-        red_result: Result = self.get_red(roi, frame)   
+        # blue_result: Result = self.get_blue(roi, frame)
+        # red_result: Result = self.get_red(roi, frame)   
         value = 1
 
 
-        if green_result.noblack != 0 and not self.isTwo :
+        if green_result.noblack != 0:
             green_x, green_y = green_result.x2_absolute , green_result.y2_absolute
             x, y = self.calculate_centroid()
             
@@ -329,41 +329,42 @@ class Sensor:
                 value = 34
         
         else:
-            if red_result.noblack !=0 and blue_result.noblack != 0:
-                delta_x = abs(red_result.x_center - blue_result.x_center)
-                delta_y = abs(red_result.y_center - blue_result.y_center)
-                if delta_x > delta_y:
-                    #вертикально
-                    if red_result.x1 > blue_result.x1:
-                        value = 53
-                    else:
-                        value = 51
-                else:
-                    #горизонтально
-                    if red_result.y1 > blue_result.y1:
-                        value = 52
-                    else:
-                        value = 54
+            value = 1
+            # if red_result.noblack !=0 and blue_result.noblack != 0:
+            #     delta_x = abs(red_result.x_center - blue_result.x_center)
+            #     delta_y = abs(red_result.y_center - blue_result.y_center)
+            #     if delta_x > delta_y:
+            #         #вертикально
+            #         if red_result.x1 > blue_result.x1:
+            #             value = 53
+            #         else:
+            #             value = 51
+            #     else:
+            #         #горизонтально
+            #         if red_result.y1 > blue_result.y1:
+            #             value = 52
+            #         else:
+            #             value = 54
             
-            elif  red_result.noblack !=0 and blue_result.noblack == 0:
+            # elif  red_result.noblack !=0 and blue_result.noblack == 0:
 
-                roi.roi_frame = roi.roi_frame[30:-30, 30:-30]
+            #     roi.roi_frame = roi.roi_frame[30:-30, 30:-30]
 
-                red_result = self.get_red(roi, frame_copy)
+            #     red_result = self.get_red(roi, frame_copy)
 
                 
-                if  red_result.w < red_result.h + 15 and not self.isTwo:
-                    value = 21
-                elif red_result.w > red_result.h and not self.isTwo:
-                        value = 22
-                elif red_result.w  <= red_result.h +15 and self.isTwo:
-                    value = 23
+            #     if  red_result.w < red_result.h + 15 and not self.isTwo:
+            #         value = 21
+            #     elif red_result.w > red_result.h and not self.isTwo:
+            #             value = 22
+            #     elif red_result.w  <= red_result.h +15 and self.isTwo:
+            #         value = 23
                 
-                elif  self.isTwo :
-                    value = 24
+            #     elif  self.isTwo :
+            #         value = 24
             
-            elif self.isTwo:
-                value = 41
+            # elif self.isTwo:
+            #     value = 41
 
         return value, self.isTwo
 
