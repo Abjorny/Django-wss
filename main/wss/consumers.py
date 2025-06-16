@@ -227,6 +227,8 @@ import os
 import cv2
 import time
 
+
+
 async def download():
     global sensor_center_one, sensor_center_left, sensor_center_right, sensor_center_two
     
@@ -297,6 +299,7 @@ def extract_features(image, target_size, hog_params):
 
 # model_data = load_model('hog_svm_model.pkl')
 model_data = None
+
 def predict_image_class(image_path):
     model = model_data['model']
     scaler = model_data['scaler']
