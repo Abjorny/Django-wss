@@ -25,7 +25,7 @@ def create_color_masks(img):
     
     return np.stack([red_mask, blue_mask, green_mask, white_mask, black_mask], axis=-1)
 
-def preprocess_image(img_path):
+def preprocess_image(img):
     img = cv2.resize(img, (224, 224))
     img = img.astype(np.float32) / 255.0
     
