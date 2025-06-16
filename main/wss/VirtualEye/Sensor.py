@@ -241,7 +241,7 @@ class Sensor:
         black_pixels = np.all(roi == [0, 0, 0], axis=-1)  
         roi[black_pixels] = [0, 0, 0]  
 
-        roi = self.enhance_roi_colors(roi)
+        # roi = self.enhance_roi_colors(roi)
         roi = Roi([roi, x, y, w, h])
 
         return roi

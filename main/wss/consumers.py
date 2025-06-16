@@ -340,9 +340,10 @@ async def read_data():
     int(value_center_two), confidence_two =  predict_image_classpredict(roi2)
     int(value_left), confidence_left =  predict_image_classpredict(roi3)
     int(value_right), confidence_right =  predict_image_classpredict(roi4)
+   
+    print(value_center_one, value_center_two, value_left, value_right)
     if value_center_one in [51, 52, 53, 54]:
         value_center_one, confidence_one =  predict_image_class(roi1)
-    
 
     if value_center_two in [51, 52, 53, 54]:
         value_center_two, confidence_two =  predict_image_class(roi2)
