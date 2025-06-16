@@ -21,7 +21,7 @@ from .WRO_Robot_Api.API.ObjectPoint.objectPoint import Message
 from skimage.feature import hog
 import joblib
 from pathlib import Path
-# from .tenser import predict
+from .tenser import predict_image_classpredict
 uartController = UartControllerAsync()
 logger = logging.getLogger(__name__)
 cap0 = cv2.VideoCapture(0)
@@ -336,10 +336,23 @@ async def read_data():
     roi3 =  sensor_center_left.get_roi(frame).roi_frame
     roi4 =  sensor_center_right.get_roi(frame).roi_frame
 
-    value_center_one,confidence_one =  predict_image_class(roi1)
-    value_center_two, confidence_two =  predict_image_class(roi2)
-    value_left, confidence_left =  predict_image_class(roi3)
-    value_right, confidence_right =  predict_image_class(roi4)
+    value_center_one,confidence_one =  predict_image_classpredict(roi1)
+    value_center_two, confidence_two =  predict_image_classpredict(roi2)
+    value_left, confidence_left =  predict_image_classpredict(roi3)
+    value_right, confidence_right =  predict_image_classpredict(roi4)
+
+    if value_center_one in [51, 52, 53, 54]:
+        value_center_one,confidence_one =  predict_image_class(roi1)
+    
+
+    if value_center_two in [51, 52, 53, 54]:
+        value_center_two, confidence_two =  predict_image_class(roi2)
+    
+    if value_left in [51, 52, 53, 54]:
+        value_left, confidence_left =  predict_image_class(roi3)
+    
+    if value_right in [51, 52, 53, 54]:
+        value_right, confidence_right =  predict_image_class(roi3)
 
     # value_center_one, isTwo = sensor_center_one.readObject(copyFrame, frame)
 
@@ -352,11 +365,11 @@ async def read_data():
     red_right = red_right_border.check_border(copyFrame, copyFrame)
     red_left = red_left_border.check_border(copyFrame, copyFrame)
     
-    # FrameUtilis.display_all_roi_sensors(
-    #     [sensor_center_one, sensor_center_two, red_front_border, red_left_border, red_right_border,
-    #     red_frontTwo_border, sensor_center_right, sensor_center_left], 
-    #     frame
-    # )
+    FrameUtilis.display_all_roi_sensors(
+        [sensor_center_one, sensor_center_two, red_front_border, red_left_border, red_right_border,
+        red_frontTwo_border, sensor_center_right, sensor_center_left], 
+        frame
+    )
 
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
     lower = np.array([latest_hsv["h_min"], latest_hsv["s_min"], latest_hsv["v_min"]])
