@@ -203,6 +203,20 @@ class Sensor:
         cv2.rectangle(frame_3d, (x_global, y_global), (x_global + result.w, y_global + result.h), (255, 0, 0), 2)
         return result
 
+    def enhance_roi_colors(self, roi_img):
+        roi = roi_img.astype(np.float32) / 255.0  
+
+        min_vals = roi.min(axis=(0, 1), keepdims=True)
+        max_vals = roi.max(axis=(0, 1), keepdims=True)
+        diff = max_vals - min_vals
+
+        diff[diff < 1e-5] = 1.0
+
+        roi = (roi - min_vals) / diff
+        roi = np.clip(roi * 255, 0, 255).astype(np.uint8)
+
+        return roi
+    
     def get_roi(self, frame):
         if self.isTwo:
             if self.robotTwo:
@@ -216,6 +230,7 @@ class Sensor:
                 box = self.mass
 
         self.mass_display = box
+        
         mask = np.zeros(frame.shape[:2], dtype=np.uint8)
         cv2.fillPoly(mask, [box], 255)  
         roi = cv2.bitwise_and(frame, frame, mask=mask)
@@ -225,7 +240,10 @@ class Sensor:
 
         black_pixels = np.all(roi == [0, 0, 0], axis=-1)  
         roi[black_pixels] = [0, 0, 0]  
+
+        roi = self.enhance_roi_colors(roi)
         roi = Roi([roi, x, y, w, h])
+
         return roi
     
     def get_roi_compress(self, frame):
