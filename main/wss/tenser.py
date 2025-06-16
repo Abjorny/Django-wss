@@ -16,7 +16,7 @@ def preprocess_image(img):
     img = img.astype(np.float32) / 255.0
     return np.expand_dims(img, axis=0)
 
-def predict(img):
+def predict_image_classpredict(img):
     input_data = preprocess_image(img)
     interpreter.set_tensor(input_details[0]['index'], input_data)
     interpreter.invoke()

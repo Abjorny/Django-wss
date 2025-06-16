@@ -297,8 +297,8 @@ def extract_features(image, target_size, hog_params):
 
     return np.hstack([hog_feat, color_hist])
 
-# model_data = load_model('hog_svm_model.pkl')
-model_data = None
+model_data = load_model('hog_svm_model.pkl')
+# model_data = None
 
 def predict_image_class(image_path):
     model = model_data['model']
@@ -336,10 +336,10 @@ async def read_data():
     roi3 =  sensor_center_left.get_roi(frame).roi_frame
     roi4 =  sensor_center_right.get_roi(frame).roi_frame
 
-    value_center_one,confidence_one =  predict(roi1)
-    value_center_two, confidence_two =  predict(roi2)
-    value_left, confidence_left =  predict(roi3)
-    value_right, confidence_right =  predict(roi4)
+    value_center_one,confidence_one =  predict_image_class(roi1)
+    value_center_two, confidence_two =  predict_image_class(roi2)
+    value_left, confidence_left =  predict_image_class(roi3)
+    value_right, confidence_right =  predict_image_class(roi4)
 
     # value_center_one, isTwo = sensor_center_one.readObject(copyFrame, frame)
 
