@@ -327,8 +327,22 @@ async def read_data():
     sensor_center_right.isTwo = False
 
     frame = get_frame_from_socket()
-    frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
+    frame_rgb = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
+    # 2. Найдём яркость каждого пикселя (можно по норме или по сумме каналов)
+    # Здесь — сумма каналов как простой способ оценки "яркости"
+    brightness = np.sum(frame_rgb, axis=2)  # shape: (H, W)
 
+    # 3. Найдём координаты самого яркого пикселя
+    max_idx = np.unravel_index(np.argmax(brightness), brightness.shape)
+    max_pixel = frame_rgb[max_idx]  # RGB значения самого яркого пикселя
+
+    # 4. Нормализуем изображение по значению самого яркого пикселя
+    # Чтобы пиксели были в диапазоне [0, 1] относительно max_pixel
+    max_pixel = max_pixel.astype(np.float32)
+    frame_normalized = frame_rgb.astype(np.float32) / (max_pixel + 1e-6)  # предотвращаем деление на 0
+
+    # 5. (Опционально) обрезаем значения, если вдруг выше 1.0
+    frame = np.clip(frame_normalized, 0.0, 1.0)
     copyFrame = frame.copy()
     
     roi1 =  sensor_center_one.get_roi(frame).roi_frame
