@@ -327,10 +327,10 @@ async def read_data():
     sensor_center_right.isTwo = False
 
     frame = get_frame_from_socket()
-    frame_rgb = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
+    frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     brightness = np.sum(frame_rgb, axis=2)
     max_idx = np.unravel_index(np.argmax(brightness), brightness.shape)
-    max_per_channel = np.max(frame_rgb, axis=(0, 1)) + 1e-6  # [max_R, max_G, max_B]
+    max_per_channel = np.max(frame_rgb, axis=(0, 1)) + 1e-6 
 
     frame_normalized = (frame_rgb / max_per_channel) * 255.0
 
