@@ -330,9 +330,9 @@ async def read_data():
     frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
     roi_delta = sensor_center_one.get_roi(frame).roi_frame
     # Получаем максимумы по каналам
-    max_r = np.max(roi_delta[:, :, 0])
+    max_b = np.max(roi_delta[:, :, 0])
     max_g = np.max(roi_delta[:, :, 1])
-    max_b = np.max(roi_delta[:, :, 2]) 
+    max_r = np.max(roi_delta[:, :, 2]) 
     print(max_r, max_g, max_b)
     # Нормализуем каждый канал отдельно
     frame[:, :, 0] = (frame[:, :, 0] / max_r) * 255.0  # R
