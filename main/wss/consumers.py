@@ -325,13 +325,14 @@ async def read_data():
     sensor_center_two.isTwo = False
     sensor_center_left.isTwo = False
     sensor_center_right.isTwo = False
+
+    frame = get_frame_from_socket() 
     lab = cv2.cvtColor(frame, cv2.COLOR_BGR2LAB)
     l, a, b = cv2.split(lab)
     clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
     l = clahe.apply(l)  # Улучшаем яркость (L-канал)
     lab = cv2.merge((l, a, b))
     frame = cv2.cvtColor(lab, cv2.COLOR_LAB2BGR)
-    frame = get_frame_from_socket() 
     copyFrame = frame.copy()
 
     roi1 =  sensor_center_one.get_roi(frame).roi_frame
