@@ -314,7 +314,7 @@ def predict_image_class(image_path):
     class_pred = model.predict(features_scaled)[0]
     proba = model.predict_proba(features_scaled)[0]
     
-    return class_pred, dict(zip(model.classes_, proba))
+    return class_pred, 1.0
 
 async def read_data():
     global lib_hsv, sensor_center_one, sensor_center_left, sensor_center_right,\
