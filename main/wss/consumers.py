@@ -333,7 +333,7 @@ async def read_data():
     max_r = np.max(frame_rgb[:, :, 0]) + 1e-6
     max_g = np.max(frame_rgb[:, :, 1]) + 1e-6
     max_b = np.max(frame_rgb[:, :, 2]) + 1e-6
-
+    print(max_r, max_g, max_b)
     # Нормализуем каждый канал отдельно
     frame_rgb[:, :, 0] = (frame_rgb[:, :, 0] / max_r) * 255.0  # R
     frame_rgb[:, :, 1] = (frame_rgb[:, :, 1] / max_g) * 255.0  # G
