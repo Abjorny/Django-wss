@@ -21,7 +21,7 @@ from .WRO_Robot_Api.API.ObjectPoint.objectPoint import Message
 from skimage.feature import hog
 import joblib
 from pathlib import Path
-from .tenser import predict
+# from .tenser import predict
 uartController = UartControllerAsync()
 logger = logging.getLogger(__name__)
 cap0 = cv2.VideoCapture(0)
