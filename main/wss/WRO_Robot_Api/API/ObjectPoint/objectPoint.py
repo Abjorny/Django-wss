@@ -16,10 +16,10 @@ class Message:
         self.redFront = data['redFront']
         self.redFrontTwo = data['redFrontTwo']
 
-        self.cofOne = data['cofOne']
-        self.cofTwo = data['cofTwo']
-        self.cofThree = data['cofThree']
-        self.cofFour = data['cofFour']
+        self.cofOne = data.get('cofOne', 1)
+        self.cofTwo = data.get('cofTwo', 1)
+        self.cofThree = data.get('cofThree', 1)
+        self.cofFour = data.get('cofFour', 1)
         
 async def get_message_once():
     uri = "ws://127.0.0.1:4000/ws/api/get_image"
