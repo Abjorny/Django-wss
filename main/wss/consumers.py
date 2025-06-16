@@ -328,17 +328,16 @@ async def read_data():
 
     frame = get_frame_from_socket() 
     frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
-    roi = sensor_center_one.get_roi(frame).roi_frame.astype(np.float32)
+    roi = sensor_center_one.get_roi(frame).roi_frame
 
     max_b = np.max(roi[:, :, 0])
     max_g = np.max(roi[:, :, 1]) 
     max_r = np.max(roi[:, :, 2]) 
 
-    frame[:, :, 2] = (frame[:, :, 0] / max_b) * 255.0 
+    frame[:, :, 0] = (frame[:, :, 0] / max_b) * 255.0 
     frame[:, :, 1] = (frame[:, :, 1] / max_g) * 255.0  
-    frame[:, :, 0] = (frame[:, :, 2] / max_r) * 255.0  # Red
+    frame[:, :, 2] = (frame[:, :, 2] / max_r) * 255.0
 
-    # frame = np.clip(frame, 0, 255).astype(np.uint8)
     copyFrame = frame.copy()
     roi1 =  sensor_center_one.get_roi(frame).roi_frame
     roi2 =  sensor_center_two.get_roi(frame).roi_frame
