@@ -447,12 +447,12 @@ class RobotPoint(objectPoint):
             else:
                 print("Сбой направление")
 
-        print([self.switchValue(object.valueOne, napr), object.valueOne,], [self.switchValue(object.valueTwo, napr), object.valueTwo], napr, [object.redLeft, object.redRight, object.redFront, object.redFrontTwo], "\n", [self.x, self.y])
+            print([self.switchValue(object.valueOne, napr), object.valueOne,], [self.switchValue(object.valueTwo, napr), object.valueTwo], napr, [object.redLeft, object.redRight, object.redFront, object.redFrontTwo], "\n", [self.x, self.y])
 
-        print("Карта")
-        for row in self.mapArray:
-            print(row)       
-        self.setRobot()
+            print("Карта")
+            for row in self.mapArray:
+                print(row)       
+            self.setRobot()
 
 
     def __str__(self):
