@@ -11,28 +11,10 @@ interpreter.allocate_tensors()
 input_details = interpreter.get_input_details()
 output_details = interpreter.get_output_details()
 
-def create_color_masks(img):
-    r, g, b = img[..., 0], img[..., 1], img[..., 2]
-    sum_rgb = r + g + b + 1e-7
-    
-    r_norm, g_norm, b_norm = r/sum_rgb, g/sum_rgb, b/sum_rgb
-    
-    red_mask = ((r_norm > 0.45) & (g_norm < 0.35) & (b_norm < 0.35)).astype(np.float32)
-    blue_mask = ((b_norm > 0.45) & (r_norm < 0.35)).astype(np.float32)
-    green_mask = ((g_norm > 0.4) & (r_norm < 0.35) & (b_norm < 0.35)).astype(np.float32)
-    white_mask = ((r > 0.8) & (g > 0.8) & (b > 0.8)).astype(np.float32)
-    black_mask = ((r < 0.2) & (g < 0.2) & (b < 0.2)).astype(np.float32)
-    
-    return np.stack([red_mask, blue_mask, green_mask, white_mask, black_mask], axis=-1)
-
-def preprocess_image(img_path):
-    img = cv2.resize(img, (224, 224))
+def preprocess_image(img):
+    img = cv2.resize(img, IMAGE_SIZE)
     img = img.astype(np.float32) / 255.0
-    
-    masks = create_color_masks(img)
-    return masks[np.newaxis, ...] 
-
-
+    return np.expand_dims(img, axis=0)
 
 def predict(img):
     input_data = preprocess_image(img)
