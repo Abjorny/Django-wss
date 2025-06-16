@@ -340,8 +340,8 @@ async def read_data():
     frame_rgb[:, :, 2] = (frame_rgb[:, :, 2] / max_b) * 255.0  # B
 
     # Ограничим и приведём к uint8
-    frame_normalized = np.clip(frame_rgb, 0, 255).astype(np.uint8)
-    
+    frame = np.clip(frame_rgb, 0, 255).astype(np.uint8)
+    copyFrame = frame.copy()
     roi1 =  sensor_center_one.get_roi(frame).roi_frame
     roi2 =  sensor_center_two.get_roi(frame).roi_frame
     roi3 =  sensor_center_left.get_roi(frame).roi_frame
