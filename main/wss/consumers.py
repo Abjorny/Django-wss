@@ -327,6 +327,7 @@ async def read_data():
     sensor_center_right.isTwo = False
 
     frame = get_frame_from_socket() 
+    frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
     lab = cv2.cvtColor(frame, cv2.COLOR_BGR2LAB)
     l, a, b = cv2.split(lab)
     clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
