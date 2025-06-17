@@ -297,9 +297,13 @@ def extract_features(image, target_size, hog_params):
 
     return np.hstack([hog_feat, color_hist])
 
-model_data = load_model('cascade_model.pkl')
-# model_data = None
-
+# model_data = load_model('cascade_model.pkl')
+model_data = None
+data = joblib.load('cascade_model.pkl')
+svm_shape = data['svm_shape']
+svm_refine = data['svm_refine']
+scaler_hog = data['scaler_hog']
+scaler_color = data['scaler_color']
 def extract_hog_features(image, target_size, hog_params):
     image_resized = cv2.resize(image, target_size, interpolation=cv2.INTER_AREA)
     gray = cv2.cvtColor(image_resized, cv2.COLOR_BGR2GRAY)
@@ -350,11 +354,6 @@ def extract_full_features(image, target_size, hog_params):
     return hog_feat, color_spatial_feat
 
 def predict_image_class(image_path):
-    svm_shape = model_data['svm_shape']
-    svm_refine = model_data['svm_refine']
-    scaler_hog = model_data['scaler_hog']
-    scaler_color = model_data['scaler_color']
-
     hog_params = {
         'orientations': 9,
         'pixels_per_cell': (16, 16),
@@ -369,6 +368,7 @@ def predict_image_class(image_path):
         raise ValueError("Не удалось загрузить изображение.")
 
     hog_feat, color_feat = extract_full_features(img, target_size, hog_params)
+
 
     color_scaled = scaler_color.transform(color_feat.reshape(1, -1))
     pred_label = svm_refine.predict(color_scaled)[0]
