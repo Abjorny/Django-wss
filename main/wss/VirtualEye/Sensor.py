@@ -374,7 +374,7 @@ class RedSensor(Sensor):
         roi: Roi = self.get_roi(frame)
         result: Result = self.get_red(roi, frame_3d)
         isBorder = False
-        if  roi.w * roi.h / result.w * result.h * 100 > 90:
+        if result.w * result.h > 0 and roi.w * roi.h / result.w * result.h * 100 > 90:
             isBorder = True
 
         return isBorder
