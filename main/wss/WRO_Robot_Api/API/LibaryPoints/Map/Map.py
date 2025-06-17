@@ -32,10 +32,11 @@ class Map:
         command = int(command)
 
         if command == 40:
-            self.robot.turnLeft()
+            self.robot.turnRight()
 
         elif command == 30:
-            self.robot.turnRight()
+            self.robot.turnLeft()
+            
         
         elif command == 50:
             self.robot.turnRightFull()
