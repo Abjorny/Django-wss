@@ -297,24 +297,83 @@ def extract_features(image, target_size, hog_params):
 
     return np.hstack([hog_feat, color_hist])
 
-model_data = load_model('hog_svm_model.pkl')
+model_data = load_model('cascade_model.pkl')
 # model_data = None
 
-def predict_image_class(image_path):
-    model = model_data['model']
-    scaler = model_data['scaler']
-    hog_params = model_data['hog_params']
-    target_size = model_data['target_size']
-    
-    img = image_path
+def extract_hog_features(image, target_size, hog_params):
+    image_resized = cv2.resize(image, target_size, interpolation=cv2.INTER_AREA)
+    gray = cv2.cvtColor(image_resized, cv2.COLOR_BGR2GRAY)
+    return hog(gray, **hog_params)
 
-    features = extract_features(img, target_size, hog_params).reshape(1, -1)
-    features_scaled = scaler.transform(features)
-    
-    class_pred = model.predict(features_scaled)[0]
-    proba = model.predict_proba(features_scaled)[0]
-    
-    return class_pred, 1.0
+def extract_color_histograms(hsv_image, bins=32):
+    h_hist = cv2.calcHist([hsv_image], [0], None, [bins], [0, 180])
+    s_hist = cv2.calcHist([hsv_image], [1], None, [bins], [0, 256])
+    h_hist = cv2.normalize(h_hist, h_hist).flatten()
+    s_hist = cv2.normalize(s_hist, s_hist).flatten()
+    return np.hstack([h_hist, s_hist])
+
+def extract_lab_histograms(image, bins=32):
+    lab = cv2.cvtColor(image, cv2.COLOR_BGR2LAB)
+    l_hist = cv2.calcHist([lab], [0], None, [bins], [0, 256])
+    a_hist = cv2.calcHist([lab], [1], None, [bins], [0, 256])
+    b_hist = cv2.calcHist([lab], [2], None, [bins], [0, 256])
+    l_hist = cv2.normalize(l_hist, l_hist).flatten()
+    a_hist = cv2.normalize(a_hist, a_hist).flatten()
+    b_hist = cv2.normalize(b_hist, b_hist).flatten()
+    return np.hstack([l_hist, a_hist, b_hist])
+
+def extract_spatial_features(image, size=(16, 16)):
+    small_img = cv2.resize(image, size, interpolation=cv2.INTER_AREA)
+    return small_img.flatten()
+
+def extract_full_features(image, target_size, hog_params):
+    image_resized = cv2.resize(image, target_size, interpolation=cv2.INTER_AREA)
+
+    # HOG
+    gray = cv2.cvtColor(image_resized, cv2.COLOR_BGR2GRAY)
+    hog_feat = hog(gray, **hog_params)
+
+    # HSV + CLAHE
+    hsv = cv2.cvtColor(image_resized, cv2.COLOR_BGR2HSV)
+    clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
+    hsv[:, :, 2] = clahe.apply(hsv[:, :, 2])
+    hsv_hist = extract_color_histograms(hsv)
+
+    # LAB
+    lab_hist = extract_lab_histograms(image_resized)
+
+    # Spatial
+    spatial_feat = extract_spatial_features(image_resized)
+
+    color_spatial_feat = np.hstack([hsv_hist, lab_hist, spatial_feat])
+
+    return hog_feat, color_spatial_feat
+
+def predict_image_class(image_path):
+    svm_shape = model_data['svm_shape']
+    svm_refine = model_data['svm_refine']
+    scaler_hog = model_data['scaler_hog']
+    scaler_color = model_data['scaler_color']
+
+    hog_params = {
+        'orientations': 9,
+        'pixels_per_cell': (16, 16),
+        'cells_per_block': (2, 2),
+        'transform_sqrt': True,
+        'block_norm': 'L2-Hys'
+    }
+    target_size = (224, 224)
+
+    img = cv2.imread(image_path)
+    if img is None:
+        raise ValueError("Не удалось загрузить изображение.")
+
+    hog_feat, color_feat = extract_full_features(img, target_size, hog_params)
+
+    color_scaled = scaler_color.transform(color_feat.reshape(1, -1))
+    pred_label = svm_refine.predict(color_scaled)[0]
+
+    return pred_label, 1.0
 
 async def read_data():
     global lib_hsv, sensor_center_one, sensor_center_left, sensor_center_right,\
