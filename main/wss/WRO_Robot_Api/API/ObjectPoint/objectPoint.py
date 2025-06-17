@@ -117,7 +117,7 @@ class RobotPoint(objectPoint):
 
     def turnLeft(self):
         print('Лево под 90', self.napr, [self.y, self.x])
-        self.uart.sendValueAndWait(30)
+        self.uart.sendValueAndWait(40)
         self.napr = self.napr - 1
         if self.napr < 1:
             self.napr = 4
