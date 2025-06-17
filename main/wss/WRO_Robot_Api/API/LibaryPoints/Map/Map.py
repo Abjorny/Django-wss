@@ -26,15 +26,15 @@ class Map:
         cv2.waitKey()
 
     def tracerCommand(self,  command):
-        
+        command = int(command)
         key_command = int(str(command)[0])
         value_command = int(str(command)[1:])
-        command = int(command)
 
-        if command == 40:
+
+        if command == 30:
             self.robot.turnRight()
 
-        elif command == 30:
+        elif command == 40:
             self.robot.turnLeft()
             
         
