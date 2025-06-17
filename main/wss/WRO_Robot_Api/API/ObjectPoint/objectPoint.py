@@ -108,6 +108,7 @@ class RobotPoint(objectPoint):
         self.setRobot()
         
     def turnRight(self):
+        print('Право под 90', self.napr, [self.y, self.x])
         self.uart.sendValueAndWait(30)
         self.napr = self.napr + 1
         if self.napr> 4:
@@ -115,6 +116,7 @@ class RobotPoint(objectPoint):
         # time.sleep(2)
 
     def turnLeft(self):
+        print('Лево под 90', self.napr, [self.y, self.x])
         self.uart.sendValueAndWait(30)
         self.napr = self.napr - 1
         if self.napr < 1:
@@ -123,6 +125,7 @@ class RobotPoint(objectPoint):
         # time.sleep(2)
     
     def turnRightFull(self):
+        print('Право под 180', self.napr, [self.y, self.x])
         self.uart.sendValueAndWait(50)
         if self.napr ==  1:
             self.napr = 3
@@ -136,6 +139,7 @@ class RobotPoint(objectPoint):
         # time.sleep(2)
     
     def turnLeftFull(self):
+        print('Лево под 180', self.napr, [self.y, self.x])
         self.uart.sendValueAndWait(50)
         if self.napr ==  1:
             self.napr = 3
