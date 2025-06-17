@@ -104,6 +104,7 @@ class RobotPoint(objectPoint):
         self.value = 6
         self.value_pod = 1
 
+        self.two_lear =  [41, 51, 52, 53, 54, 23, 24]
         self.setRobot()
         
     def turnRight(self):
@@ -337,115 +338,126 @@ class RobotPoint(objectPoint):
             y = self.y
             x = self.x
             print(x, y)
+
             valueLeft = self.switchValue(object.valueLeft, napr)
             valueRight = self.switchValue(object.valueRight, napr)
             valueCenterOne = self.switchValue(object.valueOne, napr)
             valueCenterTwo = self.switchValue(object.valueTwo, napr)
 
             if napr == 1:
-                self.check_null_to_write(x, y - 1, valueCenterOne)
+                if object.redFront:
+                    for x1 in range (len(self.mapArray[y - 1])):
+                        self.mapArray[y - 1][x1] = -1
+                else:
+                    if object.redFrontTwo and\
+                        valueCenterOne not in  self.two_lear:
+                        for x1 in range (len(self.mapArray[y - 2])):
+                            self.mapArray[y - 2][x1] = -1
+
+                    self.check_null_to_write(x, y - 1, valueCenterOne)
+
+                    if valueCenterOne not in [41, 23, 24]:
+                        self.check_null_to_write(x, y - 2, valueCenterTwo)
+
+
+                    if object.redLeft == False:
+                        self.check_null_to_write(x - 1, y , valueLeft)
+                    else:
+                        for row in self.mapArray:
+                            row[x-1] = -1
+                    
+                    if object.redRight == False:
+                        self.check_null_to_write(x + 1, y , valueRight)
+                    else:
+                        for row in self.mapArray:
+                            print(row, x+1, self.x)
+                            row[x+1] = -1
+
+            elif napr == 3:
+                if object.redFront:
+                    for x1 in range (len(self.mapArray[y + 1])):
+                        self.mapArray[y + 1][x1] = -1
+                else:
+                    if object.redFrontTwo and valueCenterOne not in self.two_lear:
+                        for x1 in range (len(self.mapArray[y + 2])):
+                            self.mapArray[y + 2][x1] = -1
                 
-                if object.redFrontTwo:
-                    for x1 in range (len(self.mapArray[y - 3])):
-                        self.mapArray[y - 3][x1] = -1
+                    self.check_null_to_write(x, y + 1, valueCenterOne)
+                   
+                    if valueCenterOne not in [41, 23, 24]:
+                        self.check_null_to_write(x, y + 2, valueCenterTwo)
 
-                if object.redFront == False and valueCenterOne not in [41, 23, 24]:
-                    self.check_null_to_write(x, y - 2, valueCenterTwo)
-                else:
-                    for x1 in range (len(self.mapArray[y - 2])):
-                        self.mapArray[y - 2][x1] = -1
-
-                if object.redLeft == False:
-                    self.check_null_to_write(x - 1, y , valueLeft)
-                else:
-                    for row in self.mapArray:
-
-                        row[x-1] = -1
                 
-                if object.redRight == False:
-                    self.check_null_to_write(x + 1, y , valueRight)
-                else:
-                    for row in self.mapArray:
-                        print(row, x+1, self.x)
-                        row[x+1] = -1
-
-            elif napr == 3 and valueCenterOne not in [41, 23, 24]:
-                self.check_null_to_write(x, y + 1, valueCenterOne)
-
-                if object.redFrontTwo:
-                    for x1 in range (len(self.mapArray[y + 3])):
-                        self.mapArray[y + 3][x1] = -1
-
-                if object.redFront == False:
-                    self.check_null_to_write(x, y + 2, valueCenterTwo)
-                else:
-                    for x1 in range (len(self.mapArray[y + 2])):
-                        self.mapArray[y + 2][x1] = -1
-                
-                if object.redLeft == False:
-                    self.check_null_to_write(x + 1, y , valueLeft)
-                else:
-                    for row in self.mapArray:
-                        row[x + 1] = -1
-                if object.redRight == False:
-                    self.check_null_to_write(x - 1, y , valueRight) 
-                else:
+                    if object.redLeft == False:
+                        self.check_null_to_write(x + 1, y , valueLeft)
+                    else:
+                        for row in self.mapArray:
+                            row[x + 1] = -1
+                    if object.redRight == False:
+                        self.check_null_to_write(x - 1, y , valueRight) 
+                    else:
                     for row in self.mapArray:
                         row[x - 1] = -1      
 
-            elif napr == 2 and valueCenterOne not in [41, 23, 24]:
-                self.check_null_to_write(x + 1, y, valueCenterOne)
-                if object.redFrontTwo:
+            elif napr == 2 :
+                if object.redFront:
                     for row in self.mapArray:
-                        row[x + 3] = -1  
-
-                if object.redFront == False:
-                    self.check_null_to_write(x + 2, y, valueCenterTwo)
+                        row[x + 1] = -1  
                 else:
-                    for row in self.mapArray:
-                        row[x + 2] = -1  
 
-                if object.redLeft == False:
-                    self.check_null_to_write(x, y - 1 , valueLeft)
-                else:
-                    for x1 in range (len(self.mapArray[y - 1])):
-                        self.mapArray[y - 1][x1] = -1
+                    if object.redFrontTwo and\
+                        valueCenterOne not in self.two_lear:
+                        for row in self.mapArray:
+                            row[x + 2] = -1  
 
-                if object.redRight == False:
-                    self.check_null_to_write(x, y + 1 , valueRight)
-                else:
+                    self.check_null_to_write(x + 1, y, valueCenterOne)
+                    if valueCenterOne not in [41, 23, 24]:
+                        self.check_null_to_write(x + 2, y, valueCenterTwo)
+
+
+                    if object.redLeft == False:
+                        self.check_null_to_write(x, y - 1 , valueLeft)
+                    else:
+                        for x1 in range (len(self.mapArray[y - 1])):
+                            self.mapArray[y - 1][x1] = -1
+
+                    if object.redRight == False:
+                        self.check_null_to_write(x, y + 1 , valueRight)
+                    else:
                     for x1 in range (len(self.mapArray[y + 1])):
                         self.mapArray[y + 1][x1] = -1
 
-            elif napr == 4 and valueCenterOne not in [41, 23, 24]:
-                self.check_null_to_write(x - 1, y, valueCenterOne)
-                
-                if object.redFrontTwo:
+            elif napr == 4 :
+                if object.redFront:
                     for row in self.mapArray:
-                        row[x - 3] = -1  
+                        row[x - 1] = -1  
+                else:
+                    if object.redFrontTwo:
+                        for row in self.mapArray and\
+                        valueCenterOne not in  self.two_lear:
+                            row[x - 2] = -1  
 
-                if object.redFront == False:
-                    self.check_null_to_write(x - 2, y, valueCenterTwo)
-                else:
-                    for row in self.mapArray:
-                        row[x - 2] = -1  
+                    self.check_null_to_write(x - 1, y, valueCenterOne)
+                    if valueCenterOne not in [41, 23, 24]:
+                        self.check_null_to_write(x - 2, y, valueCenterTwo)
 
-                if object.redLeft == False:
-                    self.check_null_to_write(x, y + 1 , valueLeft)
-                else:
-                    for x1 in range (len(self.mapArray[y + 1])):
-                        self.mapArray[y + 1][x1] = -1
-                
-                if object.redRight == False:
-                    self.check_null_to_write(x, y - 1 , valueRight)  
-                else:
+
+                    if object.redLeft == False:
+                        self.check_null_to_write(x, y + 1 , valueLeft)
+                    else:
+                        for x1 in range (len(self.mapArray[y + 1])):
+                            self.mapArray[y + 1][x1] = -1
+                    
+                    if object.redRight == False:
+                        self.check_null_to_write(x, y - 1 , valueRight)  
+                    else:
                     for x1 in range (len(self.mapArray[y - 1])):
                         self.mapArray[y - 1][x1] = -1
             
        
             
             else:
-                print("Сбой направление")
+                print("Сбой направление", napr)
 
             print([self.switchValue(object.valueOne, napr), object.valueOne,], [self.switchValue(object.valueTwo, napr), object.valueTwo], napr, [object.redLeft, object.redRight, object.redFront, object.redFrontTwo], "\n", [self.x, self.y])
 
