@@ -353,7 +353,7 @@ def extract_full_features(image, target_size, hog_params):
 
     return hog_feat, color_spatial_feat
 
-def predict_image_class(image_path):
+def predict_image_class(img):
     hog_params = {
         'orientations': 9,
         'pixels_per_cell': (16, 16),
@@ -363,7 +363,6 @@ def predict_image_class(image_path):
     }
     target_size = (224, 224)
 
-    img = cv2.imread(image_path)
     if img is None:
         raise ValueError("Не удалось загрузить изображение.")
 
