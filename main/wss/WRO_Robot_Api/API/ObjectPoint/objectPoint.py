@@ -430,6 +430,7 @@ class RobotPoint(objectPoint):
                     for row in self.mapArray:
                         row[x - 1] = -1  
                 else:
+                    print(self.mapArray, valueCenterOne, object.redFrontTwo)
                     if object.redFrontTwo:
                         for row in self.mapArray and valueCenterOne not in  self.two_lear:
                             row[x - 2] = -1  
