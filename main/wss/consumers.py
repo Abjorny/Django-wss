@@ -400,20 +400,6 @@ async def read_data():
     value_right, confidence_right =  predict_image_classpredict(roi4)
 
 
-    # if value_center_one in [51, 52, 53, 54]:
-    #     value_center_one, confidence_one =  predict_image_class(roi1)
-    
-
-    # if value_center_two in [51, 52, 53, 54]:
-    #     value_center_two, confidence_two =  predict_image_class(roi2)
-    
-    # if value_left in [51, 52, 53, 54]:
-    #     value_left, confidence_left =  predict_image_class(roi3)
-    
-    # if value_right in [51, 52, 53, 54]:
-    #     value_right, confidence_right =  predict_image_class(roi3)
-    
-    
     if value_center_one in [31, 32, 33, 34]:
         value_center_one, confidence_one =  sensor_center_one.readObject(copyFrame, frame)
     
