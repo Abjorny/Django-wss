@@ -466,7 +466,7 @@ class RobotPoint(objectPoint):
                 print("Сбой направление", napr)
 
             print(napr, [object.redLeft, object.redRight, object.redFront, object.redFrontTwo], "\n", [self.x, self.y])
-            print([self.switchValue(object.valueOne, napr), object.valueOne, '\n', [self.switchValue(object.valueTwo, napr), object.valueTwo], '\n', [self.switchValue(object.valueLeft, napr), object.valueLeft], [self.switchValue(object.valueRight, napr), object.valueRight]])
+            print([self.switchValue(object.valueOne, napr), object.valueOne, '\n', [self.switchValue(object.valueTwo, napr), object.valueTwo], '\n', [self.switchValue(object.valueLeft, napr), object.valueLeft],'\n', [self.switchValue(object.valueRight, napr), object.valueRight]])
             print("Карта")
             for row in self.mapArray:
                 print(row)       
