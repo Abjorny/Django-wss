@@ -331,13 +331,13 @@ class Sensor:
         elif  red_result.noblack != 0:
 
 
-            if  red_result.w < red_result.h  and value in [21 , 22]:
+            if  red_result.w < red_result.h + 15  and value in [21 , 22]:
                 value = 21
             
-            elif red_result.w > red_result.h and value in [21 , 22]:
+            elif red_result.w > red_result.h + 15 and value in [21 , 22]:
                 value = 22
             
-            elif red_result.w  <= red_result.h :
+            elif red_result.w  <= red_result.h + 15:
                 value = 23
             
             else  :
