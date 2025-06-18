@@ -104,6 +104,7 @@ class RobotPoint(objectPoint):
         self.value = 6
         self.value_pod = 1
 
+        self.reds = 0
         self.two_lear =  [41, 51, 52, 53, 54, 23, 24]
         self.setRobot()
         
@@ -349,14 +350,16 @@ class RobotPoint(objectPoint):
             valueCenterTwo = self.switchValue(object.valueTwo, napr)
 
             if napr == 1:
-                if object.redFront:
+                if object.redFront and self.reds < 4:
+                    self.reds += 2
                     for x1 in range (len(self.mapArray[y - 1])):
                         self.mapArray[y - 1][x1] = -1
                         self.mapArray[y + 7][x1] = -1
                 else:
-                    if object.redFrontTwo and valueCenterOne not in  self.two_lear:
+                    if object.redFrontTwo and valueCenterOne not in  self.two_lear and self.reds < 4:
                         for x1 in range (len(self.mapArray[y - 2])):
                             self.mapArray[y - 2][x1] = -1
+                            self.mapArray[y + 6][x1] = -1
 
                     self.check_null_to_write(x, y - 1, valueCenterOne)
 
