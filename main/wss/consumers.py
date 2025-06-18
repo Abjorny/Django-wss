@@ -413,16 +413,16 @@ async def read_data():
 
 
     if value_center_one in [31, 32, 33, 34, 23, 24]:
-        value_center_one, confidence_one =  sensor_center_one.readObject(copyFrame, frame)
+        value_center_one, confidence_one =  sensor_center_one.readObject(copyFrame, frame, value_center_one)
     
     if value_center_two in [31, 32, 33, 34, 23, 24]:
-        value_center_two, confidence_two = sensor_center_two.readObject(copyFrame, frame)
+        value_center_two, confidence_two = sensor_center_two.readObject(copyFrame, frame, value_center_two)
     
     if value_left in [31, 32, 33, 34, 23, 24]:
-        value_left, confidence_left = sensor_center_left.readObject(copyFrame, frame)
+        value_left, confidence_left = sensor_center_left.readObject(copyFrame, frame, value_left)
     
     if value_right in [31, 32, 33, 34, 23, 24]:
-        value_right, confidence_right = sensor_center_right.readObject(copyFrame, frame)
+        value_right, confidence_right = sensor_center_right.readObject(copyFrame, frame, value_right)
 
 
 

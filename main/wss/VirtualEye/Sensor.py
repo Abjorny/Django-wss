@@ -304,14 +304,14 @@ class Sensor:
 
         return int(C_x), int(C_y)
     
-    def readObject(self, frame_copy, frame):
+    def readObject(self, frame_copy, frame, value ):
         # self.checkIsTwo(frame_copy)
         roi = self.get_roi(frame_copy)
 
 
         green_result: Result = self.get_green(roi, frame)
         # blue_result: Result = self.get_blue(roi, frame)
-        # red_result: Result = self.get_red(roi, frame)   
+        red_result: Result = self.get_red(roi, frame)   
         value = 1
 
 
@@ -327,7 +327,24 @@ class Sensor:
             
             elif green_x < x and green_y > y:
                 value = 34
-        
+                    
+            elif  red_result.noblack != 0:
+
+
+                red_result = self.get_red(roi, frame_copy)
+
+                
+                if  red_result.w < red_result.h  and value in [21 , 22]:
+                    value = 21
+                
+                elif red_result.w > red_result.h and value in [21 , 22]:
+                    value = 22
+                
+                elif red_result.w  <= red_result.h :
+                    value = 23
+                
+                elif  self.isTwo :
+                    value = 24
         else:
             value = 1
             # if red_result.noblack !=0 and blue_result.noblack != 0:
