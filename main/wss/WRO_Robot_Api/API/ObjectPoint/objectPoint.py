@@ -93,8 +93,10 @@ class RobotPoint(objectPoint):
         
         self.x = x
         self.y = y
+        
         self.napr = 1
         self.value = 6
+        self.inv = 0
         
         self.uart = UartController()
         self.left = 0

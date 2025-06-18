@@ -305,12 +305,10 @@ class Sensor:
         return int(C_x), int(C_y)
     
     def readObject(self, frame_copy, frame, value ):
-        # self.checkIsTwo(frame_copy)
         roi = self.get_roi(frame_copy)
 
 
         green_result: Result = self.get_green(roi, frame)
-        # blue_result: Result = self.get_blue(roi, frame)
         red_result: Result = self.get_red(roi, frame)   
         value = 1
 

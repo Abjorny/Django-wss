@@ -61,19 +61,9 @@ def get_priority(cords, libary: LibryPoints):
                     count += 1
 
         if count != 0:
-            # patch = mainUtilis.get_patch_target(this_point, libary)
-            # if patch is None:
-            #     return None
-            # lt = 0
-            # for command in patch:
-            #     key_command = int(str(command)[0])
-            #     value_command = int(str(command)[1:])
-            #     if key_command == 1:
-            #         lt += value_command
-            #     else:
-            #         lt +=1
+
             data = {
-                count: [x, y]
+                count: [x, y, this_point.value]
             }
 
             return data
@@ -88,6 +78,8 @@ def getPatchPriority(priorityList: list, libary: LibryPoints):
 
 
     target_point = objectPoint(x,y,libary.maper.mapArray[y][x])
+
+
     comands = mainUtilis.get_patch_target(target_point, libary)
     
     print (f"Робот едет на точку с x: {x}, y: {y} ее значение {target_point.value}")
@@ -120,8 +112,22 @@ while 1:
                     priorityList.append(
                         priority,
                     )
-  
-    priorityList_sorted = sorted(priorityList, key=lambda d: list(d.keys())[0], reverse = True)
+    if robotObject.value_pod == 41:
+        priorityList_sorted = sorted(
+            priorityList,
+            key=lambda d: (
+                0 if list(d.values())[0]['value'] == 41 else 1,   # приоритет значения 41
+                -ord(list(d.keys())[0][0])                        # сортировка по ключу (например, по первой букве, в обратном порядке)
+            )
+        )   
+    else:
+        priorityList_sorted = sorted(
+            priorityList,
+            key=lambda d: (
+                1 if list(d.values())[0]['value'] == 41 else 0,   # приоритет значения 41
+                -ord(list(d.keys())[0][0])                        # сортировка по ключу (например, по первой букве, в обратном порядке)
+            )
+        )   
     getPatchPriority(priorityList_sorted, libary)
     
     robotObject.left = 0
