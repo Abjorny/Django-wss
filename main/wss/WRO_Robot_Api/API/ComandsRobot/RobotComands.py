@@ -30,9 +30,13 @@ def FormatedComands(patch: Patch, libary: LibryPoints) -> list:
         next_point = points[i + 1] if i + 1 < len(points) else current
         direction = get_direction(current, next_point)
 
-        inv = int(next_point.value in {41,42,51,52,53,54,23,24})
-        val = next_point.value if next_point.value != 6 else next_point.value_pod
-        commands.append([direction, [next_point.x, next_point.y], val, inv])
+
+        if direction == '0':
+                pass
+        else:
+            inv = int(next_point.value in {41,42,51,52,53,54,23,24})
+            val = next_point.value if next_point.value != 6 else next_point.value_pod
+            commands.append([direction, [next_point.x, next_point.y], val, inv])
 
     return commands
 
