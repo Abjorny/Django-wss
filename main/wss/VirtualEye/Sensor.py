@@ -328,22 +328,20 @@ class Sensor:
             elif green_x < x and green_y > y:
                 value = 34
                     
-            elif  red_result.noblack != 0:
+        elif  red_result.noblack != 0:
 
 
-                red_result = self.get_red(roi, frame_copy)
-
-                if  red_result.w < red_result.h  and value in [21 , 22]:
-                    value = 21
-                
-                elif red_result.w > red_result.h and value in [21 , 22]:
-                    value = 22
-                
-                elif red_result.w  <= red_result.h :
-                    value = 23
-                
-                else  :
-                    value = 24
+            if  red_result.w < red_result.h  and value in [21 , 22]:
+                value = 21
+            
+            elif red_result.w > red_result.h and value in [21 , 22]:
+                value = 22
+            
+            elif red_result.w  <= red_result.h :
+                value = 23
+            
+            else  :
+                value = 24
         else:
             value = 1
 
