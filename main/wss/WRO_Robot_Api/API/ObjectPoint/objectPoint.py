@@ -368,13 +368,13 @@ class RobotPoint(objectPoint):
 
 
                     if object.redLeft == False:
-                        self.check_null_to_write(x - 1, y , valueLeft)
+                        self.check_null_to_write(x - 1, y -1 , valueLeft)
                     else:
                         for row in self.mapArray:
                             row[x-1] = -1
                     
                     if object.redRight == False:
-                        self.check_null_to_write(x + 1, y , valueRight)
+                        self.check_null_to_write(x + 1, y -1 , valueRight)
                     else:
                         for row in self.mapArray:
                             print(row, x+1, self.x)
@@ -396,12 +396,12 @@ class RobotPoint(objectPoint):
 
                 
                     if object.redLeft == False:
-                        self.check_null_to_write(x + 1, y , valueLeft)
+                        self.check_null_to_write(x + 1, y + 1 , valueLeft)
                     else:
                         for row in self.mapArray:
                             row[x + 1] = -1
                     if object.redRight == False:
-                        self.check_null_to_write(x - 1, y , valueRight) 
+                        self.check_null_to_write(x - 1, y + 1, valueRight) 
                     else:
                         for row in self.mapArray:
                             row[x - 1] = -1      
