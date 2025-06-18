@@ -112,22 +112,13 @@ while 1:
                     priorityList.append(
                         priority,
                     )
-    if robotObject.value_pod == 41:
-        priorityList_sorted = sorted(
-            priorityList,
-            key=lambda d: (
-                0 if list(d.values())[0]['value'] == 41 else 1,   # приоритет значения 41
-                -ord(list(d.keys())[0][0])                        # сортировка по ключу (например, по первой букве, в обратном порядке)
-            )
-        )   
-    else:
-        priorityList_sorted = sorted(
-            priorityList,
-            key=lambda d: (
-                1 if list(d.values())[0]['value'] == 41 else 0,   # приоритет значения 41
-                -ord(list(d.keys())[0][0])                        # сортировка по ключу (например, по первой букве, в обратном порядке)
-            )
-        )   
+    priorityList_sorted = sorted(
+        priorityList,
+        key=lambda d: (
+            0 if list(d.values())[0][2] == robotObject.value_pod else 1,
+            -list(d.keys())[0]
+        )
+    )
     getPatchPriority(priorityList_sorted, libary)
     
     robotObject.left = 0
