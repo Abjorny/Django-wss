@@ -357,6 +357,7 @@ class RobotPoint(objectPoint):
                         self.mapArray[y + 8][x1] = -1
                 else:
                     if object.redFrontTwo and valueCenterOne not in  self.two_lear and self.reds < 4:
+                        self.reds += 2
                         for x1 in range (len(self.mapArray[y - 2])):
                             self.mapArray[y - 2][x1] = -1
                             self.mapArray[y + 7][x1] = -1
@@ -381,13 +382,17 @@ class RobotPoint(objectPoint):
                             row[x+1] = -1
 
             elif napr == 3:
-                if object.redFront:
+                if object.redFront and self.reds < 4:
+                    self.reds += 2
                     for x1 in range (len(self.mapArray[y + 1])):
                         self.mapArray[y + 1][x1] = -1
+                        self.mapArray[y - 8][x1] = -1
                 else:
-                    if object.redFrontTwo and valueCenterOne not in self.two_lear:
+                    if object.redFrontTwo and valueCenterOne not in self.two_lear and self.reds < 4:
+                        self.reds += 2
                         for x1 in range (len(self.mapArray[y + 2])):
                             self.mapArray[y + 2][x1] = -1
+                            self.mapArray[y - 7][x1] = -1
                 
                     self.check_null_to_write(x, y + 1, valueCenterOne)
                    
@@ -407,14 +412,18 @@ class RobotPoint(objectPoint):
                             row[x - 1] = -1      
 
             elif napr == 2 :
-                if object.redFront:
-                    for row in self.mapArray:
+                if object.redFront and self.reds < 4:
+                    self.reds += 2
+                    for row in self.mapArray and self.reds < 4:
                         row[x + 1] = -1  
+                        row[x - 8] = -1  
                 else:
 
-                    if object.redFrontTwo and valueCenterOne not in self.two_lear:
+                    if object.redFrontTwo and valueCenterOne not in self.two_lear and self.reds < 4:
+                        self.reds += 2
                         for row in self.mapArray:
                             row[x + 2] = -1  
+                            row[x - 7] = -1  
 
                     self.check_null_to_write(x + 1, y, valueCenterOne)
                     if valueCenterOne not in [41, 23, 24]:
@@ -434,14 +443,17 @@ class RobotPoint(objectPoint):
                             self.mapArray[y + 1][x1] = -1
 
             elif napr == 4 :
-                if object.redFront:
+                if object.redFront and self.reds < 4:
+                    self.reds += 2
                     for row in self.mapArray:
                         row[x - 1] = -1  
+                        row[x + 8] = -1  
                 else:
-                    print(self.mapArray, valueCenterOne, object.redFrontTwo)
-                    if object.redFrontTwo and valueCenterOne not in  self.two_lear:
+                    if object.redFrontTwo and valueCenterOne not in  self.two_lear and self.reds < 4:
+                        self.reds += 2
                         for row in self.mapArray :
                             row[x - 2] = -1  
+                            row[x + 7] = -1 
 
                     self.check_null_to_write(x - 1, y, valueCenterOne)
                     if valueCenterOne not in [41, 23, 24]:
