@@ -280,7 +280,7 @@ class RobotPoint(objectPoint):
 
     def arround_read(self):
         data = []
-        time.sleep(0.5)
+        time.sleep(1)
         one = get_message()
         data.append(
             {
@@ -289,7 +289,7 @@ class RobotPoint(objectPoint):
             }
         )
         self.turnRight()
-        time.sleep(0.7)
+        time.sleep(1)
         two = get_message()
         data.append(
             {
@@ -298,7 +298,7 @@ class RobotPoint(objectPoint):
             }
         )
         self.turnRight()
-        time.sleep(0.7)
+        time.sleep(1)
         three = get_message()
         data.append(
             {
@@ -307,7 +307,7 @@ class RobotPoint(objectPoint):
             }
         )
         self.turnRight()
-        time.sleep(0.7)
+        time.sleep(1)
         four = get_message()
         
         data.append(
