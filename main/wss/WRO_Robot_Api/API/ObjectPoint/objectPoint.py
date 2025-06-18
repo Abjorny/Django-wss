@@ -352,6 +352,7 @@ class RobotPoint(objectPoint):
                 if object.redFront:
                     for x1 in range (len(self.mapArray[y - 1])):
                         self.mapArray[y - 1][x1] = -1
+                        self.mapArray[y + 7][x1] = -1
                 else:
                     if object.redFrontTwo and valueCenterOne not in  self.two_lear:
                         for x1 in range (len(self.mapArray[y - 2])):
