@@ -39,7 +39,7 @@ class Settings(models.Model):
     sensor_center_two = models.ForeignKey(Sensor, on_delete=models.CASCADE, verbose_name="Второй датчик по центру", related_name='center_two')
     
     sensor_left = models.ForeignKey(Sensor, on_delete=models.CASCADE, verbose_name="первый Левый датчик по центру", related_name='center_left', null=True, blank=True)
-    sensor_left_two = models.ForeignKey(Sensor, on_delete=models.CASCADE, verbose_name="Второй Левый датчик по центру", related_name='center_left_two', null=True, blank=True)
+    # sensor_left_two = models.ForeignKey(Sensor, on_delete=models.CASCADE, verbose_name="Второй Левый датчик по центру", related_name='center_left_two', null=True, blank=True)
     
     sensor_right = models.ForeignKey(Sensor, on_delete=models.CASCADE, verbose_name="Первый Правый датчик по центру", related_name='center_right', null=True, blank=True)
     sensor_right_two = models.ForeignKey(Sensor, on_delete=models.CASCADE, verbose_name="Второй Правый датчик по центру", related_name='center_right_two', null=True, blank=True)
