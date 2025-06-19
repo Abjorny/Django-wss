@@ -118,7 +118,7 @@ async def update_settings():
 
 
     center_left = settings.sensor_left
-    center_left_two = settings.sensor_left_two
+    center_left_two = settings.sensor_left_twoC
 
     center_right = settings.sensor_right
     center_right_two = settings.sensor_right_twoC
