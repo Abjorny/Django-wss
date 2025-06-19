@@ -526,8 +526,13 @@ async def read_data():
 async def read_data_consistent(repeats=10):
         values_center_one = []
         values_center_two = []
+
+
         values_left = []
+        values_left_two = []
+
         values_right = []
+        values_right_two = []
         
         confs_one = []
         confs_two = []
@@ -545,9 +550,13 @@ async def read_data_consistent(repeats=10):
             
             values_center_one.append(message["valueCenterOne"])
             values_center_two.append(message["valueCenterTwo"])
-            values_left.append(message["valueCenterLeft"])
-            values_right.append(message["valueCenterRight"])
             
+            values_left.append(message["valueCenterLeft"])
+            values_left_two.append(message["valueCenterLeft"])
+
+            values_right.append(message["valueCenterRight"])
+            values_right_two.append(message["valueCenterRightTwo"])
+
             confs_one.append(message["cofOne"])
             confs_two.append(message["cofTwo"])
             confs_left.append(message["cofThree"])
@@ -570,8 +579,12 @@ async def read_data_consistent(repeats=10):
             {
                 "valueCenterOne": get_consistent_value(values_center_one),
                 "valueCenterTwo": get_consistent_value(values_center_two),
+
                 "valueCenterLeft": get_consistent_value(values_left),
+                "valueCenterLeftTwo": get_consistent_value(values_left_two),  
+
                 "valueCenterRight": get_consistent_value(values_right),
+                "valueCenterRightTwo": get_consistent_value(values_right_two),
                 "redLeft": get_consistent_value(red_left_list),
                 "redRight": get_consistent_value(red_right_list),
                 "redFront": get_consistent_value(red_front_list),
