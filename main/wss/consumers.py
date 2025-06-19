@@ -487,7 +487,7 @@ async def read_data():
     
     FrameUtilis.display_all_roi_sensors(
         [sensor_center_one, sensor_center_two, red_front_border, red_left_border, red_right_border,
-        red_frontTwo_border, sensor_center_right, sensor_center_left], 
+        red_frontTwo_border, sensor_center_right, sensor_center_left, sensor_center_left_two, sensor_center_right_two], 
         frame
     )
 
