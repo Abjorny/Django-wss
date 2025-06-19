@@ -89,7 +89,7 @@ def get_settings():
         'sensor_red_left', 'sensor_red_right',
         'sensor_red_front', 'sensor_red_front_two',
         'sensor_left', 'sensor_right',
-        'sensor_left_two', 'sensor_right_two'
+        'sensor_left_twoC', 'sensor_right_twoC'
 
     ).get()
 
@@ -121,7 +121,7 @@ async def update_settings():
     center_left_two = settings.sensor_left_two
 
     center_right = settings.sensor_right
-    center_right_two = settings.sensor_right_two
+    center_right_two = settings.sensor_right_twoC
 
     red_left = settings.sensor_red_left
     red_front = settings.sensor_red_front
