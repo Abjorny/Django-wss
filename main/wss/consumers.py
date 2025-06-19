@@ -507,6 +507,7 @@ async def read_data():
             
             "valueCenterLeft" : value_left,
             "valueCenterRight" : value_right,
+
             "valueCenterLeftTwo" : value_left_two,
             "valueCenterRightTwo" : value_right_two,
             
@@ -552,7 +553,7 @@ async def read_data_consistent(repeats=10):
             values_center_two.append(message["valueCenterTwo"])
             
             values_left.append(message["valueCenterLeft"])
-            values_left_two.append(message["valueCenterLeft"])
+            values_left_two.append(message["valueCenterLeftTwo"])
 
             values_right.append(message["valueCenterRight"])
             values_right_two.append(message["valueCenterRightTwo"])
@@ -585,6 +586,7 @@ async def read_data_consistent(repeats=10):
 
                 "valueCenterRight": get_consistent_value(values_right),
                 "valueCenterRightTwo": get_consistent_value(values_right_two),
+
                 "redLeft": get_consistent_value(red_left_list),
                 "redRight": get_consistent_value(red_right_list),
                 "redFront": get_consistent_value(red_front_list),
@@ -617,6 +619,8 @@ async def send_periodic_messages():
                     "valueCenterTwo": f"{message.valueTwo}",
                     "valueCenterLeft": f"{message.valueLeft}",
                     "valueCenterRight": f"{message.valueRight}",
+                    "valueCenterRightTwo": f"{message.valueRightTwo}",
+                    "valueCenterLeftTwo": f"{message.valueLeftTwo}",
                     "redLeft" : message.redLeft,
                     "redRight" : message.redRight,
                     "redFront" : message.redFront,

@@ -8,8 +8,12 @@ class Message:
     def __init__(self, data: list):
         self.valueOne = int(data['valueCenterOne'])
         self.valueTwo = int(data['valueCenterTwo'])
+
         self.valueLeft = int(data['valueCenterLeft'])
+        self.valueLeftTwo = int(data['valueCenterLeftTwo'])
+
         self.valueRight = int(data['valueCenterRight'])
+        self.valueRightTwo = int(data['valueCenterRightTwo'])
 
         self.redLeft = data['redLeft']
         self.redRight = data['redRight']
