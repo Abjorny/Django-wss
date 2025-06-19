@@ -2,10 +2,21 @@ import cv2
 import os
 import numpy as np
 from  WRO_Robot_Api.API.ObjectPoint.objectPoint import objectPoint, RobotPoint
-
-
+import asyncio
+import websockets
+import json
 
 script_dir = os.path.dirname(os.path.abspath(__file__))
+async def send_chanege_value():
+    uri = "ws://127.0.0.1:4000/ws/api/get_image"
+    async with websockets.connect(uri) as websocket:
+        send_data = {
+            "type": "change_two",
+        }
+        await websocket.send(json.dumps(send_data))
+
+def change_two():
+    return asyncio.run(send_chanege_value())
 
 class Map:
     def __init__(self, robot: RobotPoint):
@@ -48,9 +59,11 @@ class Map:
         
         elif command == 90:
             self.robot.move(2)
+            change_two()
         
         elif command == 91:
             self.robot.move(2)
+            change_two()
         
         if command not in [30, 40, 50, 60]:
             self.robot.uart.sendValueAndWait(command)

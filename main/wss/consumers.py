@@ -581,7 +581,9 @@ class MyConsumer(AsyncWebsocketConsumer):
         global latest_hsv, robotTwo, task_slam
         data = json.loads(text_data)
         type_message = data.get("type")
-        if  type_message == "hsv":
+        if type_message == "change_two":
+            robotTwo = not robotTwo
+        elif  type_message == "hsv":
             hsv_data = data.get("data", {})
             robotTwo = hsv_data.get("isTwo", False)
             latest_hsv.update({
