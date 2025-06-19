@@ -66,14 +66,9 @@ robotTwo = False
 
 lib_hsv = None
 sensor_center_one = None
-sensor_center_two = None
-
 sensor_center_left = None
-sensor_center_left_two = None
-
 sensor_center_right = None
-sensor_center_right_two = None
-
+sensor_center_two = None
 red_front_border = None
 red_right_border = None
 red_left_border = None
@@ -88,8 +83,7 @@ def get_settings():
         'hsv_black', 'hsv_white',
         'sensor_red_left', 'sensor_red_right',
         'sensor_red_front', 'sensor_red_front_two',
-        'sensor_left', 'sensor_right',
-        'sensor_left_twoC', 'sensor_right_twoC'
+        'sensor_left', 'sensor_right'
 
     ).get()
 
@@ -109,19 +103,13 @@ async def printLog(message):
 async def update_settings():
     global lib_hsv, sensor_center_one, sensor_center_left, sensor_center_right,\
             sensor_center_two, red_front_border, red_right_border, red_left_border,\
-            red_frontTwo_border, sensor_center_left_two, sensor_center_right_two
-    
+            red_frontTwo_border
     settings = await get_settings()
 
     center_one = settings.sensor_center_one
     center_two = settings.sensor_center_two
-
-
     center_left = settings.sensor_left
-    center_left_two = settings.sensor_left_twoC
-
     center_right = settings.sensor_right
-    center_right_two = settings.sensor_right_twoC
 
     red_left = settings.sensor_red_left
     red_front = settings.sensor_red_front
@@ -161,18 +149,6 @@ async def update_settings():
         robotTwo
     )
     
-    sensor_center_left_two = Sensor(
-        np.array(center_left_two.area_cord_one),
-        np.array(center_left_two.area_cord_check),
-        np.array(center_left_two.area_cord_two),
-        np.array(center_left_two.area_cordTwo_one),
-        np.array(center_left_two.area_cordTwo_two),
-        np.array(center_left_two.area_cordTwo_check),
-        (0, 0, 255),
-        lib_hsv,
-        robotTwo
-    )
-
     sensor_center_right = Sensor(
         np.array(center_right.area_cord_one),
         np.array(center_right.area_cord_check),
@@ -180,17 +156,6 @@ async def update_settings():
         np.array(center_right.area_cordTwo_one),
         np.array(center_right.area_cordTwo_two),
         np.array(center_right.area_cordTwo_check),
-        (0, 0, 255),
-        lib_hsv,
-        robotTwo
-    )
-    sensor_center_right_two = Sensor(
-        np.array(center_right_two.area_cord_one),
-        np.array(center_right_two.area_cord_check),
-        np.array(center_right_two.area_cord_two),
-        np.array(center_right_two.area_cordTwo_one),
-        np.array(center_right_two.area_cordTwo_two),
-        np.array(center_right_two.area_cordTwo_check),
         (0, 0, 255),
         lib_hsv,
         robotTwo
@@ -412,7 +377,7 @@ def predict_image_class(img):
 async def read_data():
     global lib_hsv, sensor_center_one, sensor_center_left, sensor_center_right,\
         sensor_center_two, red_front_border, red_right_border, red_left_border,\
-        red_frontTwo_border, sensor_center_left_two, sensor_center_right_two
+        red_frontTwo_border
     
     sensor_center_one.isTwo = False
     sensor_center_two.isTwo = False
@@ -428,21 +393,11 @@ async def read_data():
     roi2 =  sensor_center_two.get_roi(frame).roi_frame
     roi3 =  sensor_center_left.get_roi(frame).roi_frame
     roi4 =  sensor_center_right.get_roi(frame).roi_frame
-    roi_left_two =  sensor_center_left_two.get_roi(frame).roi_frame
-    roi_right_two =  sensor_center_right_two.get_roi(frame).roi_frame
 
     value_center_one, confidence_one =  predict_image_class(roi1)
     value_center_two, confidence_two =  predict_image_class(roi2)
     value_left, confidence_left =  predict_image_class(roi3)
     value_right, confidence_right =  predict_image_class(roi4)
-    value_left_two, confidence_left_two =  predict_image_class(roi_left_two)
-    value_right_two, confidence_right_two =  predict_image_class(roi_right_two)
-
-    if value_left_two in [51, 52, 53, 54]:
-        value_left_two, confidence_left_two = predict_image_classpredict(roi_left_two)
-
-    if value_right_two in [51, 52, 53, 54]:
-        value_right_two, confidence_right_two = predict_image_classpredict(roi_right_two)
 
     if value_center_one in [51, 52, 53, 54]:
         value_center_one, confidence_one =  predict_image_classpredict(roi1)
@@ -455,15 +410,6 @@ async def read_data():
 
     if value_right in [51, 52, 53, 54]:
         value_right, confidence_right = predict_image_classpredict(roi4)
-        
-
-   
-    if value_left_two in [31, 32, 33, 34, 23, 24]:
-        value_left_two, confidence_left_two =  sensor_center_left_two.readObject(copyFrame, frame, value_center_one)
-    
-    if value_right_two in [31, 32, 33, 34, 23, 24]:
-        value_right_two, confidence_right_two = sensor_center_right_two.readObject(copyFrame, frame, value_center_two)
-
 
 
     if value_center_one in [31, 32, 33, 34, 23, 24]:
@@ -487,7 +433,7 @@ async def read_data():
     
     FrameUtilis.display_all_roi_sensors(
         [sensor_center_one, sensor_center_two, red_front_border, red_left_border, red_right_border,
-        red_frontTwo_border, sensor_center_right, sensor_center_left, sensor_center_left_two, sensor_center_right_two], 
+        red_frontTwo_border, sensor_center_right, sensor_center_left], 
         frame
     )
 
@@ -504,12 +450,8 @@ async def read_data():
         {
             "valueCenterOne" : value_center_one,
             "valueCenterTwo" : value_center_two,
-            
             "valueCenterLeft" : value_left,
             "valueCenterRight" : value_right,
-
-            "valueCenterLeftTwo" : value_left_two,
-            "valueCenterRightTwo" : value_right_two,
             
             "redLeft" : red_left,
             "redRight" : red_right,
@@ -527,13 +469,8 @@ async def read_data():
 async def read_data_consistent(repeats=10):
         values_center_one = []
         values_center_two = []
-
-
         values_left = []
-        values_left_two = []
-
         values_right = []
-        values_right_two = []
         
         confs_one = []
         confs_two = []
@@ -551,13 +488,9 @@ async def read_data_consistent(repeats=10):
             
             values_center_one.append(message["valueCenterOne"])
             values_center_two.append(message["valueCenterTwo"])
-            
             values_left.append(message["valueCenterLeft"])
-            values_left_two.append(message["valueCenterLeftTwo"])
-
             values_right.append(message["valueCenterRight"])
-            values_right_two.append(message["valueCenterRightTwo"])
-
+            
             confs_one.append(message["cofOne"])
             confs_two.append(message["cofTwo"])
             confs_left.append(message["cofThree"])
@@ -580,13 +513,8 @@ async def read_data_consistent(repeats=10):
             {
                 "valueCenterOne": get_consistent_value(values_center_one),
                 "valueCenterTwo": get_consistent_value(values_center_two),
-
                 "valueCenterLeft": get_consistent_value(values_left),
-                "valueCenterLeftTwo": get_consistent_value(values_left_two),  
-
                 "valueCenterRight": get_consistent_value(values_right),
-                "valueCenterRightTwo": get_consistent_value(values_right_two),
-
                 "redLeft": get_consistent_value(red_left_list),
                 "redRight": get_consistent_value(red_right_list),
                 "redFront": get_consistent_value(red_front_list),
@@ -619,8 +547,6 @@ async def send_periodic_messages():
                     "valueCenterTwo": f"{message.valueTwo}",
                     "valueCenterLeft": f"{message.valueLeft}",
                     "valueCenterRight": f"{message.valueRight}",
-                    "valueCenterRightTwo": f"{message.valueRightTwo}",
-                    "valueCenterLeftTwo": f"{message.valueLeftTwo}",
                     "redLeft" : message.redLeft,
                     "redRight" : message.redRight,
                     "redFront" : message.redFront,

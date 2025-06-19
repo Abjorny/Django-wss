@@ -51,7 +51,7 @@ class SettingsAdmin(ModelAdmin):
     list_display = ("sensor_center_one", "sensor_center_two")
     fieldsets = (
         ("Центральные датчики", {
-            "fields": ("sensor_center_one", "sensor_center_two", "sensor_left", "sensor_right", "sensor_left_twoC", "sensor_right_twoC")
+            "fields": ("sensor_center_one", "sensor_center_two", "sensor_left", "sensor_right")
         }),
         ("Красные датчики", {
             "fields": ("sensor_red_front", "sensor_red_front_two", "sensor_red_left", "sensor_red_right")

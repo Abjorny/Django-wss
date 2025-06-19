@@ -8,12 +8,8 @@ class Message:
     def __init__(self, data: list):
         self.valueOne = int(data['valueCenterOne'])
         self.valueTwo = int(data['valueCenterTwo'])
-
         self.valueLeft = int(data['valueCenterLeft'])
-        self.valueLeftTwo = int(data['valueCenterLeftTwo'])
-
         self.valueRight = int(data['valueCenterRight'])
-        self.valueRightTwo = int(data['valueCenterRightTwo'])
 
         self.redLeft = data['redLeft']
         self.redRight = data['redRight']
@@ -67,6 +63,7 @@ class objectPoint:
     
     def get_make_go(self,napr):
         return True if napr =="left" and self.left != 0 else True if napr =="right" and self.right != 0 else True if napr =="top" and self.top != 0 else True if napr =="bottom" and self.bottom != 0 else False
+
 
 class RobotPoint(objectPoint):
     def __init__(self, x = None, y = None):

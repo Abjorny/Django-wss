@@ -8,8 +8,8 @@
         * {
             box-sizing: border-box;
         }
-
-        а .container-camera {
+а
+        .container-camera {
             display: flex;
             flex-direction: column;
             max-width: 1280px;
@@ -123,7 +123,7 @@
             <button id="start-point" class="btn btn btn-dark" onclick="startProgram()">Запустить</button>
             <button id="start-point" class="btn btn btn btn-primary" onclick="updateSettings()">Обнавить
                 настройки</button>
-            <button id="start-point" class="btn btn btn btn-primary" onclick="download()">
+                            <button id="start-point" class="btn btn btn btn-primary" onclick="download()">
                 Скачать</button>
 
         </div>
@@ -138,14 +138,9 @@
             <pre id="hsv-output"></pre>
         </div>
         <div class="utilis-row-data">
-            <div class="row-data">
-                <div class="colown-data">
-                    <div class="row-data">
-                        <span id="value-center-left-two">255</span>
-                    </div>
-                    <div class="row-data">
-                        <span id="value-center-left">255</span>
-                    </div>
+            <div class="row-data">zz
+                <div class="row-data">
+                    <span id="value-center-left">255</span>
                 </div>
                 <div class="colown-data">
 
@@ -159,13 +154,8 @@
 
                     </div>
                 </div>
-                <div class="colown-data">
-                    <div class="row-data">
-                        <span id="value-center-right-two">255</span>
-                    </div>
-                    <div class="row-data">
-                        <span id="value-center-right">255</span>
-                    </div>
+                <div class="row-data">
+                    <span id="value-center-right">255</span>
                 </div>
 
             </div>
@@ -208,9 +198,6 @@
 
                     document.getElementById('value-center-left').textContent = data.message.valueCenterLeft;
                     document.getElementById('value-center-right').textContent = data.message.valueCenterRight;
-                    
-                    document.getElementById('value-center-left-two').textContent = data.message.valueCenterLeftTwo;
-                    document.getElementById('value-center-right-two').textContent = data.message.valueCenterRightTwo;
 
                     document.getElementById('red-left').textContent = 'Лево: ' + data.message.redLeft;
                     document.getElementById('red-right').textContent = 'Право: ' + data.message.redRight;
@@ -335,7 +322,7 @@
                 return camera.send(JSON.stringify({ type: 'slam' }));
             }
         }
-        function download() {
+                function download() {
             if (camera && camera.readyState === WebSocket.OPEN) {
                 return camera.send(JSON.stringify({ type: 'download' }));
             }
