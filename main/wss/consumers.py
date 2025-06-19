@@ -504,6 +504,7 @@ async def read_data():
         {
             "valueCenterOne" : value_center_one,
             "valueCenterTwo" : value_center_two,
+            
             "valueCenterLeft" : value_left,
             "valueCenterRight" : value_right,
             "valueCenterLeftTwo" : value_left_two,
