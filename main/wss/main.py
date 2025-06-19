@@ -35,16 +35,32 @@ def get_priority(cords, libary: LibryPoints):
         if this_point == None or this_point.value not in [1, 41] or libary.mass_mover[y][x] == 100 : return None
 
         point_up_one = libary.get_point_coord(x, y - 1)
-        point_up_two = libary.get_point_coord(x, y - 2)
+        if point_up_one.value not in [41, 23, 24]:
+            point_up_two = libary.get_point_coord(x, y - 2)
+        else:
+            point_up_two = None
 
         point_down_one = libary.get_point_coord(x, y + 1)
-        point_down_two = libary.get_point_coord(x, y + 2)
+        
+        if point_down_one.value not in [41, 23, 24]:
+            point_down_two = libary.get_point_coord(x, y + 2)
+        else:
+            point_down_two = None     
+        
         
         point_right_one = libary.get_point_coord(x + 1, y)
-        point_right_two = libary.get_point_coord(x + 2, y)
+        
+        if point_right_one.value not in [41, 23, 24]:
+            point_right_two = libary.get_point_coord(x + 2, y)
+        else:
+            point_right_two = None
 
         point_left_one = libary.get_point_coord(x - 1, y)
-        point_left_two = libary.get_point_coord(x - 2, y)
+        if point_left_one.value not in [41, 23, 24]:
+            point_left_two = libary.get_point_coord(x - 2, y)
+        else:
+            point_left_two = None
+        
         
         points = [
             point_up_one, point_down_one, 
