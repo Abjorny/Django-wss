@@ -387,7 +387,7 @@ class RobotPoint(objectPoint):
         if len(self.mapArray) > y and len(self.mapArray[0]) > x:
             if self.mapArray[y][x] == 0: self.mapArray[y][x] = value
 
-    def readAll(self, libary: LibryPoints):
+    def readAll(self, libary):
         data = self.arround_read(libary)
         
         for elem in data:
