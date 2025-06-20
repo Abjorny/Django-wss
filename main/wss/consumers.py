@@ -18,7 +18,7 @@ import os
 from .models import Settings
 from .WRO_Robot_Api.API.UTIL.UartController import UartControllerAsync
 from .WRO_Robot_Api.API.ObjectPoint.objectPoint import Message
-from skimage.feature import hog, local_binary_pattern
+from skimage.feature import hog
 import joblib
 from pathlib import Path
 from .tenser import predict_image_classpredict
@@ -278,35 +278,45 @@ def load_model(model_path):
         'target_size': model_data.get('target_size', (224, 224))
     }
 
-
-
-
-
-# model_data = load_model('cascade_model.pkl')
-model_bundle = joblib.load('optimized_svm_model.pkl')
-
-model = model_bundle['model']
-scaler = model_bundle['scaler']
-
-HOG_PARAMS = {
-        'orientations': 8,
-        'pixels_per_cell': (12, 12),
-        'cells_per_block': (2, 2),
-        'transform_sqrt': True,
-        'block_norm': 'L2-Hys',
-        'channel_axis': -1
-}
-
-def extract_color_histograms(hsv_image, bins=16):
+def extract_color_histograms(hsv_image, bins=32):
     h_hist = cv2.calcHist([hsv_image], [0], None, [bins], [0, 180])
     s_hist = cv2.calcHist([hsv_image], [1], None, [bins], [0, 256])
-    v_hist = cv2.calcHist([hsv_image], [2], None, [bins], [0, 256])
     h_hist = cv2.normalize(h_hist, h_hist).flatten()
     s_hist = cv2.normalize(s_hist, s_hist).flatten()
-    v_hist = cv2.normalize(v_hist, v_hist).flatten()
-    return np.hstack([h_hist, s_hist, v_hist])
+    return np.hstack([h_hist, s_hist])
 
-def extract_lab_histograms(image, bins=16):
+def extract_features(image, target_size, hog_params):
+    image_resized = cv2.resize(image, tuple(target_size), interpolation=cv2.INTER_AREA)
+    gray = cv2.cvtColor(image_resized, cv2.COLOR_BGR2GRAY)
+    hog_feat = hog(gray, **hog_params)
+    
+    hsv = cv2.cvtColor(image_resized, cv2.COLOR_BGR2HSV)
+    clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
+    hsv[:, :, 2] = clahe.apply(hsv[:, :, 2])
+    color_hist = extract_color_histograms(hsv)
+
+    return np.hstack([hog_feat, color_hist])
+
+# model_data = load_model('cascade_model.pkl')
+model_data = None
+data = joblib.load('cascade_model.pkl')
+svm_shape = data['svm_shape']
+svm_refine = data['svm_refine']
+scaler_hog = data['scaler_hog']
+scaler_color = data['scaler_color']
+def extract_hog_features(image, target_size, hog_params):
+    image_resized = cv2.resize(image, target_size, interpolation=cv2.INTER_AREA)
+    gray = cv2.cvtColor(image_resized, cv2.COLOR_BGR2GRAY)
+    return hog(gray, **hog_params)
+
+def extract_color_histograms(hsv_image, bins=32):
+    h_hist = cv2.calcHist([hsv_image], [0], None, [bins], [0, 180])
+    s_hist = cv2.calcHist([hsv_image], [1], None, [bins], [0, 256])
+    h_hist = cv2.normalize(h_hist, h_hist).flatten()
+    s_hist = cv2.normalize(s_hist, s_hist).flatten()
+    return np.hstack([h_hist, s_hist])
+
+def extract_lab_histograms(image, bins=32):
     lab = cv2.cvtColor(image, cv2.COLOR_BGR2LAB)
     l_hist = cv2.calcHist([lab], [0], None, [bins], [0, 256])
     a_hist = cv2.calcHist([lab], [1], None, [bins], [0, 256])
@@ -316,33 +326,53 @@ def extract_lab_histograms(image, bins=16):
     b_hist = cv2.normalize(b_hist, b_hist).flatten()
     return np.hstack([l_hist, a_hist, b_hist])
 
-def extract_spatial_features(image, size=(8, 8)):
+def extract_spatial_features(image, size=(16, 16)):
     small_img = cv2.resize(image, size, interpolation=cv2.INTER_AREA)
     return small_img.flatten()
 
-def extract_texture_features(image):
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    lbp = local_binary_pattern(gray, 16, 2, method='uniform')
-    hist, _ = np.histogram(lbp, bins=16, range=(0, 26))
-    return hist / hist.sum()
+def extract_full_features(image, target_size, hog_params):
+    image_resized = cv2.resize(image, target_size, interpolation=cv2.INTER_AREA)
 
-def extract_features_cascade(image):
-    image_resized = cv2.resize(image, (224, 224), interpolation=cv2.INTER_AREA)
+    # HOG
+    gray = cv2.cvtColor(image_resized, cv2.COLOR_BGR2GRAY)
+    hog_feat = hog(gray, **hog_params)
 
-    hog_feat = hog(image_resized, **HOG_PARAMS)
+    # HSV + CLAHE
     hsv = cv2.cvtColor(image_resized, cv2.COLOR_BGR2HSV)
+    clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
+    hsv[:, :, 2] = clahe.apply(hsv[:, :, 2])
     hsv_hist = extract_color_histograms(hsv)
+
+    # LAB
     lab_hist = extract_lab_histograms(image_resized)
+
+    # Spatial
     spatial_feat = extract_spatial_features(image_resized)
-    texture_feat = extract_texture_features(image_resized)
-    return np.hstack([hog_feat, hsv_hist, lab_hist, spatial_feat, texture_feat])
+
+    color_spatial_feat = np.hstack([hsv_hist, lab_hist, spatial_feat])
+
+    return hog_feat, color_spatial_feat
 
 def predict_image_class(img):
-    features = extract_features_cascade(img).astype(np.float32)
-    features_scaled = scaler.transform([features])
-    prediction = model.predict(features_scaled)[0]
-    return int(prediction), 1.0
+    hog_params = {
+        'orientations': 9,
+        'pixels_per_cell': (16, 16),
+        'cells_per_block': (2, 2),
+        'transform_sqrt': True,
+        'block_norm': 'L2-Hys'
+    }
+    target_size = (224, 224)
 
+    if img is None:
+        raise ValueError("Не удалось загрузить изображение.")
+
+    hog_feat, color_feat = extract_full_features(img, target_size, hog_params)
+
+
+    color_scaled = scaler_color.transform(color_feat.reshape(1, -1))
+    pred_label = svm_refine.predict(color_scaled)[0]
+
+    return int(pred_label), 1.0
 
 async def read_data():
     global lib_hsv, sensor_center_one, sensor_center_left, sensor_center_right,\
@@ -369,17 +399,17 @@ async def read_data():
     value_left, confidence_left =  predict_image_class(roi3)
     value_right, confidence_right =  predict_image_class(roi4)
 
-    # if value_center_one in [51, 52, 53, 54]:
-    #     value_center_one, confidence_one =  predict_image_classpredict(roi1)
+    if value_center_one in [51, 52, 53, 54]:
+        value_center_one, confidence_one =  predict_image_classpredict(roi1)
 
-    # if value_center_two in [51, 52, 53, 54]:
-    #     value_center_two, confidence_two = predict_image_classpredict(roi2)
+    if value_center_two in [51, 52, 53, 54]:
+        value_center_two, confidence_two = predict_image_classpredict(roi2)
 
-    # if value_left in [51, 52, 53, 54]:
-    #     value_left, confidence_left = predict_image_classpredict(roi3)
+    if value_left in [51, 52, 53, 54]:
+        value_left, confidence_left = predict_image_classpredict(roi3)
 
-    # if value_right in [51, 52, 53, 54]:
-    #     value_right, confidence_right = predict_image_classpredict(roi4)
+    if value_right in [51, 52, 53, 54]:
+        value_right, confidence_right = predict_image_classpredict(roi4)
 
 
     if value_center_one in [31, 32, 33, 34, 23, 24]:
@@ -498,6 +528,9 @@ async def read_data_consistent(repeats=10):
 
         # Возвращаем последний image_data (например) и усреднённое сообщение с валидными значениями
         return image_data, result_message
+
+# Нужно будет переименовать оригинальную функцию чтения в read_data_once,
+# чтобы использовать внутри этой функции, которая выполняет 10 повторов.
 
 async def send_periodic_messages():
     channel_layer = get_channel_layer()
