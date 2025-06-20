@@ -293,26 +293,30 @@ class RobotPoint(objectPoint):
             value_left = get_value(self.x - 1, self.y - 1)
             value_right = get_value(self.x + 1, self.y - 1)
             value_top = get_value(self.x, self.y - 1)
+            value_top_two = get_value(self.x, self.y - 2)
 
         elif napr == 2:
             value_left = get_value(self.x + 1, self.y - 1)
             value_right = get_value(self.x + 1, self.y + 1)
             value_top = get_value(self.x + 1, self.y)
+            value_top_two = get_value(self.x + 2, self.y)
 
         elif napr == 3:
             value_left = get_value(self.x + 1, self.y + 1)
             value_right = get_value(self.x - 1, self.y + 1)
             value_top = get_value(self.x, self.y + 1)
+            value_top_two = get_value(self.x , self.y + 2)
 
         elif napr == 4:
             value_left = get_value(self.x - 1, self.y + 1)
             value_right = get_value(self.x - 1, self.y - 1)
             value_top = get_value(self.x - 1, self.y)
+            value_top_two = get_value(self.x - 2 , self.y)
 
         else:
             return False 
 
-        if value_left == 0 or value_right == 0 or value_top == 0:
+        if value_left == 0 or value_right == 0 or value_top == 0 or ( value_top not in [41, 23, 24] and value_top_two == 0):
             return True
 
         return False

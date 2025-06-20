@@ -38,14 +38,14 @@ def get_priority(cords, libary: LibryPoints):
             return None
         
         point_up_one = libary.get_point_coord(x, y - 1)
-        if point_up_one.value  and (point_up_one.value not in [41, 23, 24] if robotObject.value_pod in [1] else True):
+        if point_up_one.value  and (point_up_one.value not in [41, 23, 24]):
             point_up_two = libary.get_point_coord(x, y - 2)
         else:
             point_up_two = None
 
         point_down_one = libary.get_point_coord(x, y + 1)
         
-        if point_down_one.value and (point_down_one.value not in [41, 23, 24] if robotObject.value_pod in [1] else True):
+        if point_down_one.value and (point_down_one.value not in [41, 23, 24]):
             point_down_two = libary.get_point_coord(x, y + 2)
         else:
             point_down_two = None     
@@ -53,14 +53,14 @@ def get_priority(cords, libary: LibryPoints):
         
         point_right_one = libary.get_point_coord(x + 1, y)
         
-        if point_right_one.value and (point_right_one.value not in [41, 23, 24] if robotObject.value_pod in [1] else True):
+        if point_right_one.value and (point_right_one.value not in [41, 23, 24]):
             point_right_two = libary.get_point_coord(x + 2, y)
         else:
             point_right_two = None
 
         point_left_one = libary.get_point_coord(x - 1, y)
 
-        if point_left_one.value  and (point_left_one.value not in [41, 23, 24] if robotObject.value_pod in [1] else True):
+        if point_left_one.value  and (point_left_one.value not in [41, 23, 24]):
             point_left_two = libary.get_point_coord(x - 2, y)
         else:
             point_left_two = None
