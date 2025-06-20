@@ -290,10 +290,10 @@ class RobotPoint(objectPoint):
             value_left = libary.get_point_coord(self.x - 1, self.y + 1)
             value_left = int(value_left.value) if value_left  else -1
 
-            value_right = libary.get_point_coord(self.x + 1, self.y + 1).value
+            value_right = libary.get_point_coord(self.x + 1, self.y + 1)
             value_right = int(value_right.value) if value_right  else -1
 
-            value_top = libary.get_point_coord(self.x, self.y + 1).value
+            value_top = libary.get_point_coord(self.x, self.y + 1)
             value_top = int(value_top.value) if value_top  else -1
             
             if value_left == 0 or value_right == 0 or value_top == 0:
