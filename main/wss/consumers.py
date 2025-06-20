@@ -529,35 +529,53 @@ async def read_data_consistent(repeats=10):
         # Возвращаем последний image_data (например) и усреднённое сообщение с валидными значениями
         return image_data, result_message
 
-# Нужно будет переименовать оригинальную функцию чтения в read_data_once,
-# чтобы использовать внутри этой функции, которая выполняет 10 повторов.
 
 async def send_periodic_messages():
     channel_layer = get_channel_layer()
+
+    last_values = None
+    stable_count = 0
+    required_stable_iterations = 5
+
     while True:
-        # try:
         image_data, message = await read_data()
-        await channel_layer.group_send(
-            "broadcast_group",
-            {
-                "type": "broadcast_message",
-                "message": {
-                    "image": image_data,
-                    "valueCenterOne": f"{message.valueOne}",
-                    "valueCenterTwo": f"{message.valueTwo}",
-                    "valueCenterLeft": f"{message.valueLeft}",
-                    "valueCenterRight": f"{message.valueRight}",
-                    "redLeft" : message.redLeft,
-                    "redRight" : message.redRight,
-                    "redFront" : message.redFront,
-                    "redFrontTwo": message.redFrontTwo  
-                },
-            }
+
+        current_values = (
+            message.valueLeft,
+            message.valueRight,
+            message.valueTwo,
+            message.valueOne,
         )
-        await asyncio.sleep(1/30)
-        # except Exception as e:
-        #     await printLog(f"Ошибка в функции считывания датчиков:\n{e}")
+
+        if current_values == last_values:
+            stable_count += 1
+        else:
+            stable_count = 0
+            last_values = current_values
+
+        if stable_count >= required_stable_iterations:
+            await channel_layer.group_send(
+                "broadcast_group",
+                {
+                    "type": "broadcast_message",
+                    "message": {
+                        "image": image_data,
+                        "valueCenterOne": f"{message.valueOne}",
+                        "valueCenterTwo": f"{message.valueTwo}",
+                        "valueCenterLeft": f"{message.valueLeft}",
+                        "valueCenterRight": f"{message.valueRight}",
+                        "redLeft": message.redLeft,
+                        "redRight": message.redRight,
+                        "redFront": message.redFront,
+                        "redFrontTwo": message.redFrontTwo  
+                    },
+                }
+            )
+            stable_count = 0
+
+        await asyncio.sleep(1 / 30)
         gc.collect()
+
 
 async def slam():
     await uartController.sendValueAndWait("1000")
