@@ -327,7 +327,8 @@ def extract_texture_features(image):
     return hist / hist.sum()
 
 def extract_features_cascade(image):
-    image_resized = cv2.resize(image, 2224, interpolation=cv2.INTER_AREA)
+    image_resized = cv2.resize(image, (224, 224), interpolation=cv2.INTER_AREA)
+
     hog_feat = hog(image_resized, **HOG_PARAMS)
     hsv = cv2.cvtColor(image_resized, cv2.COLOR_BGR2HSV)
     hsv_hist = extract_color_histograms(hsv)
@@ -337,11 +338,11 @@ def extract_features_cascade(image):
     return np.hstack([hog_feat, hsv_hist, lab_hist, spatial_feat, texture_feat])
 
 def predict_image_class(img):
-    
     features = extract_features_cascade(img).astype(np.float32)
     features_scaled = scaler.transform([features])
     prediction = model.predict(features_scaled)[0]
     return prediction, 1.0
+
 
 async def read_data():
     global lib_hsv, sensor_center_one, sensor_center_left, sensor_center_right,\
