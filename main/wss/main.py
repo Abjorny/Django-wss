@@ -133,11 +133,12 @@ while 1:
     priorityList_sorted = sorted(
         priorityList,
         key=lambda d: (
-            -list(d.keys())[0], 
-            0 if list(d.values())[0][2] == robotObject.value_pod else 1,  
-            list(d.values())[0][3]  # 
+            0 if list(d.values())[0][2] == robotObject.value_pod else 1,  # этаж текущий → 0, остальные → 1
+            -list(d.keys())[0],                                           # count по убыванию
+            list(d.values())[0][3]                                        # длина пути по возрастанию
         )
     )
+
 
     getPatchPriority(priorityList_sorted, libary)
     

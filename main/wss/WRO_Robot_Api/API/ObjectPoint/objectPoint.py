@@ -337,10 +337,12 @@ class RobotPoint(objectPoint):
         smart = []
         
         for napr in naprs:
+            print(libary)
             if libary:
                 made = self.get_state_change(libary, napr)
             else:
                 made = True
+            print(made)
             smart.append([made, napr])
 
         for go in smart:
