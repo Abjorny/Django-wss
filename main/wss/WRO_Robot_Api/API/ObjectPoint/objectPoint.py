@@ -1,5 +1,5 @@
 from ..UTIL.UartController import UartController
-from ..LibaryPoints.libaryPoints import LibryPoints
+
 import websockets
 import asyncio
 import time
@@ -67,6 +67,7 @@ class objectPoint:
 
 
 class RobotPoint(objectPoint):
+    from ..LibaryPoints.libaryPoints import LibryPoints
     def __init__(self, x = None, y = None):
         
         self.mapArray = [
