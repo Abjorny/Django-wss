@@ -159,4 +159,4 @@ class FindTheBestPatchMap:
             commands = FormatedComands(path_first, libary)
             commands_format = NaprovToCommandsFormat(commands)
             last_format = FindTheBestPatchMap.commands_format_to_callback(commands_format)
-            return last_format
+            return last_format, data

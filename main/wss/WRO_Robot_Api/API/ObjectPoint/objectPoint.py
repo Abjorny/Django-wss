@@ -1,4 +1,5 @@
 from ..UTIL.UartController import UartController
+from ..LibaryPoints.libaryPoints import LibryPoints
 import websockets
 import asyncio
 import time
@@ -284,49 +285,97 @@ class RobotPoint(objectPoint):
         
         return value 
 
-    def arround_read(self):
-        await_time = 1
-        self.delta_napr = self.napr
-        data = []
-        time.sleep(await_time)
-
-        one = get_message()
-        data.append(
-            {
-                "object": one,
-                "napr": self.napr
-            }
-        )
-        self.turnRight()
-        time.sleep(await_time)
-        two = get_message()
-        data.append(
-            {
-                "object": two,
-                "napr": self.napr
-            }
-        )
-        self.turnRight()
-        time.sleep(await_time)
-        three = get_message()
-        data.append(
-            {
-                "object": three,
-                "napr": self.napr
-            }
-        )
-        self.turnRight()
-        time.sleep(await_time)
-        four = get_message()
+    def get_state_change(self, libary: LibryPoints,  napr):
         
-        data.append(
-            {
-                "object": four,
-                "napr": self.napr
-            }
-        )
+        if napr == 1:
+            value_left = libary.get_point_coord(self.x - 1, self.y + 1)
+            value_left = int(value_left.value) if value_left  else -1
 
-        self.turnRight()
+            value_right = libary.get_point_coord(self.x + 1, self.y + 1).value
+            value_right = int(value_right.value) if value_right  else -1
+
+            value_top = libary.get_point_coord(self.x, self.y + 1).value
+            value_top = int(value_top.value) if value_top  else -1
+            
+            if value_left == 0 or value_right == 0 or value_top == 0:
+                return True
+        
+        elif napr == 2:
+            value_left = libary.get_point_coord(self.x + 1, self.y -1)
+            value_left = int(value_left.value) if value_left  else -1
+
+            value_right = libary.get_point_coord(self.x + 1, self.y + 1).value
+            value_right = int(value_right.value) if value_right  else -1
+
+            value_top = libary.get_point_coord(self.x + 1, self.y ).value
+            value_top = int(value_top.value) if value_top  else -1
+            
+            if value_left == 0 or value_right == 0 or value_top == 0:
+                return True
+            
+        elif napr == 3:
+            value_left = libary.get_point_coord(self.x + 1, self.y - 1)
+            value_left = int(value_left.value) if value_left  else -1
+
+            value_right = libary.get_point_coord(self.x - 1, self.y - 1).value
+            value_right = int(value_right.value) if value_right  else -1
+
+            value_top = libary.get_point_coord(self.x, self.y - 1).value
+            value_top = int(value_top.value) if value_top  else -1
+            
+            if value_left == 0 or value_right == 0 or value_top == 0:
+                return True
+            
+        elif napr == 4:
+            value_left = libary.get_point_coord(self.x - 1, self.y +1)
+            value_left = int(value_left.value) if value_left  else -1
+
+            value_right = libary.get_point_coord(self.x - 1, self.y - 1).value
+            value_right = int(value_right.value) if value_right  else -1
+
+            value_top = libary.get_point_coord(self.x - 1, self.y ).value
+            value_top = int(value_top.value) if value_top  else -1
+            
+            if value_left == 0 or value_right == 0 or value_top == 0:
+                return True
+            
+        return False
+    
+    def smart_turn(self, napr):
+        if ((self.napr - 1 + 1) % 4) + 1 == napr:
+            self.turnRight()
+        elif ((self.napr - 1 - 1) % 4) + 1 == napr:
+            self.turnLeft()
+        elif ((self.napr - 1 + 2) % 4) + 1 == napr:
+            self.turnRightFull()
+        elif ((self.napr - 1 - 2) % 4) + 1 == napr:
+            self.turnLeftFull()
+
+    def arround_read(self, libary: LibryPoints):
+        delta_napr = self.napr
+        await_time = 0.5
+        data = []
+
+        naprs = list(range(self.napr, 4 + 1)) + list(range(1, self.napr))
+        smart = []
+        
+        for napr in naprs:
+            made = self.get_state_change(libary, napr)
+            smart.append([made, napr])
+
+        for go in smart:
+            if go[0]:
+                self.smart_turn(go[1])
+                time.sleep(await_time)
+                one = get_message()
+                data.append(
+                    {
+                        "object": one,
+                        "napr": self.napr
+                    }
+                )
+
+        self.smart_turn(delta_napr)
         return data
     
     def validation_napr(self, napr):
@@ -339,18 +388,16 @@ class RobotPoint(objectPoint):
         if len(self.mapArray) > y and len(self.mapArray[0]) > x:
             if self.mapArray[y][x] == 0: self.mapArray[y][x] = value
 
-    def readAll(self):
-        data = self.arround_read()
+    def readAll(self, libary: LibryPoints):
+        data = self.arround_read(libary)
         
         for elem in data:
             napr = int(elem['napr'])
-            # valid_napr = self.validation_napr(napr)
             napr = napr
             object: Message = elem['object']
 
             y = self.y
             x = self.x
-            print(x, y)
 
             valueLeft = self.switchValue(object.valueLeft, napr)
             valueRight = self.switchValue(object.valueRight, napr)

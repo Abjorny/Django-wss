@@ -76,11 +76,12 @@ def get_priority(cords, libary: LibryPoints):
             if point != None:
                 if point.value == 0:
                     count += 1
-
+        patch, delta =  mainUtilis.get_patch_target(this_point, libary)
+        
         if count != 0:
 
             data = {
-                count: [x, y, this_point.value]
+                count: [x, y, this_point.value, len(delta)]
             }
 
             return data
@@ -97,7 +98,7 @@ def getPatchPriority(priorityList: list, libary: LibryPoints):
     target_point = objectPoint(x,y,libary.maper.mapArray[y][x])
 
 
-    comands = mainUtilis.get_patch_target(target_point, libary)
+    comands, delta = mainUtilis.get_patch_target(target_point, libary)
     
     print (f"Робот едет на точку с x: {x}, y: {y} ее значение {target_point.value}")
 
@@ -105,13 +106,12 @@ def getPatchPriority(priorityList: list, libary: LibryPoints):
         for index , comand in enumerate( comands):
             map.tracerCommand(comand)
         
-        robotObject.readAll()
+        robotObject.readAll(libary)
         
         map.setImagesMap()
 
     return
    
-
 while 1:
     result = check_map(map.mapArray)
     if result:
@@ -133,10 +133,12 @@ while 1:
     priorityList_sorted = sorted(
         priorityList,
         key=lambda d: (
-            0 if list(d.values())[0][2] == robotObject.value_pod else 1,
-            -list(d.keys())[0]
+            -list(d.keys())[0], 
+            0 if list(d.values())[0][2] == robotObject.value_pod else 1,  
+            list(d.values())[0][3]  # 
         )
     )
+
     getPatchPriority(priorityList_sorted, libary)
     
     robotObject.left = 0

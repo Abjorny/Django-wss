@@ -304,6 +304,7 @@ svm_shape = data['svm_shape']
 svm_refine = data['svm_refine']
 scaler_hog = data['scaler_hog']
 scaler_color = data['scaler_color']
+
 def extract_hog_features(image, target_size, hog_params):
     image_resized = cv2.resize(image, target_size, interpolation=cv2.INTER_AREA)
     gray = cv2.cvtColor(image_resized, cv2.COLOR_BGR2GRAY)
@@ -394,35 +395,35 @@ async def read_data():
     roi3 =  sensor_center_left.get_roi(frame).roi_frame
     roi4 =  sensor_center_right.get_roi(frame).roi_frame
 
-    value_center_one, confidence_one =  predict_image_class(roi1)
-    value_center_two, confidence_two =  predict_image_class(roi2)
-    value_left, confidence_left =  predict_image_class(roi3)
-    value_right, confidence_right =  predict_image_class(roi4)
+    value_center_one, confidence_one =  predict_image_classpredict(roi1)
+    value_center_two, confidence_two =  predict_image_classpredict(roi2)
+    value_left, confidence_left =  predict_image_classpredict(roi3)
+    value_right, confidence_right =  predict_image_classpredict(roi4)
 
-    if value_center_one in [51, 52, 53, 54]:
-        value_center_one, confidence_one =  predict_image_classpredict(roi1)
+    # if value_center_one in [51, 52, 53, 54]:
+    #     value_center_one, confidence_one =  predict_image_classpredict(roi1)
 
-    if value_center_two in [51, 52, 53, 54]:
-        value_center_two, confidence_two = predict_image_classpredict(roi2)
+    # if value_center_two in [51, 52, 53, 54]:
+    #     value_center_two, confidence_two = predict_image_classpredict(roi2)
 
-    if value_left in [51, 52, 53, 54]:
-        value_left, confidence_left = predict_image_classpredict(roi3)
+    # if value_left in [51, 52, 53, 54]:
+    #     value_left, confidence_left = predict_image_classpredict(roi3)
 
-    if value_right in [51, 52, 53, 54]:
-        value_right, confidence_right = predict_image_classpredict(roi4)
+    # if value_right in [51, 52, 53, 54]:
+    #     value_right, confidence_right = predict_image_classpredict(roi4)
 
 
-    if value_center_one in [31, 32, 33, 34, 23, 24]:
-        value_center_one, confidence_one =  sensor_center_one.readObject(copyFrame, frame, value_center_one)
+    # if value_center_one in [31, 32, 33, 34, 23, 24]:
+    #     value_center_one, confidence_one =  sensor_center_one.readObject(copyFrame, frame, value_center_one)
     
-    if value_center_two in [31, 32, 33, 34, 23, 24]:
-        value_center_two, confidence_two = sensor_center_two.readObject(copyFrame, frame, value_center_two)
+    # if value_center_two in [31, 32, 33, 34, 23, 24]:
+    #     value_center_two, confidence_two = sensor_center_two.readObject(copyFrame, frame, value_center_two)
     
-    if value_left in [31, 32, 33, 34, 23, 24]:
-        value_left, confidence_left = sensor_center_left.readObject(copyFrame, frame, value_left)
+    # if value_left in [31, 32, 33, 34, 23, 24]:
+    #     value_left, confidence_left = sensor_center_left.readObject(copyFrame, frame, value_left)
     
-    if value_right in [31, 32, 33, 34, 23, 24]:
-        value_right, confidence_right = sensor_center_right.readObject(copyFrame, frame, value_right)
+    # if value_right in [31, 32, 33, 34, 23, 24]:
+    #     value_right, confidence_right = sensor_center_right.readObject(copyFrame, frame, value_right)
 
 
 
@@ -528,9 +529,6 @@ async def read_data_consistent(repeats=10):
 
         # Возвращаем последний image_data (например) и усреднённое сообщение с валидными значениями
         return image_data, result_message
-
-# Нужно будет переименовать оригинальную функцию чтения в read_data_once,
-# чтобы использовать внутри этой функции, которая выполняет 10 повторов.
 
 async def send_periodic_messages():
     channel_layer = get_channel_layer()
