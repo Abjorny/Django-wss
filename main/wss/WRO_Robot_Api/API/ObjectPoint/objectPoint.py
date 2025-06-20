@@ -310,7 +310,7 @@ class RobotPoint(objectPoint):
             value_top = get_value(self.x - 1, self.y)
 
         else:
-            return False  # неверное направление
+            return False 
 
         if value_left == 0 or value_right == 0 or value_top == 0:
             return True
@@ -337,15 +337,14 @@ class RobotPoint(objectPoint):
         smart = []
         
         for napr in naprs:
-            print(libary)
             if libary:
                 made = self.get_state_change(libary, napr)
             else:
                 made = True
-            print(made)
             smart.append([made, napr])
 
         for go in smart:
+            print(go[0], go[1])
             if go[0]:
                 self.smart_turn(go[1])
                 time.sleep(await_time)
