@@ -18,7 +18,7 @@ def preprocess_image(img):
     img = np.expand_dims(img, axis=0) 
     return img
 
-def predict_image_class(image_path):
+def predict_image_classpredict(image_path):
     input_data = preprocess_image(image_path)
 
     interpreter.set_tensor(input_details[0]['index'], input_data)
