@@ -5,7 +5,7 @@ from WRO_Robot_Api.API.LibaryPoints.Map.Map import Map
 import cv2
 
 robotObject =  RobotPoint(8, 8)
-robotObject.readAll()
+robotObject.readAll(None)
 map = Map(robotObject)
 
 

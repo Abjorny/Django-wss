@@ -359,7 +359,10 @@ class RobotPoint(objectPoint):
         smart = []
         
         for napr in naprs:
-            made = self.get_state_change(libary, napr)
+            if libary:
+                made = self.get_state_change(libary, napr)
+            else:
+                True
             smart.append([made, napr])
 
         for go in smart:
@@ -388,6 +391,7 @@ class RobotPoint(objectPoint):
             if self.mapArray[y][x] == 0: self.mapArray[y][x] = value
 
     def readAll(self, libary):
+        
         data = self.arround_read(libary)
         
         for elem in data:
