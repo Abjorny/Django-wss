@@ -283,63 +283,41 @@ class RobotPoint(objectPoint):
                 value = 23
         
         return value 
-
-    def get_state_change(self, libary,  napr):
-        
-        if napr == 1:
-            value_left = libary.get_point_coord(self.x - 1, self.y + 1)
-            value_left = int(value_left.value) if value_left  and value_left != -1   else -1
-
-            value_right = libary.get_point_coord(self.x + 1, self.y + 1)
-            value_right = int(value_right.value) if value_right and value_right != -1  else -1
-
-            value_top = libary.get_point_coord(self.x, self.y + 1)
-            value_top = int(value_top.value) if value_top  and value_top != -1  else -1
-            
-            if value_left == 0 or value_right == 0 or value_top == 0:
-                return True
-        
-        elif napr == 2:
-            value_left = libary.get_point_coord(self.x + 1, self.y -1)
-            value_left = int(value_left.value) if value_left  else -1
-
-            value_right = libary.get_point_coord(self.x + 1, self.y + 1).value
-            value_right = int(value_right.value) if value_right  else -1
-
-            value_top = libary.get_point_coord(self.x + 1, self.y ).value
-            value_top = int(value_top.value) if value_top  else -1
-            
-            if value_left == 0 or value_right == 0 or value_top == 0:
-                return True
-            
-        elif napr == 3:
-            value_left = libary.get_point_coord(self.x + 1, self.y - 1)
-            value_left = int(value_left.value) if value_left  else -1
-
-            value_right = libary.get_point_coord(self.x - 1, self.y - 1).value
-            value_right = int(value_right.value) if value_right  else -1
-
-            value_top = libary.get_point_coord(self.x, self.y - 1).value
-            value_top = int(value_top.value) if value_top  else -1
-            
-            if value_left == 0 or value_right == 0 or value_top == 0:
-                return True
-            
-        elif napr == 4:
-            value_left = libary.get_point_coord(self.x - 1, self.y +1)
-            value_left = int(value_left.value) if value_left  else -1
-
-            value_right = libary.get_point_coord(self.x - 1, self.y - 1).value
-            value_right = int(value_right.value) if value_right  else -1
-
-            value_top = libary.get_point_coord(self.x - 1, self.y ).value
-            value_top = int(value_top.value) if value_top  else -1
-            
-            if value_left == 0 or value_right == 0 or value_top == 0:
-                return True
-            
-        return False
     
+    def get_state_change(self, libary, napr):
+        def get_value(x, y):
+            val = libary.get_point_coord(x, y)
+            return int(val.value) if val and val != -1 else -1
+
+        if napr == 1:
+            value_left = get_value(self.x - 1, self.y + 1)
+            value_right = get_value(self.x + 1, self.y + 1)
+            value_top = get_value(self.x, self.y + 1)
+
+        elif napr == 2:
+            value_left = get_value(self.x + 1, self.y - 1)
+            value_right = get_value(self.x + 1, self.y + 1)
+            value_top = get_value(self.x + 1, self.y)
+
+        elif napr == 3:
+            value_left = get_value(self.x + 1, self.y - 1)
+            value_right = get_value(self.x - 1, self.y - 1)
+            value_top = get_value(self.x, self.y - 1)
+
+        elif napr == 4:
+            value_left = get_value(self.x - 1, self.y + 1)
+            value_right = get_value(self.x - 1, self.y - 1)
+            value_top = get_value(self.x - 1, self.y)
+
+        else:
+            return False  # неверное направление
+
+        if value_left == 0 or value_right == 0 or value_top == 0:
+            return True
+
+        return False
+
+            
     def smart_turn(self, napr):
         if ((self.napr - 1 + 1) % 4) + 1 == napr:
             self.turnRight()
