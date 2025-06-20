@@ -27,6 +27,5 @@ def predict_image_class(image_path):
     output_data = interpreter.get_tensor(output_details[0]['index'])
     predicted_index = np.argmax(output_data)
     predicted_class = LABELS[predicted_index]
-    confidence = float(output_data[0][predicted_index])
 
     return predicted_class, 1.0
