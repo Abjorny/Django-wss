@@ -1,5 +1,4 @@
 from ..UTIL.UartController import UartController
-
 import websockets
 import asyncio
 import time
@@ -67,7 +66,6 @@ class objectPoint:
 
 
 class RobotPoint(objectPoint):
-    from ..LibaryPoints.libaryPoints import LibryPoints
     def __init__(self, x = None, y = None):
         
         self.mapArray = [
@@ -286,7 +284,7 @@ class RobotPoint(objectPoint):
         
         return value 
 
-    def get_state_change(self, libary: LibryPoints,  napr):
+    def get_state_change(self, libary,  napr):
         
         if napr == 1:
             value_left = libary.get_point_coord(self.x - 1, self.y + 1)
@@ -352,7 +350,7 @@ class RobotPoint(objectPoint):
         elif ((self.napr - 1 - 2) % 4) + 1 == napr:
             self.turnLeftFull()
 
-    def arround_read(self, libary: LibryPoints):
+    def arround_read(self, libary):
         delta_napr = self.napr
         await_time = 0.5
         data = []
