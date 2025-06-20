@@ -341,7 +341,7 @@ def predict_image_class(img):
     features = extract_features_cascade(img).astype(np.float32)
     features_scaled = scaler.transform([features])
     prediction = model.predict(features_scaled)[0]
-    return prediction, 1.0
+    return int(prediction), 1.0
 
 
 async def read_data():

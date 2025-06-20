@@ -28,4 +28,4 @@ def predict_image_classpredict(image_path):
     predicted_index = np.argmax(output_data)
     predicted_class = LABELS[predicted_index]
 
-    return predicted_class, 1.0
+    return int(predicted_class), 1.0
