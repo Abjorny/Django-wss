@@ -115,9 +115,8 @@ def getPatchPriority(priorityList: list, libary: LibryPoints):
     return
    
 while 1:
-    result = check_map(map.mapArray)
-    if result:
-        break
+    gren_result = 0
+    red_result = 0
     priorityList = []
     libary = LibryPoints(map)
     count = 0
@@ -125,13 +124,20 @@ while 1:
 
     for y, row in enumerate(map.mapArray):
         for x, value in enumerate(row):
+                point = libary.get_point_coord(x, y)
+                if point.value in [31, 32, 33, 34]:
+                    gren_result += 1
+                elif point.value in [21, 22, 23, 24]:
+                    red_result += 1
+
                 priority = get_priority([y,x], libary)
                 count += 1
                 if priority:
                     priorityList.append(
                         priority,
                     )
-                    
+    if red_result == 3 and gren_result == 3:
+        break               
     priorityList_sorted = sorted(
         priorityList,
         key=lambda d: (
