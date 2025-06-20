@@ -392,7 +392,7 @@ async def read_data():
         value_left, confidence_left = sensor_center_left.readObject(copyFrame, frame, value_left)
     
     if value_right in [31, 32, 33, 34, 23, 24]:
-    #     value_right, confidence_right = sensor_center_right.readObject(copyFrame, frame, value_right)
+        value_right, confidence_right = sensor_center_right.readObject(copyFrame, frame, value_right)
 
 
 
