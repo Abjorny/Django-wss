@@ -28,6 +28,7 @@ class LibryPoints:
             coords = point.get_info().get("base")
             if coords.get("x") == x and coords.get("y") == y:
                 return point
+        return None
     
     def get_robot_point(self) -> objectPoint:
         for point in self.libary_mass:
