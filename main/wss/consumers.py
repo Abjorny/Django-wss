@@ -18,7 +18,7 @@ import os
 from .models import Settings
 from .WRO_Robot_Api.API.UTIL.UartController import UartControllerAsync
 from .WRO_Robot_Api.API.ObjectPoint.objectPoint import Message
-from skimage.feature import hog
+from skimage.feature import hog, local_binary_pattern
 import joblib
 from pathlib import Path
 from .tenser import predict_image_classpredict
