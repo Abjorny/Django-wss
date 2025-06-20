@@ -362,7 +362,7 @@ class RobotPoint(objectPoint):
             if libary:
                 made = self.get_state_change(libary, napr)
             else:
-                True
+                made = True
             smart.append([made, napr])
 
         for go in smart:
