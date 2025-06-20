@@ -334,6 +334,7 @@ class RobotPoint(objectPoint):
         data = []
 
         naprs = list(range(self.napr, 4 + 1)) + list(range(1, self.napr))
+        print(naprs)
         smart = []
         
         for napr in naprs:
