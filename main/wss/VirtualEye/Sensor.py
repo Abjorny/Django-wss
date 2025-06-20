@@ -341,7 +341,8 @@ class Sensor:
             else  :
                 value = 24
         else:
-            value = 1
+            if value != 41:
+                value = 1 
 
         return value, self.isTwo
 
