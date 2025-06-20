@@ -31,8 +31,9 @@ def get_priority(cords, libary: LibryPoints):
         x = cords[1]
 
         this_point = libary.get_point_coord(x, y)
+        patch, delta =  mainUtilis.get_patch_target(this_point, libary)
         count = 0
-        if this_point == None or this_point.value not in [1, 41] or libary.mass_mover[y][x] == 100 : return None
+        if this_point == None or this_point.value not in [1, 41] or libary.mass_mover[y][x] == 100 or patch == None: return None
 
         point_up_one = libary.get_point_coord(x, y - 1)
         if point_up_one.value  and (point_up_one.value not in [41, 23, 24] if robotObject.value_pod in [1] else True):
@@ -76,7 +77,6 @@ def get_priority(cords, libary: LibryPoints):
             if point != None:
                 if point.value == 0:
                     count += 1
-        patch, delta =  mainUtilis.get_patch_target(this_point, libary)
         
         if count != 0:
 

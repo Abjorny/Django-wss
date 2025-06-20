@@ -160,3 +160,4 @@ class FindTheBestPatchMap:
             commands_format = NaprovToCommandsFormat(commands)
             last_format = FindTheBestPatchMap.commands_format_to_callback(commands_format)
             return last_format, data
+        return None, None

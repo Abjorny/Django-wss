@@ -290,9 +290,9 @@ class RobotPoint(objectPoint):
             return int(val.value) if val and val != -1 else -1
 
         if napr == 1:
-            value_left = get_value(self.x - 1, self.y + 1)
-            value_right = get_value(self.x + 1, self.y + 1)
-            value_top = get_value(self.x, self.y + 1)
+            value_left = get_value(self.x - 1, self.y - 1)
+            value_right = get_value(self.x + 1, self.y - 1)
+            value_top = get_value(self.x, self.y - 1)
 
         elif napr == 2:
             value_left = get_value(self.x + 1, self.y - 1)
@@ -300,9 +300,9 @@ class RobotPoint(objectPoint):
             value_top = get_value(self.x + 1, self.y)
 
         elif napr == 3:
-            value_left = get_value(self.x + 1, self.y - 1)
-            value_right = get_value(self.x - 1, self.y - 1)
-            value_top = get_value(self.x, self.y - 1)
+            value_left = get_value(self.x + 1, self.y + 1)
+            value_right = get_value(self.x - 1, self.y + 1)
+            value_top = get_value(self.x, self.y + 1)
 
         elif napr == 4:
             value_left = get_value(self.x - 1, self.y + 1)
