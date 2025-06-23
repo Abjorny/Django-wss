@@ -448,7 +448,7 @@ class RobotPoint(objectPoint):
             valueCenterTwo = self.switchValue(object.valueTwo, napr)
 
             if napr == 1:
-                if object.redFront and not self.red_front:
+                if object.redFront and self.red_front == False:
                     self.red_front = True
                     for idx in [y - 2, y - 1, y + 8, y + 9]:
                         if 0 <= idx < len(self.mapArray):
@@ -456,7 +456,7 @@ class RobotPoint(objectPoint):
                                 self.mapArray[idx][x1] = -1
 
                 else:
-                    if object.redFrontTwo and valueCenterOne not in  self.two_lear and not self.red_front and self.value_pod != 41:
+                    if object.redFrontTwo and valueCenterOne not in  self.two_lear and self.red_front == False and self.value_pod != 41:
                         self.red_front = True
                         for idx in [y - 2, y - 3, y + 8, y + 7]:
                             if 0 <= idx < len(self.mapArray):
@@ -473,7 +473,7 @@ class RobotPoint(objectPoint):
                     self.check_null_to_write(x + 1, y -1 , valueRight)
 
             elif napr == 3:
-                if object.redFront and not self.red_front:
+                if object.redFront and self.red_front == False:
                     self.red_front = True
                     for idx in [y + 2, y + 1, y - 8, y - 9]:
                         if 0 <= idx < len(self.mapArray):
@@ -481,7 +481,7 @@ class RobotPoint(objectPoint):
                                 self.mapArray[idx][x1] = -1
 
                 else:
-                    if object.redFrontTwo and valueCenterOne not in self.two_lear and not self.red_front and self.value_pod != 41:
+                    if object.redFrontTwo and valueCenterOne not in self.two_lear and self.red_front == False and self.value_pod != 41:
                         self.red_front = True
                         for idx in [y + 2, y + 3, y - 8, y - 7]:
                             if 0 <= idx < len(self.mapArray):
@@ -498,7 +498,7 @@ class RobotPoint(objectPoint):
                     self.check_null_to_write(x - 1, y + 1, valueRight) 
 
             elif napr == 2 :
-                if object.redFront and self.reds < 4 and not self.red_right:
+                if object.redFront and self.reds < 4 and self.red_right == False:
                     self.red_right = True
                     for row in self.mapArray:
                         for col_idx in [x + 1, x + 2, x - 8, x - 9]:
@@ -506,7 +506,7 @@ class RobotPoint(objectPoint):
                                 row[col_idx] = -1
                 else:
 
-                    if object.redFrontTwo and valueCenterOne not in self.two_lear and not self.red_right and self.value_pod != 41:
+                    if object.redFrontTwo and valueCenterOne not in self.two_lear and self.red_right == False and self.value_pod != 41:
                         self.red_right = True
                         for row in self.mapArray:
                             for col_idx in [x + 3, x + 2, x - 8, x - 7]:
@@ -521,14 +521,14 @@ class RobotPoint(objectPoint):
                     self.check_null_to_write(x + 1, y + 1 , valueRight)
 
             elif napr == 4 :
-                if object.redFront and not self.red_right:
+                if object.redFront and self.red_right == False:
                     self.red_right = True
                     for row in self.mapArray:
                         for col_idx in [x - 1, x - 2, x + 8, x + 9]:
                             if 0 <= col_idx < len(row):
                                 row[col_idx] = -1
                 else:
-                    if object.redFrontTwo and valueCenterOne not in  self.two_lear and not self.red_right and self.value_pod != 41:
+                    if object.redFrontTwo and valueCenterOne not in  self.two_lear and self.red_right == False and self.value_pod != 41:
                         self.red_right = True
                         for row in self.mapArray:
                             for col_idx in [x + 3, x + 2, x - 8, x - 7]:
