@@ -530,6 +530,7 @@ async def read_data_consistent(repeats=10):
         return image_data, result_message
 
 async def send_periodic_messages():
+        print("pk")
         channel_layer = get_channel_layer()
 
         last_values = None
@@ -539,18 +540,18 @@ async def send_periodic_messages():
     # while True:
         image_data, message = await read_data()
 
-        current_values = (
-            message.valueLeft,
-            message.valueRight,
-            message.valueTwo,
-            message.valueOne,
-        )
+        # current_values = (
+        #     message.valueLeft,
+        #     message.valueRight,
+        #     message.valueTwo,
+        #     message.valueOne,
+        # )
 
-        if current_values == last_values:
-            stable_count += 1
-        else:
-            stable_count = 0
-            last_values = current_values
+        # if current_values == last_values:
+        #     stable_count += 1
+        # else:
+        #     stable_count = 0
+        #     last_values = current_values
 
         # if stable_count >= required_stable_iterations:
         await channel_layer.group_send(
@@ -570,8 +571,9 @@ async def send_periodic_messages():
                 },
             }
             )
-        stable_count = 0
+            # stable_count = 0
 
+        await asyncio.sleep(1 / 30)
         gc.collect()
 
 async def slam():
