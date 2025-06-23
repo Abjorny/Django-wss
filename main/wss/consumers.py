@@ -534,7 +534,7 @@ async def send_periodic_messages():
 
     last_values = None
     stable_count = 0
-    required_stable_iterations = 5
+    required_stable_iterations = 1
 
     while True:
         image_data, message = await read_data()
