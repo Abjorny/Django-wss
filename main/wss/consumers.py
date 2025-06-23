@@ -514,7 +514,7 @@ async def send_periodic_messages():
             # stable_count = 0
 
         await asyncio.sleep(1 / 30)
-        gc.collect()
+        # gc.collect()
 
 async def slam():
     await uartController.sendValueAndWait("1000")
