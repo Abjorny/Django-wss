@@ -310,7 +310,6 @@ class Sensor:
 
         green_result: Result = self.get_green(roi, frame)
         red_result: Result = self.get_red(roi, frame)   
-        value = 1
 
 
         if green_result.noblack != 0:

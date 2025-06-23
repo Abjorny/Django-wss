@@ -10,7 +10,6 @@ from .API.Patches.patch import Patch
 # Второй этаж - 41
 # Пандус - 51,52,53,54
 # Робот - 6
-
 class FindTheBestPatchMap:
     @staticmethod
     def commands_format_to_callback( best):

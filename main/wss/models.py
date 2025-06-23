@@ -1,6 +1,8 @@
 from django.db import models
 from django.core.exceptions import ValidationError
 
+
+
 class HsvObject(models.Model):
     name = models.CharField(max_length=100, verbose_name="Заголовок для админ панели")
     min_color_hsv = models.JSONField("Минимальный (HSV)", default=list)

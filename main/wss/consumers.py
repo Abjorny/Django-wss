@@ -529,7 +529,6 @@ async def read_data_consistent(repeats=10):
         # Возвращаем последний image_data (например) и усреднённое сообщение с валидными значениями
         return image_data, result_message
 
-
 async def send_periodic_messages():
     channel_layer = get_channel_layer()
 
@@ -575,7 +574,6 @@ async def send_periodic_messages():
 
         await asyncio.sleep(1 / 30)
         gc.collect()
-
 
 async def slam():
     await uartController.sendValueAndWait("1000")

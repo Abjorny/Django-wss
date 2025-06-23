@@ -21,7 +21,8 @@ class UartController:
         while (self.uartBody.in_waiting == 0): 
             time.sleep(0.01)
             pass
-        self.uartBody.reset_input_buffer()
+        response = self.uartBody.read(self.uartBody.in_waiting).decode('utf-8') 
+        return response
 
 class UartControllerAsync(UartController):
     async def sendCommand(self, command) -> bool:

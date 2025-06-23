@@ -109,7 +109,8 @@ class RobotPoint(objectPoint):
         self.value = 6
         self.value_pod = 1
 
-        self.reds = 0
+        self.red_front = False
+        self.red_right = False
         self.two_lear =  [41, 51, 52, 53, 54, 23, 24]
         self.setRobot()
         
@@ -321,7 +322,6 @@ class RobotPoint(objectPoint):
 
         return False
 
-            
     def smart_turn(self, napr):
         if ((self.napr - 1 + 1) % 4) + 1 == napr:
             self.turnRight()
@@ -374,6 +374,62 @@ class RobotPoint(objectPoint):
         if len(self.mapArray) > y and len(self.mapArray[0]) > x:
             if self.mapArray[y][x] == 0: self.mapArray[y][x] = value
 
+    def mapValidControl(self, libary):
+        for y in range(len(self.mapArray)):
+            for x in range(len(self.mapArray[y])):
+                point = libary.get_point_coord(x, y)
+                point_left  = libary.get_point_coord(x-1, y)
+                point_top = libary.get_point_coord(x, y - 1)
+                point_right  = libary.get_point_coord(x+1, y)
+                point_bottom = libary.get_point_coord(x, y + 1)
+
+                if point and point.value == 31:
+                    if not( point_top or point_top.value == -1 ):
+                        self.mapArray[y][x] = 0
+                
+                elif point and point.value == 32:
+                    if not (point_right and point_right == -1):
+                        self.mapArray[y][x] = 0
+                
+                elif point and point.value == 33:
+                    if not( point_bottom or point_bottom.value == -1 ):
+                        self.mapArray[y][x] = 0
+                
+                elif point and point.value == 34:
+                    if not (point_left or point_left == -1):
+                        self.mapArray[y][x] = 0
+                
+                elif point and point.value == 21:
+                    if not ( (point_right and point_right.value in [1, 54]) or point_left and point_left.value in [1, 52] ):
+                        self.mapArray[y][x] = 0
+                
+                elif point and point.value == 22:
+                    if not ( (point_top and point_top.value in [1, 51]) or point_bottom and point_bottom.value in [1, 53] ):
+                        self.mapArray[y][x] = 0
+                
+                elif point and point.value == 23:
+                    if not ( (point_right and point_right.value in [41, 52]) or point_left and point_left.value in [41, 54] ):
+                        self.mapArray[y][x] = 0
+            
+                elif point and point.value == 24:
+                    if not ( (point_top and point_top.value in [41, 53]) or point_bottom and point_bottom.value in [41, 51] ):
+                        self.mapArray[y][x] = 0
+                
+                elif point and point.value == 51:
+                    if not ( (point_top and point_top.value in [41, 24]) ):
+                        self.mapArray[y][x] = 0
+
+                elif point and point.value == 53:
+                    if not ( (point_bottom and point_bottom.value in [41, 24]) ):
+                        self.mapArray[y][x] = 0  
+                
+                elif point and point.value == 52:
+                    if not ( (point_left and point_left.value in [41, 23]) ):
+                        self.mapArray[y][x] = 0
+
+                elif point and point.value == 54:
+                    if not ( (point_right and point_right.value in [41, 23]) ):
+                        self.mapArray[y][x] = 0
     def readAll(self, libary):
         
         data = self.arround_read(libary)
@@ -392,21 +448,21 @@ class RobotPoint(objectPoint):
             valueCenterTwo = self.switchValue(object.valueTwo, napr)
 
             if napr == 1:
-                if object.redFront and self.reds < 4:
-                    self.reds += 2
+                if object.redFront and not self.red_front:
+                    self.red_front = True
                     for idx in [y - 2, y - 1, y + 8, y + 9]:
                         if 0 <= idx < len(self.mapArray):
                             for x1 in range(len(self.mapArray[idx])):
                                 self.mapArray[idx][x1] = -1
 
                 else:
-                    if object.redFrontTwo and valueCenterOne not in  self.two_lear and self.reds < 4:
-                        self.reds += 2
+                    if object.redFrontTwo and valueCenterOne not in  self.two_lear and not self.red_front and self.value_pod != 41:
+                        self.red_front = True
                         for idx in [y - 2, y - 3, y + 8, y + 7]:
                             if 0 <= idx < len(self.mapArray):
                                 for x1 in range(len(self.mapArray[idx])):
                                     self.mapArray[idx][x1] = -1
-
+                      
                     self.check_null_to_write(x, y - 1, valueCenterOne)
 
                     if valueCenterOne not in [41, 23, 24]:
@@ -417,16 +473,16 @@ class RobotPoint(objectPoint):
                     self.check_null_to_write(x + 1, y -1 , valueRight)
 
             elif napr == 3:
-                if object.redFront and self.reds < 4:
-                    self.reds += 2
+                if object.redFront and not self.red_front:
+                    self.red_front = True
                     for idx in [y + 2, y + 1, y - 8, y - 9]:
                         if 0 <= idx < len(self.mapArray):
                             for x1 in range(len(self.mapArray[idx])):
                                 self.mapArray[idx][x1] = -1
 
                 else:
-                    if object.redFrontTwo and valueCenterOne not in self.two_lear and self.reds < 4:
-                        self.reds += 2
+                    if object.redFrontTwo and valueCenterOne not in self.two_lear and not self.red_front and self.value_pod != 41:
+                        self.red_front = True
                         for idx in [y + 2, y + 3, y - 8, y - 7]:
                             if 0 <= idx < len(self.mapArray):
                                 for x1 in range(len(self.mapArray[idx])):
@@ -442,16 +498,16 @@ class RobotPoint(objectPoint):
                     self.check_null_to_write(x - 1, y + 1, valueRight) 
 
             elif napr == 2 :
-                if object.redFront and self.reds < 4:
-                    self.reds += 2
+                if object.redFront and self.reds < 4 and not self.red_right:
+                    self.red_right = True
                     for row in self.mapArray:
                         for col_idx in [x + 1, x + 2, x - 8, x - 9]:
                             if 0 <= col_idx < len(row):
                                 row[col_idx] = -1
                 else:
 
-                    if object.redFrontTwo and valueCenterOne not in self.two_lear and self.reds < 4:
-                        self.reds += 2
+                    if object.redFrontTwo and valueCenterOne not in self.two_lear and not self.red_right and self.value_pod != 41:
+                        self.red_right = True
                         for row in self.mapArray:
                             for col_idx in [x + 3, x + 2, x - 8, x - 7]:
                                 if 0 <= col_idx < len(row):
@@ -465,15 +521,15 @@ class RobotPoint(objectPoint):
                     self.check_null_to_write(x + 1, y + 1 , valueRight)
 
             elif napr == 4 :
-                if object.redFront and self.reds < 4:
-                    self.reds += 2
+                if object.redFront and not self.red_right:
+                    self.red_right = True
                     for row in self.mapArray:
                         for col_idx in [x - 1, x - 2, x + 8, x + 9]:
                             if 0 <= col_idx < len(row):
                                 row[col_idx] = -1
                 else:
-                    if object.redFrontTwo and valueCenterOne not in  self.two_lear and self.reds < 4:
-                        self.reds += 2
+                    if object.redFrontTwo and valueCenterOne not in  self.two_lear and not self.red_right and self.value_pod != 41:
+                        self.red_right = True
                         for row in self.mapArray:
                             for col_idx in [x + 3, x + 2, x - 8, x - 7]:
                                 if 0 <= col_idx < len(row):
@@ -483,8 +539,8 @@ class RobotPoint(objectPoint):
                     if valueCenterOne not in [41, 23, 24]:
                         self.check_null_to_write(x - 2, y, valueCenterTwo)
 
-                    self.check_null_to_write(x, y + 1 , valueLeft)
-                    self.check_null_to_write(x, y - 1 , valueRight)  
+                    self.check_null_to_write(x - 1, y + 1 , valueLeft)
+                    self.check_null_to_write(x -1, y - 1 , valueRight)  
                 
        
             

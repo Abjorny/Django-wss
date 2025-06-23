@@ -2,10 +2,22 @@ from WRO_Robot_Api import main
 from WRO_Robot_Api.API.ObjectPoint.objectPoint import objectPoint, RobotPoint
 from WRO_Robot_Api.API.LibaryPoints.libaryPoints import LibryPoints
 from WRO_Robot_Api.API.LibaryPoints.Map.Map import Map
+from WRO_Robot_Api.API.UTIL.UartController import UartController
+import requests
 import cv2
 
+
+
+uart = UartController()
+uart.sendValueAndWait("3000")
+value_robot = int(uart.sendValueAndWait("2000"))
+
+value_robot =  1 if value_robot == 0 else 41
 robotObject =  RobotPoint(8, 8)
+robotObject.value_pod = value_robot
+
 robotObject.readAll(None)
+
 map = Map(robotObject)
 
 
@@ -92,7 +104,7 @@ def get_priority(cords, libary: LibryPoints):
             return None
 
 def getPatchPriority(priorityList: list, libary: LibryPoints):
-    key_in_dict, point = list(priorityList[0].items())[0]
+    key_in_dict, point = list(priorityList.items())[0]
     x = point[0]
     y = point[1]
 
@@ -101,23 +113,14 @@ def getPatchPriority(priorityList: list, libary: LibryPoints):
 
 
     comands, delta = mainUtilis.get_patch_target(target_point, libary)
-    
-    print (f"Робот едет на точку с x: {x}, y: {y} ее значение {target_point.value}")
+    return comands
 
-    if comands is not None:
-        for index , comand in enumerate( comands):
-            map.tracerCommand(comand)
-        
-        robotObject.readAll(libary)
-        
-        map.setImagesMap()
 
-    return
-   
 while 1:
     gren_result = 0
     red_result = 0
     priorityList = []
+    thisLearPriority = []
     libary = LibryPoints(map)
     count = 0
     
@@ -125,8 +128,10 @@ while 1:
     for y, row in enumerate(map.mapArray):
         for x, value in enumerate(row):
                 point = libary.get_point_coord(x, y)
+                
                 if point.value in [31, 32, 33, 34]:
                     gren_result += 1
+                
                 elif point.value in [21, 22, 23, 24]:
                     red_result += 1
 
@@ -136,8 +141,10 @@ while 1:
                     priorityList.append(
                         priority,
                     )
+    
     if red_result == 3 and gren_result == 3:
         break               
+
     priorityList_sorted = sorted(
         priorityList,
         key=lambda d: (
@@ -147,18 +154,48 @@ while 1:
         )
     )
 
+    for priority in priorityList_sorted:
+        flag = False
+        comands = getPatchPriority(priority, libary)
+        for commad in comands:
+            if commad in [90, 91, 92, 93, 94]:
+                flag = True
+        if not flag:
+            thisLearPriority.append(priority)
 
-    getPatchPriority(priorityList_sorted, libary)
-    
+    if len(thisLearPriority ) > 0:
+        comands = getPatchPriority(thisLearPriority[0], libary)
+    elif len(priorityList_sorted) > 0:
+        comands = getPatchPriority(priorityList_sorted[0], libary)
+    else:
+        comands = None
+    # print (f"Робот едет на точку с x: {x}, y: {y} ")
+
+    if comands is not None:
+        for index , comand in enumerate( comands):
+            map.tracerCommand(comand)
+        
+        robotObject.readAll(libary)
+        robotObject.mapValidControl(libary)
+        map.setImagesMap()
+
     robotObject.left = 0
     robotObject.right = 0
     robotObject.top = 0
     robotObject.bottom = 0
-    
+
 
 print("Отправка карты на работа >>>>>>>")
 
-for row in map.mapArray:
-    print(row)
+
+robotObject.smart_turn(1)
+response = requests.post(
+     "http://192.168.216.119:8000/api/robot-start/",
+     json={ 
+         "data": map.mapArray,
+         "wait" : "0"
+    }
+)
+
 
 cv2.waitKey()
