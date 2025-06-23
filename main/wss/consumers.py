@@ -516,8 +516,7 @@ async def send_periodic_messages():
         await asyncio.sleep(1 / 30)
         # gc.collect()
 
-async def slam():
-    await uartController.sendValueAndWait("1000")
+
 
 class MyConsumer(AsyncWebsocketConsumer):
     
@@ -540,6 +539,7 @@ class MyConsumer(AsyncWebsocketConsumer):
         type_message = data.get("type")
         if type_message == "change_two":
             robotTwo = not robotTwo
+        
         elif  type_message == "hsv":
             hsv_data = data.get("data", {})
             robotTwo = hsv_data.get("isTwo", False)
@@ -553,9 +553,6 @@ class MyConsumer(AsyncWebsocketConsumer):
             })
             logger.info(f"Updated HSV: {latest_hsv}")
         
-        elif type_message == "slam":
-            if task_slam is None or task_slam.done():
-                task_slam = asyncio.create_task(slam())
         
         elif type_message == "update":
             await update_settings()
