@@ -464,34 +464,93 @@ async def read_data():
             "cofFour": confidence_right
         }
     )
-    print("ok")
-
     return image_data, message
 
+async def read_data_consistent(repeats=10):
+        values_center_one = []
+        values_center_two = []
+        values_left = []
+        values_right = []
+        
+        confs_one = []
+        confs_two = []
+        confs_left = []
+        confs_right = []
 
+        red_left_list = []
+        red_right_list = []
+        red_front_list = []
+        red_front_two_list = []
+
+        for _ in range(repeats):
+            image_data, message = await read_data()
+
+            
+            values_center_one.append(message["valueCenterOne"])
+            values_center_two.append(message["valueCenterTwo"])
+            values_left.append(message["valueCenterLeft"])
+            values_right.append(message["valueCenterRight"])
+            
+            confs_one.append(message["cofOne"])
+            confs_two.append(message["cofTwo"])
+            confs_left.append(message["cofThree"])
+            confs_right.append(message["cofFour"])
+
+            red_left_list.append(message["redLeft"])
+            red_right_list.append(message["redRight"])
+            red_front_list.append(message["redFront"])
+            red_front_two_list.append(message["redFrontTwo"])
+
+            await asyncio.sleep(0.01)
+
+        def all_equal(lst):
+            return all(x == lst[0] for x in lst)
+
+        def get_consistent_value(lst):
+            return lst[0] if all_equal(lst) else None
+
+        result_message = Message(
+            {
+                "valueCenterOne": get_consistent_value(values_center_one),
+                "valueCenterTwo": get_consistent_value(values_center_two),
+                "valueCenterLeft": get_consistent_value(values_left),
+                "valueCenterRight": get_consistent_value(values_right),
+                "redLeft": get_consistent_value(red_left_list),
+                "redRight": get_consistent_value(red_right_list),
+                "redFront": get_consistent_value(red_front_list),
+                "redFrontTwo": get_consistent_value(red_front_two_list),
+                "cofOne": sum(confs_one)/len(confs_one),
+                "cofTwo": sum(confs_two)/len(confs_two),
+                "cofThree": sum(confs_left)/len(confs_left),
+                "cofFour": sum(confs_right)/len(confs_right),
+            }
+        )
+
+        # Возвращаем последний image_data (например) и усреднённое сообщение с валидными значениями
+        return image_data, result_message
 
 async def send_periodic_messages():
-        channel_layer = get_channel_layer()
+    channel_layer = get_channel_layer()
 
-        last_values = None
-        stable_count = 0
-        required_stable_iterations = 1
+    last_values = None
+    stable_count = 0
+    required_stable_iterations = 5
 
-    # while True:
+    while True:
         image_data, message = await read_data()
 
-        # current_values = (
-        #     message.valueLeft,
-        #     message.valueRight,
-        #     message.valueTwo,
-        #     message.valueOne,
-        # )
+        current_values = (
+            message.valueLeft,
+            message.valueRight,
+            message.valueTwo,
+            message.valueOne,
+        )
 
-        # if current_values == last_values:
-        #     stable_count += 1
-        # else:
-        #     stable_count = 0
-        #     last_values = current_values
+        if current_values == last_values:
+            stable_count += 1
+        else:
+            stable_count = 0
+            last_values = current_values
 
         # if stable_count >= required_stable_iterations:
         await channel_layer.group_send(
@@ -510,13 +569,14 @@ async def send_periodic_messages():
                     "redFrontTwo": message.redFrontTwo  
                 },
             }
-            )
-            # stable_count = 0
+        )
+        stable_count = 0
 
         await asyncio.sleep(1 / 30)
-        # gc.collect()
+        gc.collect()
 
-
+async def slam():
+    await uartController.sendValueAndWait("1000")
 
 class MyConsumer(AsyncWebsocketConsumer):
     
@@ -539,7 +599,6 @@ class MyConsumer(AsyncWebsocketConsumer):
         type_message = data.get("type")
         if type_message == "change_two":
             robotTwo = not robotTwo
-        
         elif  type_message == "hsv":
             hsv_data = data.get("data", {})
             robotTwo = hsv_data.get("isTwo", False)
@@ -553,6 +612,9 @@ class MyConsumer(AsyncWebsocketConsumer):
             })
             logger.info(f"Updated HSV: {latest_hsv}")
         
+        elif type_message == "slam":
+            if task_slam is None or task_slam.done():
+                task_slam = asyncio.create_task(slam())
         
         elif type_message == "update":
             await update_settings()
