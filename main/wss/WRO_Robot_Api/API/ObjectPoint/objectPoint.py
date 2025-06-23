@@ -498,7 +498,7 @@ class RobotPoint(objectPoint):
                     self.check_null_to_write(x - 1, y + 1, valueRight) 
 
             elif napr == 2 :
-                if object.redFront and self.reds < 4 and self.red_right == False:
+                if object.redFront  and self.red_right == False:
                     self.red_right = True
                     for row in self.mapArray:
                         for col_idx in [x + 1, x + 2, x - 8, x - 9]:
