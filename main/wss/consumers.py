@@ -530,13 +530,13 @@ async def read_data_consistent(repeats=10):
         return image_data, result_message
 
 async def send_periodic_messages():
-    channel_layer = get_channel_layer()
+        channel_layer = get_channel_layer()
 
-    last_values = None
-    stable_count = 0
-    required_stable_iterations = 1
+        last_values = None
+        stable_count = 0
+        required_stable_iterations = 1
 
-    while True:
+    # while True:
         image_data, message = await read_data()
 
         current_values = (
@@ -552,27 +552,26 @@ async def send_periodic_messages():
             stable_count = 0
             last_values = current_values
 
-        if stable_count >= required_stable_iterations:
-            await channel_layer.group_send(
-                "broadcast_group",
-                {
-                    "type": "broadcast_message",
-                    "message": {
-                        "image": image_data,
-                        "valueCenterOne": f"{message.valueOne}",
-                        "valueCenterTwo": f"{message.valueTwo}",
-                        "valueCenterLeft": f"{message.valueLeft}",
-                        "valueCenterRight": f"{message.valueRight}",
-                        "redLeft": message.redLeft,
-                        "redRight": message.redRight,
-                        "redFront": message.redFront,
-                        "redFrontTwo": message.redFrontTwo  
-                    },
-                }
+        # if stable_count >= required_stable_iterations:
+        await channel_layer.group_send(
+            "broadcast_group",
+            {
+                "type": "broadcast_message",
+                "message": {
+                    "image": image_data,
+                    "valueCenterOne": f"{message.valueOne}",
+                    "valueCenterTwo": f"{message.valueTwo}",
+                    "valueCenterLeft": f"{message.valueLeft}",
+                    "valueCenterRight": f"{message.valueRight}",
+                    "redLeft": message.redLeft,
+                    "redRight": message.redRight,
+                    "redFront": message.redFront,
+                    "redFrontTwo": message.redFrontTwo  
+                },
+            }
             )
-            stable_count = 0
+        stable_count = 0
 
-        await asyncio.sleep(1 / 30)
         gc.collect()
 
 async def slam():
