@@ -186,13 +186,22 @@ while 1:
 
 
 print("Отправка карты на работа >>>>>>>")
+cleaned_map = []
 
+for row in map.mapArray:
+    new_row = []
+    for item in row:
+        try:
+            new_row.append(int(item))
+        except (ValueError, TypeError):
+            new_row.append(6)  # Если не удалось преобразовать
+    cleaned_map.append(new_row)
 
 robotObject.smart_turn(1)
 response = requests.post(
      "http://192.168.216.119:8000/api/robot-start/",
      json={ 
-         "data": map.mapArray,
+         "data": cleaned_map,
          "wait" : "0"
     }
 )
