@@ -148,9 +148,9 @@ while 1:
     priorityList_sorted = sorted(
         priorityList,
         key=lambda d: (
-            0 if list(d.values())[0][2] == robotObject.value_pod else 1, 
+            # 0 if list(d.values())[0][2] == robotObject.value_pod else 1, 
             -list(d.keys())[0],                                           
-            list(d.values())[0][3]                                      
+            # list(d.values())[0][3]                                      
         )
     )
 
@@ -199,7 +199,7 @@ for row in map.mapArray:
 
 robotObject.smart_turn(1)
 response = requests.post(
-     "http://192.168.216.119:8000/api/robot-start/",
+     "http://0.0.0.0:8000/api/robot-start/",
      json={ 
          "data": cleaned_map,
          "wait" : "0"
