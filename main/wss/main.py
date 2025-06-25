@@ -37,71 +37,54 @@ def check_map(mapArray):
     return count_green == 3 and count_red == 3
 
 def get_priority(cords, libary: LibryPoints):
-        data = []
+    y = cords[0]
+    x = cords[1]
 
-        y = cords[0]
-        x = cords[1]
+    this_point = libary.get_point_coord(x, y)
+    if this_point is None or this_point.value not in [1, 41] or libary.mass_mover[y][x] == 100:
+        return None
 
-        this_point = libary.get_point_coord(x, y)
-        count = 0
-        if this_point == None or this_point.value not in [1, 41] or libary.mass_mover[y][x] == 100 : return None
-        patch, delta =  mainUtilis.get_patch_target(this_point, libary)
-        if patch == None:
-            return None
-        
-        point_up_one = libary.get_point_coord(x, y - 1)
-        if point_up_one.value  and (point_up_one.value not in [41, 23, 24]):
-            point_up_two = libary.get_point_coord(x, y - 2)
-        else:
-            point_up_two = None
+    patch, delta = mainUtilis.get_patch_target(this_point, libary)
+    if patch is None:
+        return None
 
-        point_down_one = libary.get_point_coord(x, y + 1)
-        
-        if point_down_one.value and (point_down_one.value not in [41, 23, 24]):
-            point_down_two = libary.get_point_coord(x, y + 2)
-        else:
-            point_down_two = None     
-        
-        
-        point_right_one = libary.get_point_coord(x + 1, y)
-        
-        if point_right_one.value and (point_right_one.value not in [41, 23, 24]):
-            point_right_two = libary.get_point_coord(x + 2, y)
-        else:
-            point_right_two = None
+    # Получение соседей с проверкой None
+    point_up_one = libary.get_point_coord(x, y - 1)
+    point_up_two = libary.get_point_coord(x, y - 2) if point_up_one and point_up_one.value not in [41, 23, 24] else None
 
-        point_left_one = libary.get_point_coord(x - 1, y)
+    point_down_one = libary.get_point_coord(x, y + 1)
+    point_down_two = libary.get_point_coord(x, y + 2) if point_down_one and point_down_one.value not in [41, 23, 24] else None
 
-        if point_left_one.value  and (point_left_one.value not in [41, 23, 24]):
-            point_left_two = libary.get_point_coord(x - 2, y)
-        else:
-            point_left_two = None
-        
-        
-        points = [
-            point_up_one, point_down_one, 
-            point_right_one, point_left_one,
-            point_up_two, point_down_two,
-            point_right_two, point_left_two
+    point_right_one = libary.get_point_coord(x + 1, y)
+    point_right_two = libary.get_point_coord(x + 2, y) if point_right_one and point_right_one.value not in [41, 23, 24] else None
 
-        ]
+    point_left_one = libary.get_point_coord(x - 1, y)
+    point_left_two = libary.get_point_coord(x - 2, y) if point_left_one and point_left_one.value not in [41, 23, 24] else None
 
+    points = [
+        point_up_one, point_down_one, 
+        point_right_one, point_left_one,
+        point_up_two, point_down_two,
+        point_right_two, point_left_two
+    ]
 
-        for point in points:
-            if point != None:
-                if point.value == 0:
-                    count += 1
-        
-        if count != 0:
+    # Подсчёт нулевых соседей
+    count = 0
+    for point in points:
+        if point is not None and point.value == 0:
+            count += 1
 
-            data = {
-                count: [x, y, this_point.value, len(delta)]
-            }
+    if count != 0:
+        return {
+            "count": count,
+            "x": x,
+            "y": y,
+            "value": this_point.value,
+            "delta_len": len(delta)
+        }
 
-            return data
-        
-        else:
-            return None
+    return None
+
 
 def getPatchPriority(priorityList: list, libary: LibryPoints):
     key_in_dict, point = list(priorityList.items())[0]
@@ -147,11 +130,7 @@ while 1:
 
     priorityList_sorted = sorted(
         priorityList,
-        key=lambda d: (
-            # 0 if list(d.values())[0][2] == robotObject.value_pod else 1, 
-            # -list(d.keys())[0],                                           
-            list(d.values())[0][3]                                      
-        )
+        key=lambda d: (d["delta_len"], -d["count"])
     )
 
     for priority in priorityList_sorted:
