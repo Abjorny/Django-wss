@@ -142,7 +142,6 @@ while 1:
             map.tracerCommand(comand)
         
         robotObject.readAll(libary)
-        robotObject.mapValidControl(libary)
         map.setImagesMap()
 
     robotObject.left = 0

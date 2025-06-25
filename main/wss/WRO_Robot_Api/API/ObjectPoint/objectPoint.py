@@ -374,62 +374,7 @@ class RobotPoint(objectPoint):
         if len(self.mapArray) > y and len(self.mapArray[0]) > x:
             if self.mapArray[y][x] == 0: self.mapArray[y][x] = value
 
-    def mapValidControl(self, libary):
-        for y in range(len(self.mapArray)):
-            for x in range(len(self.mapArray[y])):
-                point = libary.get_point_coord(x, y)
-                point_left  = libary.get_point_coord(x-1, y)
-                point_top = libary.get_point_coord(x, y - 1)
-                point_right  = libary.get_point_coord(x+1, y)
-                point_bottom = libary.get_point_coord(x, y + 1)
 
-                if point and point.value == 31:
-                    if not( point_top or point_top.value == -1 ):
-                        self.mapArray[y][x] = 0
-                
-                elif point and point.value == 32:
-                    if not (point_right and point_right == -1):
-                        self.mapArray[y][x] = 0
-                
-                elif point and point.value == 33:
-                    if not( point_bottom or point_bottom.value == -1 ):
-                        self.mapArray[y][x] = 0
-                
-                elif point and point.value == 34:
-                    if not (point_left or point_left == -1):
-                        self.mapArray[y][x] = 0
-                
-                elif point and point.value == 21:
-                    if not ( (point_right and point_right.value in [1, 54]) or point_left and point_left.value in [1, 52] ):
-                        self.mapArray[y][x] = 0
-                
-                elif point and point.value == 22:
-                    if not ( (point_top and point_top.value in [1, 51]) or point_bottom and point_bottom.value in [1, 53] ):
-                        self.mapArray[y][x] = 0
-                
-                elif point and point.value == 23:
-                    if not ( (point_right and point_right.value in [41, 52]) or point_left and point_left.value in [41, 54] ):
-                        self.mapArray[y][x] = 0
-            
-                elif point and point.value == 24:
-                    if not ( (point_top and point_top.value in [41, 53]) or point_bottom and point_bottom.value in [41, 51] ):
-                        self.mapArray[y][x] = 0
-                
-                elif point and point.value == 51:
-                    if not ( (point_top and point_top.value in [41, 24]) ):
-                        self.mapArray[y][x] = 0
-
-                elif point and point.value == 53:
-                    if not ( (point_bottom and point_bottom.value in [41, 24]) ):
-                        self.mapArray[y][x] = 0  
-                
-                elif point and point.value == 52:
-                    if not ( (point_left and point_left.value in [41, 23]) ):
-                        self.mapArray[y][x] = 0
-
-                elif point and point.value == 54:
-                    if not ( (point_right and point_right.value in [41, 23]) ):
-                        self.mapArray[y][x] = 0
     def readAll(self, libary):
         
         data = self.arround_read(libary)
