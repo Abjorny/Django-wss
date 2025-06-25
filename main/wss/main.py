@@ -86,10 +86,9 @@ def get_priority(cords, libary: LibryPoints):
     return None
 
 
-def getPatchPriority(priorityList: list, libary: LibryPoints):
-    key_in_dict, point = list(priorityList.items())[0]
-    x = point[0]
-    y = point[1]
+def getPatchPriority(point: list, libary: LibryPoints):
+    x = point['x']
+    y = point['y']
 
 
     target_point = objectPoint(x,y,libary.maper.mapArray[y][x])
@@ -133,21 +132,9 @@ while 1:
         key=lambda d: (d["delta_len"], -d["count"])
     )
 
-    for priority in priorityList_sorted:
-        flag = False
-        comands = getPatchPriority(priority, libary)
-        for commad in comands:
-            if commad in [90, 91, 92, 93, 94]:
-                flag = True
-        if not flag:
-            thisLearPriority.append(priority)
 
-    if len(thisLearPriority ) > 0:
-        comands = getPatchPriority(thisLearPriority[0], libary)
-    elif len(priorityList_sorted) > 0:
-        comands = getPatchPriority(priorityList_sorted[0], libary)
-    else:
-        comands = None
+    comands = getPatchPriority(priorityList_sorted[0], libary)
+
     # print (f"Робот едет на точку с x: {x}, y: {y} ")
 
     if comands is not None:
