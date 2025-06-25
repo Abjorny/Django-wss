@@ -149,8 +149,8 @@ while 1:
         priorityList,
         key=lambda d: (
             # 0 if list(d.values())[0][2] == robotObject.value_pod else 1, 
-            -list(d.keys())[0],                                           
-            # list(d.values())[0][3]                                      
+            # -list(d.keys())[0],                                           
+            list(d.values())[0][3]                                      
         )
     )
 
