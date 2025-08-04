@@ -303,7 +303,7 @@ async def send_periodic_messages():
 
     while True:
         image_data, data = await read_data()
-
+        print(data)
         await channel_layer.group_send(
             "broadcast_group",
             {
