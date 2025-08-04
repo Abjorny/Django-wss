@@ -34,6 +34,7 @@ class UartController:
             if byte == b'$':
                 break
         return buffer
+    
 class UartControllerAsync(UartController):
     async def sendCommand(self, command) -> bool:
         sendString = f'{command}$'
@@ -43,6 +44,6 @@ class UartControllerAsync(UartController):
 
     async def sendValueAndWait(self, value):
         await self.sendCommand(value)
-        data = self._read_until_dollar()
-        return data
+        response = self.uartBody.read(self.uartBody.in_waiting).decode('utf-8') 
+        return response
 
