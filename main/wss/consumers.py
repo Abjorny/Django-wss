@@ -272,17 +272,17 @@ async def read_data():
 
     copyFrame = frame.copy()
 
-    roi1 =  sensor_center_one.get_roi(frame).roi_frame
-    roi2 =  sensor_center_two.get_roi(frame).roi_frame
-    roi3 =  sensor_center_left.get_roi(frame).roi_frame
-    roi4 =  sensor_center_right.get_roi(frame).roi_frame
+    # roi1 =  sensor_center_one.get_roi(frame).roi_frame
+    # roi2 =  sensor_center_two.get_roi(frame).roi_frame
+    # roi3 =  sensor_center_left.get_roi(frame).roi_frame
+    # roi4 =  sensor_center_right.get_roi(frame).roi_frame
 
 
-    FrameUtilis.display_all_roi_sensors(
-        [sensor_center_one, sensor_center_two, red_front_border, red_left_border, red_right_border,
-        red_frontTwo_border, sensor_center_right, sensor_center_left], 
-        frame
-    )
+    # FrameUtilis.display_all_roi_sensors(
+    #     [sensor_center_one, sensor_center_two, red_front_border, red_left_border, red_right_border,
+    #     red_frontTwo_border, sensor_center_right, sensor_center_left], 
+    #     frame
+    # )
 
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
     lower = np.array([latest_hsv["h_min"], latest_hsv["s_min"], latest_hsv["v_min"]])
