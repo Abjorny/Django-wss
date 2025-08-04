@@ -362,7 +362,7 @@ class MyConsumer(AsyncWebsocketConsumer):
             await uartController.sendCommand(11)
             await printLog("Забрать воду")
 
-        elif type_message == "zap":
+        elif type_message == "zapl":
             await uartController.sendCommand(12)
             await printLog("Поставить запладку")
         
