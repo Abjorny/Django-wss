@@ -34,7 +34,7 @@ class UartController:
                 while time.time() - start < 0.02:
                     byte = str(self.uartBody.read(1), "utf-8")
                     buffer += byte
-                    if byte == b'$':
+                    if byte == '$':
                         break
                 return buffer
     
