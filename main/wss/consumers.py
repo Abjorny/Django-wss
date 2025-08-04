@@ -255,15 +255,17 @@ async def download():
     if roi4 is not None:
         cv2.imwrite(f'data/center_two_{timestamp}.png', roi4)
 
-
+old_data = 0
 async def read_data():
     global lib_hsv, sensor_center_one, sensor_center_left, sensor_center_right,\
         sensor_center_two, red_front_border, red_right_border, red_left_border,\
-        red_frontTwo_border
+        red_frontTwo_border, old_data
     
-    data = await uartController.sendValueAndWait(4)
+    
     if robotTwo:
-        await uartController.sendCommand(f"3{data}")
+        await uartController.sendCommand(f"3{old_data}")
+    else:
+        old_data = await uartController.sendValueAndWait(4)
     sensor_center_one.isTwo = False
     sensor_center_two.isTwo = False
     sensor_center_left.isTwo = False
