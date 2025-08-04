@@ -44,6 +44,5 @@ class UartControllerAsync(UartController):
     async def sendValueAndWait(self, value):
         await self.sendCommand(value)
         data = self._read_until_dollar()
-
         return data
 

@@ -262,7 +262,7 @@ async def read_data():
         red_frontTwo_border
     
     data = await uartController.sendValueAndWait(4)
-
+    print(data)
     sensor_center_one.isTwo = False
     sensor_center_two.isTwo = False
     sensor_center_left.isTwo = False
