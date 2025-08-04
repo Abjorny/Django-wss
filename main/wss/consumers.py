@@ -358,9 +358,13 @@ class MyConsumer(AsyncWebsocketConsumer):
             })
             logger.info(f"Updated HSV: {latest_hsv}")
         
-        elif type_message == "slam":
-            if task_slam is None or task_slam.done():
-                task_slam = asyncio.create_task(slam())
+        elif type_message == "water":
+            await uartController.sendCommand(11)
+            await printLog("Забрать воду")
+
+        elif type_message == "zap":
+            await uartController.sendCommand(12)
+            await printLog("Поставить запладку")
         
         elif type_message == "update":
             await update_settings()

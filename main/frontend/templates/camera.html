@@ -109,8 +109,8 @@
             </div>
         </div>
         <div class="utilis-webcam">
-            <button id="button-connect-camera" class="btn btn-success">Ехать по ё</button>
-            <button id="button-disconnect-camera" class="btn btn-danger">Off</button>
+            <button id="button-connect-camera" class="btn btn-success">Запладка</button>
+            <button id="button-disconnect-camera" class="btn btn-danger">Проба</button>
             <button id="button-download-camera" class="btn btn-warning">Download</button>
             <button id="copy-points" class="btn btn-info">Скопировать точки</button>
             <div class="form-check">
@@ -205,19 +205,14 @@
         }
 
         document.getElementById('button-disconnect-camera').onclick = () => {
-            if (camera !== null) {
-                imgElement.style.display = 'none';
-                camera.close();
-                camera = null;
-                reconnectAttempts = maxReconnectAttempts;
+            if (camera && camera.readyState === WebSocket.OPEN) {
+                return camera.send(JSON.stringify({ type: 'water' }));
             }
         };
 
         document.getElementById('button-connect-camera').onclick = () => {
-            if (camera == null) {
-                reconnectAttempts = 0;
-                imgElement.style.display = '';
-                connectCamera();
+            if (camera && camera.readyState === WebSocket.OPEN) {
+                return camera.send(JSON.stringify({ type: 'zapl' }));
             }
         };
 
