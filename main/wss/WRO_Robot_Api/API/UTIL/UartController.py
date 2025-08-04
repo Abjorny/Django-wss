@@ -12,7 +12,7 @@ class UartController:
         )
     
     def sendCommand(self, command) -> bool:
-        sendString = f'{command}#'
+        sendString = f'{command}$'
         self.uartBody.write(sendString.encode('utf-8'))
         return True
 
@@ -26,7 +26,7 @@ class UartController:
 
 class UartControllerAsync(UartController):
     async def sendCommand(self, command) -> bool:
-        sendString = f'{command}#'
+        sendString = f'{command}$'
         self.uartBody.write(sendString.encode('utf-8'))
         return True
     
