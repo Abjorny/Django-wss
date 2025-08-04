@@ -17,14 +17,11 @@ import socket
 import os
 from .models import Settings
 from .WRO_Robot_Api.API.UTIL.UartController import UartControllerAsync
-from .WRO_Robot_Api.API.ObjectPoint.objectPoint import Message
-from skimage.feature import hog
-import joblib
-from pathlib import Path
-from .tenser import predict_image_classpredict
+import time
+
+
 uartController = UartControllerAsync()
 logger = logging.getLogger(__name__)
-cap0 = cv2.VideoCapture(0)
 
 task = None
 task_slam = None
@@ -45,8 +42,6 @@ def get_frame_from_socket():
             img_data += chunk
         img = Image.open(BytesIO(img_data)).convert("RGB")
         return np.array(img)
-
-
 
 
 
@@ -223,9 +218,6 @@ async def update_settings():
         robotTwo
     )
 
-import os
-import cv2
-import time
 
 
 
@@ -263,116 +255,7 @@ async def download():
     roi4 = sensor_center_two.get_roi(frame).roi_frame
     if roi4 is not None:
         cv2.imwrite(f'data/center_two_{timestamp}.png', roi4)
-import cv2
-import numpy as np
-from skimage.feature import hog
-import joblib
-from pathlib import Path
 
-def load_model(model_path):
-    model_data = joblib.load(model_path)
-    return {
-        'model': model_data['model'],
-        'hog_params': model_data['hog_params'],
-        'scaler': model_data.get('scaler', None),
-        'target_size': model_data.get('target_size', (224, 224))
-    }
-
-def extract_color_histograms(hsv_image, bins=32):
-    h_hist = cv2.calcHist([hsv_image], [0], None, [bins], [0, 180])
-    s_hist = cv2.calcHist([hsv_image], [1], None, [bins], [0, 256])
-    h_hist = cv2.normalize(h_hist, h_hist).flatten()
-    s_hist = cv2.normalize(s_hist, s_hist).flatten()
-    return np.hstack([h_hist, s_hist])
-
-def extract_features(image, target_size, hog_params):
-    image_resized = cv2.resize(image, tuple(target_size), interpolation=cv2.INTER_AREA)
-    gray = cv2.cvtColor(image_resized, cv2.COLOR_BGR2GRAY)
-    hog_feat = hog(gray, **hog_params)
-    
-    hsv = cv2.cvtColor(image_resized, cv2.COLOR_BGR2HSV)
-    clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
-    hsv[:, :, 2] = clahe.apply(hsv[:, :, 2])
-    color_hist = extract_color_histograms(hsv)
-
-    return np.hstack([hog_feat, color_hist])
-
-# model_data = load_model('cascade_model.pkl')
-model_data = None
-data = joblib.load('cascade_model.pkl')
-svm_shape = data['svm_shape']
-svm_refine = data['svm_refine']
-scaler_hog = data['scaler_hog']
-scaler_color = data['scaler_color']
-def extract_hog_features(image, target_size, hog_params):
-    image_resized = cv2.resize(image, target_size, interpolation=cv2.INTER_AREA)
-    gray = cv2.cvtColor(image_resized, cv2.COLOR_BGR2GRAY)
-    return hog(gray, **hog_params)
-
-def extract_color_histograms(hsv_image, bins=32):
-    h_hist = cv2.calcHist([hsv_image], [0], None, [bins], [0, 180])
-    s_hist = cv2.calcHist([hsv_image], [1], None, [bins], [0, 256])
-    h_hist = cv2.normalize(h_hist, h_hist).flatten()
-    s_hist = cv2.normalize(s_hist, s_hist).flatten()
-    return np.hstack([h_hist, s_hist])
-
-def extract_lab_histograms(image, bins=32):
-    lab = cv2.cvtColor(image, cv2.COLOR_BGR2LAB)
-    l_hist = cv2.calcHist([lab], [0], None, [bins], [0, 256])
-    a_hist = cv2.calcHist([lab], [1], None, [bins], [0, 256])
-    b_hist = cv2.calcHist([lab], [2], None, [bins], [0, 256])
-    l_hist = cv2.normalize(l_hist, l_hist).flatten()
-    a_hist = cv2.normalize(a_hist, a_hist).flatten()
-    b_hist = cv2.normalize(b_hist, b_hist).flatten()
-    return np.hstack([l_hist, a_hist, b_hist])
-
-def extract_spatial_features(image, size=(16, 16)):
-    small_img = cv2.resize(image, size, interpolation=cv2.INTER_AREA)
-    return small_img.flatten()
-
-def extract_full_features(image, target_size, hog_params):
-    image_resized = cv2.resize(image, target_size, interpolation=cv2.INTER_AREA)
-
-    # HOG
-    gray = cv2.cvtColor(image_resized, cv2.COLOR_BGR2GRAY)
-    hog_feat = hog(gray, **hog_params)
-
-    # HSV + CLAHE
-    hsv = cv2.cvtColor(image_resized, cv2.COLOR_BGR2HSV)
-    clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8, 8))
-    hsv[:, :, 2] = clahe.apply(hsv[:, :, 2])
-    hsv_hist = extract_color_histograms(hsv)
-
-    # LAB
-    lab_hist = extract_lab_histograms(image_resized)
-
-    # Spatial
-    spatial_feat = extract_spatial_features(image_resized)
-
-    color_spatial_feat = np.hstack([hsv_hist, lab_hist, spatial_feat])
-
-    return hog_feat, color_spatial_feat
-
-def predict_image_class(img):
-    hog_params = {
-        'orientations': 9,
-        'pixels_per_cell': (16, 16),
-        'cells_per_block': (2, 2),
-        'transform_sqrt': True,
-        'block_norm': 'L2-Hys'
-    }
-    target_size = (224, 224)
-
-    if img is None:
-        raise ValueError("Не удалось загрузить изображение.")
-
-    hog_feat, color_feat = extract_full_features(img, target_size, hog_params)
-
-
-    color_scaled = scaler_color.transform(color_feat.reshape(1, -1))
-    pred_label = svm_refine.predict(color_scaled)[0]
-
-    return int(pred_label), 1.0
 
 async def read_data():
     global lib_hsv, sensor_center_one, sensor_center_left, sensor_center_right,\
@@ -394,43 +277,7 @@ async def read_data():
     roi3 =  sensor_center_left.get_roi(frame).roi_frame
     roi4 =  sensor_center_right.get_roi(frame).roi_frame
 
-    value_center_one, confidence_one =  predict_image_class(roi1)
-    value_center_two, confidence_two =  predict_image_class(roi2)
-    value_left, confidence_left =  predict_image_class(roi3)
-    value_right, confidence_right =  predict_image_class(roi4)
 
-    # if value_center_one in [51, 52, 53, 54]:
-    #     value_center_one, confidence_one =  predict_image_classpredict(roi1)
-
-    # if value_center_two in [51, 52, 53, 54]:
-    #     value_center_two, confidence_two = predict_image_classpredict(roi2)
-
-    # if value_left in [51, 52, 53, 54]:
-    #     value_left, confidence_left = predict_image_classpredict(roi3)
-
-    # if value_right in [51, 52, 53, 54]:
-    #     value_right, confidence_right = predict_image_classpredict(roi4)
-
-
-    if value_center_one in [31, 32, 33, 34, 23, 24]:
-        value_center_one, confidence_one =  sensor_center_one.readObject(copyFrame, frame, value_center_one)
-    
-    if value_center_two in [31, 32, 33, 34, 23, 24]:
-        value_center_two, confidence_two = sensor_center_two.readObject(copyFrame, frame, value_center_two)
-    
-    if value_left in [31, 32, 33, 34, 23, 24]:
-        value_left, confidence_left = sensor_center_left.readObject(copyFrame, frame, value_left)
-    
-    if value_right in [31, 32, 33, 34, 23, 24]:
-        value_right, confidence_right = sensor_center_right.readObject(copyFrame, frame, value_right)
-
-
-
-    red_front = red_front_border.check_border(copyFrame, copyFrame)
-    red_front_two = red_frontTwo_border.check_border(copyFrame, copyFrame)
-    red_right = red_right_border.check_border(copyFrame, copyFrame)
-    red_left = red_left_border.check_border(copyFrame, copyFrame)
-    
     FrameUtilis.display_all_roi_sensors(
         [sensor_center_one, sensor_center_two, red_front_border, red_left_border, red_right_border,
         red_frontTwo_border, sensor_center_right, sensor_center_left], 
@@ -446,131 +293,25 @@ async def read_data():
     _, buffer = cv2.imencode('.jpg', frame, [int(cv2.IMWRITE_JPEG_QUALITY), 40])
     image_data = base64.b64encode(buffer).decode('utf-8')        
 
-    message = Message(
-        {
-            "valueCenterOne" : value_center_one,
-            "valueCenterTwo" : value_center_two,
-            "valueCenterLeft" : value_left,
-            "valueCenterRight" : value_right,
-            
-            "redLeft" : red_left,
-            "redRight" : red_right,
-            "redFront" : red_front,
-            "redFrontTwo" : red_front_two,
+    return image_data
 
-            "cofOne": confidence_one,
-            "cofTwo": confidence_two,
-            "cofThree": confidence_left,
-            "cofFour": confidence_right
-        }
-    )
-    return image_data, message
 
-async def read_data_consistent(repeats=10):
-        values_center_one = []
-        values_center_two = []
-        values_left = []
-        values_right = []
-        
-        confs_one = []
-        confs_two = []
-        confs_left = []
-        confs_right = []
-
-        red_left_list = []
-        red_right_list = []
-        red_front_list = []
-        red_front_two_list = []
-
-        for _ in range(repeats):
-            image_data, message = await read_data()
-
-            
-            values_center_one.append(message["valueCenterOne"])
-            values_center_two.append(message["valueCenterTwo"])
-            values_left.append(message["valueCenterLeft"])
-            values_right.append(message["valueCenterRight"])
-            
-            confs_one.append(message["cofOne"])
-            confs_two.append(message["cofTwo"])
-            confs_left.append(message["cofThree"])
-            confs_right.append(message["cofFour"])
-
-            red_left_list.append(message["redLeft"])
-            red_right_list.append(message["redRight"])
-            red_front_list.append(message["redFront"])
-            red_front_two_list.append(message["redFrontTwo"])
-
-            await asyncio.sleep(0.01)
-
-        def all_equal(lst):
-            return all(x == lst[0] for x in lst)
-
-        def get_consistent_value(lst):
-            return lst[0] if all_equal(lst) else None
-
-        result_message = Message(
-            {
-                "valueCenterOne": get_consistent_value(values_center_one),
-                "valueCenterTwo": get_consistent_value(values_center_two),
-                "valueCenterLeft": get_consistent_value(values_left),
-                "valueCenterRight": get_consistent_value(values_right),
-                "redLeft": get_consistent_value(red_left_list),
-                "redRight": get_consistent_value(red_right_list),
-                "redFront": get_consistent_value(red_front_list),
-                "redFrontTwo": get_consistent_value(red_front_two_list),
-                "cofOne": sum(confs_one)/len(confs_one),
-                "cofTwo": sum(confs_two)/len(confs_two),
-                "cofThree": sum(confs_left)/len(confs_left),
-                "cofFour": sum(confs_right)/len(confs_right),
-            }
-        )
-
-        # Возвращаем последний image_data (например) и усреднённое сообщение с валидными значениями
-        return image_data, result_message
 
 async def send_periodic_messages():
     channel_layer = get_channel_layer()
 
-    last_values = None
-    stable_count = 0
-    required_stable_iterations = 5
-
     while True:
-        image_data, message = await read_data()
+        image_data = await read_data()
 
-        current_values = (
-            message.valueLeft,
-            message.valueRight,
-            message.valueTwo,
-            message.valueOne,
-        )
-
-        if current_values == last_values:
-            stable_count += 1
-        else:
-            stable_count = 0
-            last_values = current_values
-
-        # if stable_count >= required_stable_iterations:
         await channel_layer.group_send(
             "broadcast_group",
             {
                 "type": "broadcast_message",
                 "message": {
                     "image": image_data,
-                    "valueCenterOne": f"{message.valueOne}",
-                    "valueCenterTwo": f"{message.valueTwo}",
-                    "valueCenterLeft": f"{message.valueLeft}",
-                    "valueCenterRight": f"{message.valueRight}",
-                    "redLeft": message.redLeft,
-                    "redRight": message.redRight,
-                    "redFront": message.redFront,
-                    "redFrontTwo": message.redFrontTwo  
                 },
             }
         )
-        stable_count = 0
 
         await asyncio.sleep(1 / 30)
         gc.collect()
