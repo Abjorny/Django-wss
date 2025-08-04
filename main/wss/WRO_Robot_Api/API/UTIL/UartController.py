@@ -33,9 +33,9 @@ class UartController:
             elif self.uartBody.in_waiting > 0:
                 while time.time() - start < 0.02:
                     byte = str(self.uartBody.read(1), "utf-8")
-                    buffer += byte
                     if byte == '$':
                         break
+                    buffer += byte
                 return buffer
     
 class UartControllerAsync(UartController):
