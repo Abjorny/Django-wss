@@ -313,7 +313,7 @@ async def send_periodic_messages():
                 "type": "broadcast_message",
                 "message": {
                     "image": image_data,
-                    "compos" : data
+                    "compos" : old_data
                 },
             }
         )
