@@ -25,10 +25,9 @@ class UartController:
         return response
     
     def _read_until_dollar(self):
-        buffer = b""
+        buffer = ""
         start = time.time()
-        flag = True
-        while flag:
+        while 1:
             if time.time() - start > 0.02:
                 return ""
             elif self.uartBody.in_waiting > 0:
