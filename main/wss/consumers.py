@@ -297,16 +297,16 @@ async def read_data():
     _, buffer = cv2.imencode('.jpg', frame, [int(cv2.IMWRITE_JPEG_QUALITY), 40])
     image_data = base64.b64encode(buffer).decode('utf-8')        
 
-    return image_data, data
+    return image_data
 
 
 
 async def send_periodic_messages():
+    global old_data
     channel_layer = get_channel_layer()
 
     while True:
-        image_data, data = await read_data()
-        print(data)
+        image_data = await read_data()
         await channel_layer.group_send(
             "broadcast_group",
             {
