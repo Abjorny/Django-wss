@@ -43,9 +43,7 @@ class UartControllerAsync(UartController):
 
     async def sendValueAndWait(self, value):
         await self.sendCommand(value)
-
-        loop = asyncio.get_event_loop()
-        data = await loop.run_in_executor(None, self._read_until_dollar)
+        data = self._read_until_dollar()
 
         return data
 
