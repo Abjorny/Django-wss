@@ -261,7 +261,9 @@ async def read_data():
     global lib_hsv, sensor_center_one, sensor_center_left, sensor_center_right,\
         sensor_center_two, red_front_border, red_right_border, red_left_border,\
         red_frontTwo_border
-    uartController.sendCommand(90)
+    
+    await uartController.sendCommand(90)
+
     sensor_center_one.isTwo = False
     sensor_center_two.isTwo = False
     sensor_center_left.isTwo = False
