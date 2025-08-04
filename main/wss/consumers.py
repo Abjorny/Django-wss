@@ -58,7 +58,6 @@ latest_hsv = {
 }
 
 robotTwo = False
-
 lib_hsv = None
 sensor_center_one = None
 sensor_center_left = None
@@ -262,7 +261,7 @@ async def read_data():
         sensor_center_two, red_front_border, red_right_border, red_left_border,\
         red_frontTwo_border
     
-    await uartController.sendCommand(90)
+    data = await uartController.sendValueAndWait(4)
 
     sensor_center_one.isTwo = False
     sensor_center_two.isTwo = False
@@ -295,7 +294,7 @@ async def read_data():
     _, buffer = cv2.imencode('.jpg', frame, [int(cv2.IMWRITE_JPEG_QUALITY), 40])
     image_data = base64.b64encode(buffer).decode('utf-8')        
 
-    return image_data
+    return image_data, data
 
 
 
@@ -303,7 +302,7 @@ async def send_periodic_messages():
     channel_layer = get_channel_layer()
 
     while True:
-        image_data = await read_data()
+        image_data, data = await read_data()
 
         await channel_layer.group_send(
             "broadcast_group",
@@ -311,6 +310,7 @@ async def send_periodic_messages():
                 "type": "broadcast_message",
                 "message": {
                     "image": image_data,
+                    "compos" : data
                 },
             }
         )

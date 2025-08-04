@@ -23,16 +23,29 @@ class UartController:
             pass
         response = self.uartBody.read(self.uartBody.in_waiting).decode('utf-8') 
         return response
-
+    
+    def _read_until_dollar(self):
+        buffer = b""
+        while True:
+            byte = self.uartBody.read(1)
+            if not byte:
+                continue 
+            buffer += byte
+            if byte == b'$':
+                break
+        return buffer
 class UartControllerAsync(UartController):
     async def sendCommand(self, command) -> bool:
         sendString = f'{command}$'
         self.uartBody.write(sendString.encode('utf-8'))
         return True
     
+
     async def sendValueAndWait(self, value):
         await self.sendCommand(value)
-        while (self.uartBody.in_waiting == 0): 
-            asyncio.sleep(0.01)
-            pass
-        self.uartBody.reset_input_buffer()
+
+        loop = asyncio.get_event_loop()
+        data = await loop.run_in_executor(None, self._read_until_dollar)
+
+        return data
+

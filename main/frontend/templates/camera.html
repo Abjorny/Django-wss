@@ -137,39 +137,11 @@
             style="font-family: monospace; margin-top: 10px; background: #eee; padding: 10px; border-radius: 5px;">
             <pre id="hsv-output"></pre>
         </div>
-        <div class="utilis-row-data">
-            <div class="row-data">
-                <div class="row-data">
-                    <span id="value-center-left">255</span>
-                </div>
-                <div class="colown-data">
-
-                    <div class="row-data">
-                        <span id="value-center-two">255</span>
-
-                    </div>
-
-                    <div class="row-data">
-                        <span id="value-center">255</span>
-
-                    </div>
-                </div>
-                <div class="row-data">
-                    <span id="value-center-right">255</span>
-                </div>
-
-            </div>
-
 
             <div class="row-data">
-                <span id="red-left">Лево: 0</span>
-                <span id="red-right">Право: 0</span>
+                <span id="red-left">Компос: 0</span>
+            </div>
 
-            </div>
-            <div class="row-data">
-                <span id="red-front">Перед: 0</span>
-                <span id="red-front-two">Перед второй: 0</span>
-            </div>
         </div>
     </div>
 
@@ -193,16 +165,9 @@
                 const data = JSON.parse(event.data);
 
                 if (data.message.image) {
-                    document.getElementById('value-center').textContent = data.message.valueCenterOne;
-                    document.getElementById('value-center-two').textContent = data.message.valueCenterTwo;
+                   
 
-                    document.getElementById('value-center-left').textContent = data.message.valueCenterLeft;
-                    document.getElementById('value-center-right').textContent = data.message.valueCenterRight;
-
-                    document.getElementById('red-left').textContent = 'Лево: ' + data.message.redLeft;
-                    document.getElementById('red-right').textContent = 'Право: ' + data.message.redRight;
-                    document.getElementById('red-front').textContent = 'Перед: ' + data.message.redFront;
-                    document.getElementById('red-front-two').textContent = 'Перед второй: ' + data.message.redFrontTwo;
+                    document.getElementById('red-left').textContent = 'Компос: ' + data.message.compos;
                     imgElement.src = `data:image/jpeg;base64,${data.message.image}`;
                 }
                 else if (data.message) {
