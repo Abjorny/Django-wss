@@ -27,16 +27,20 @@ class UartController:
     def _read_until_dollar(self):
         buffer = ""
         start = time.time()
-        while 1:
-            if time.time() - start > 0.02:
-                return ""
-            elif self.uartBody.in_waiting > 0:
-                while time.time() - start < 0.02:
-                    byte = str(self.uartBody.read(1), "utf-8")
-                    if byte == '$':
-                        break
-                    buffer += byte
-                return buffer
+        timeout = 0.02  # 20 мс
+
+        while time.time() - start < timeout:
+            if self.uartBody.in_waiting > 0:
+                byte = self.uartBody.read(1)
+                if not byte:
+                    continue
+                char = byte.decode("utf-8", errors="ignore")  # <--- игнорируем ошибки декодирования
+                buffer += char
+                if char == "$":
+                    break
+
+        return buffer
+
     
 class UartControllerAsync(UartController):
     async def sendCommand(self, command) -> bool:
