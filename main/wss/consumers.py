@@ -364,7 +364,7 @@ class MyConsumer(AsyncWebsocketConsumer):
 
         elif type_message == "zapl":
             await uartController.sendCommand(12)
-            await printLog("Поставить запладку")
+            await printLog("Поставить запладку!")
         
         elif type_message == "update":
             await update_settings()
