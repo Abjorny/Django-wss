@@ -1,0 +1,95 @@
+* {
+    box-sizing: border-box;
+}
+
+а .container-camera {
+    display: flex;
+    flex-direction: column;
+    max-width: 1280px;
+    margin: 0 auto;
+    font-family: sans-serif;
+}
+
+#webcam-feed {
+    width: 1280px;
+    height: 480px;
+    border: 2px solid #333;
+    cursor: crosshair;
+    position: relative;
+}
+
+.utilis-webcam {
+    display: flex;
+    flex-direction: row;
+    justify-content: start;
+    margin-top: 20px;
+    gap: 20px;
+}
+
+.utilis-row-data {
+    margin-top: 20px;
+    font-size: 18px;
+    color: black;
+}
+
+.dot {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: red;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+}
+#dots-container {
+  pointer-events: none;
+}
+
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+}
+
+.colown-data {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.row-data {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    align-items: flex-end;
+}
+
+.container-missions{
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: flex-start;
+}
+.mission{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 200px;
+}
+.actions-mission-container{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.action-mission{
+    display: flex;
+    flex-direction: row;
+    height: 30px;
+    width: 100%;
+}
+
+.action-mission input[type="checkbox"] {
+
+}
