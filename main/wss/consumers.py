@@ -31,7 +31,7 @@ ERRORS = [0] * 10
 ERR = 0
 
 sensor_find = {
-    "x-min" : 0 + 30,
+    "x-min" : 0 + 80,
     "x-max" : FIXED_WIDTH - 30,
     "y-min" : FIXED_HEIGHT // 2,
     "y-max" : FIXED_HEIGHT - 10
