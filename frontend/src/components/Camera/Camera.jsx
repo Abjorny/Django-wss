@@ -206,6 +206,9 @@ const Camera = () => {
             <div className="my-3 d-flex flex-wrap gap-2">
                 <button className="btn btn-success" onClick={() => camera?.send(JSON.stringify({ type: 'zapl' }))}>Забрать воду</button>
                 <button className="btn btn-danger" onClick={() => camera?.send(JSON.stringify({ type: 'water' }))}>Поставить запладку</button>
+                <button className="btn btn-primary" onClick={() => camera?.send(JSON.stringify({ type: 'findred' }))}>Поставить запладку</button>
+ 
+                
                 <button className="btn btn-info" onClick={() => {
                     navigator.clipboard.writeText(JSON.stringify(points)).then(() => alert('Скопировано!'));
                 }}>Скопировать точки</button>

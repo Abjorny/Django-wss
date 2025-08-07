@@ -18,7 +18,6 @@ local = True
 logger = logging.getLogger(__name__)
 
 task = None
-task_slam = None
 settings = Settings.objects.first()
 
 FPS = 60 
@@ -115,7 +114,7 @@ async def read_data():
     frame = get_frame_from_socket() 
     frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
     
-    cv2.rectangle(frame, (sensor_find["x-min"], sensor_find["y-min"]), (sensor_find["x-max"], sensor_find["y-max"]), (0, 0, 255), 3)
+    cv2.rectangle(frame, (sensor_find["x-min"], sensor_find["y-min"]), (sensor_find["x-max"], sensor_find["y-max"]), (0, 0, 255), 1.5)
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
     lower = np.array([latest_hsv["h_min"], latest_hsv["s_min"], latest_hsv["v_min"]])
@@ -163,7 +162,7 @@ class MyConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_discard(self.group_name, self.channel_name)
 
     async def receive(self, text_data):
-        global latest_hsv, robotTwo, task_slam
+        global latest_hsv, robotTwo
         data = json.loads(text_data)
         type_message = data.get("type")
 
