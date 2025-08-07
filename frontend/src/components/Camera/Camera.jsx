@@ -126,7 +126,7 @@ const Camera = () => {
     };
   const handleChange = (e) => {
     const selectedValue = e.target.value;
-    alert(selectedValue)
+    camera?.send(JSON.stringify({ type: 'change_state',  value: selectedValue }));
   };
 
     useEffect(() => {
