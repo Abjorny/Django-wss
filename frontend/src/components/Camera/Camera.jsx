@@ -191,15 +191,14 @@ const Camera = () => {
                             </div>,
                         ]))}
                         <div className="form-check mt-3">
-                            <label htmlFor="citySelect" className="form-label">Выберите вариант</label>
+                            <label htmlFor="citySelect" className="form-label">Выберите режим</label>
                             <select
                                 id="citySelect"
                                 className="form-select"
                                 onChange={handleChange}
                                 defaultValue=""
                             >
-                                <option value="" disabled>-- Выберите --</option>
-                                <option value="none">Нету</option>
+                                <option value="" >-- Выберите --</option>
                                 <option value="red">По красному</option>
                                 <option value="compass">По компосу</option>
                             </select>
