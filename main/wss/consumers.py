@@ -103,14 +103,13 @@ async def printLog(message):
 
 async def read_data():
     global lib_hsv,  old_data
-    await printLog(not local)
     if not local:
         if robotTwo:
             await printLog("robotTw")
             await uartController.sendCommand(f"3{old_data}")
         else:
             old_data = await uartController.sendValueAndWait(4)
-            await printLog(old_data)
+            await printLog(f"read data: {old_data}")
 
 
     frame = get_frame_from_socket() 
