@@ -109,7 +109,7 @@ def search_color_two(frame, range1, range2):
     x,y,w,h = 0,0,0,0
     mask1 = cv2.inRange(frame, range1[0], range1[1])
     mask2 = cv2.inRange(frame, range2[0], range2[1])
-    mask = mask1 | mask2
+    mask = cv2.bitwise_or(mask1, mask2)
     counturs, hierarchy = cv2.findContours(mask,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
     area_result = 0
     for countur in counturs:
