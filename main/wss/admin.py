@@ -37,7 +37,6 @@ class HsvObjectAdmin(ModelAdmin):
 
 @admin.register(Settings)
 class SettingsAdmin(ModelAdmin):
-    list_display = ("sensor_center_one", "sensor_center_two")
     fieldsets = (
         ("HSV Настройки", {
             "fields": (
