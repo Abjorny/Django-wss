@@ -127,7 +127,6 @@ const Camera = () => {
                         src=""
                         alt="Webcam Feed"
                         className="img-fluid border rounded"
-                        style={{height: "100%"}}
                         onClick={handleImageClick}
                     />
                     <div id="dots-container" ref={dotsContainerRef} className="position-absolute top-0 start-0 w-100 h-100"></div>
