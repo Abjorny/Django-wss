@@ -179,13 +179,15 @@ async def read_data():
         ]
 
         data = await get_settings_data()
-        x, y, w, h, area, mask = search_color_two(
+        x1, y1, w, h, area, mask = search_color_two(
             blurred,
             [data["hsv_red1_min"], data["hsv_red1_max"]],
             [data["hsv_red2_min"], data["hsv_red2_max"]],
         )
-        y = y + sensor_find["y_min"]
-        x = x + sensor_find["x_min"]
+
+
+        y = y1 + sensor_find["y_min"]
+        x = x1 + sensor_find["x_min"]
 
         cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 2)
         e = FIXED_WIDTH // 2 - (x + w // 2)
@@ -195,9 +197,20 @@ async def read_data():
         Ud = KD * (e - ERRORS[ERR])
         U = Up + Ud
         U = max(min(U, 100), 0)
-        MA = 100 + U
-        MB = 100 - U
+            
+        MA = 30 + U
+        MB = 30 - U
+  
+        if MA > 50: MA = 50
+        if MB > 50: MB = 50
 
+        if MA < -20: MA = -20
+        if MB < -20: MB = -20
+
+        if y1 > (sensor_find["y_max"] - sensor_find["y_min"]) // 2:
+            MA = 0
+            MB = 0
+            
         await printLog(f"go to red, e: {e}, U: {U}, MA: {MA}, MB: {MB}")
         
     cv2.rectangle(frame, (sensor_find["x_min"], sensor_find["y_min"]), (sensor_find["x_max"], sensor_find["y_max"]), (0, 0, 255), 2)
