@@ -103,7 +103,7 @@ async def printLog(message):
 
 async def read_data():
     global lib_hsv,  old_data
-    await printLog("go")
+    await printLog(not local)
     if not local:
         if robotTwo:
             await printLog("robotTw")
