@@ -26,10 +26,10 @@ FIXED_WIDTH = 640
 FIXED_HEIGHT = 480
 
 sensor_find = {
-    "x-min" : 0,
-    "x-max" : FIXED_WIDTH,
+    "x-min" : 0 + 10,
+    "x-max" : FIXED_WIDTH - 10,
     "y-min" : FIXED_HEIGHT // 2,
-    "y-max" : FIXED_HEIGHT
+    "y-max" : FIXED_HEIGHT - 10
 }
 
 latest_hsv = {
@@ -115,7 +115,7 @@ async def read_data():
     frame = get_frame_from_socket() 
     frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
     
-    cv2.rectangle(frame, (sensor_find["x-min"], sensor_find["y-min"]), (sensor_find["x-max"], sensor_find["y-max"]), (255, 0, 0))
+    cv2.rectangle(frame, (sensor_find["x-min"], sensor_find["y-min"]), (sensor_find["x-max"], sensor_find["y-max"]), (0, 0, 255))
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
     lower = np.array([latest_hsv["h_min"], latest_hsv["s_min"], latest_hsv["v_min"]])
