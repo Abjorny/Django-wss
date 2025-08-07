@@ -25,7 +25,7 @@ const Camera = () => {
     const redLeftRef = useRef(null);
 
     const connectCamera = () => {
-        const ws = new WebSocket('ws://localhost:8000/ws/api/get_image');
+        const ws = new WebSocket(`ws://${window.location.hostname}:8000/ws/api/get_image`);
 
         setCamera(ws);
 
