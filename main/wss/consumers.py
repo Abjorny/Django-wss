@@ -106,10 +106,11 @@ async def read_data():
     
     if not local:
         if robotTwo:
+            await printLog("robotTw")
             await uartController.sendCommand(f"3{old_data}")
         else:
             old_data = await uartController.sendValueAndWait(4)
-            print(old_data)
+            await printLog(old_data)
 
 
     frame = get_frame_from_socket() 
