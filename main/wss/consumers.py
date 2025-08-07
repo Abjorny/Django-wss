@@ -25,6 +25,11 @@ FPS = 30
 FIXED_WIDTH = 640
 FIXED_HEIGHT = 480
 
+KP = 1
+KD = 10
+ERRORS = [0] * 10 
+ERR = 0
+
 sensor_find = {
     "x-min" : 0 + 10,
     "x-max" : FIXED_WIDTH - 10,
@@ -153,7 +158,7 @@ async def printLog(message):
     )
 
 async def read_data():
-    global lib_hsv,  old_data, robotState
+    global lib_hsv,  old_data, robotState, KP, KD, ERR, ERRORS
     if not local:
         if robotState == "compass":
             await printLog(f"Compos go: {old_data}")
@@ -168,14 +173,25 @@ async def read_data():
 
     if robotState == "red":
         data = await get_settings_data()
-        await printLog("go to red")
         x, y, w, h, area, mask = search_color_two(
             hsv,
             [data["hsv_red1_min"], data["hsv_red1_max"]],
             [data["hsv_red2_min"], data["hsv_red2_max"]],
         )
 
+
         cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 2)
+        e = FIXED_WIDTH // 2 - (x + w // 2)
+        ERRORS[ERR] = e
+        ERR = (ERR + 1) % 10
+        Up = KP * e
+        Ud = KD * (e - ERRORS[ERR])
+        U = Up + Ud
+        U = max(min(U, 100), 0)
+        MA = 100 + U
+        MB = 100 - U
+
+        await printLog(f"go to red, e: {e}, U: {U}, MA: {MA}, MB: {MB}")
         
     cv2.rectangle(frame, (sensor_find["x-min"], sensor_find["y-min"]), (sensor_find["x-max"], sensor_find["y-max"]), (0, 0, 255), 2)
 
