@@ -196,7 +196,7 @@ async def read_data():
         Up = KP * e
         Ud = KD * (e - ERRORS[ERR])
         U = Up + Ud
-        U = max(min(U, 100), 0)
+        
             
         MA = 30 + U
         MB = 30 - U
