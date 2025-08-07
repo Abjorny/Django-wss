@@ -14,7 +14,7 @@ import logging
 import socket
 from .Uart.UartController import UartControllerAsync
 
-local = True
+local = False
 logger = logging.getLogger(__name__)
 
 task = None
@@ -114,7 +114,7 @@ async def read_data():
     frame = get_frame_from_socket() 
     frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
     
-    cv2.rectangle(frame, (sensor_find["x-min"], sensor_find["y-min"]), (sensor_find["x-max"], sensor_find["y-max"]), (0, 0, 255), 1.5)
+    cv2.rectangle(frame, (sensor_find["x-min"], sensor_find["y-min"]), (sensor_find["x-max"], sensor_find["y-max"]), (0, 0, 255), 2)
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
     lower = np.array([latest_hsv["h_min"], latest_hsv["s_min"], latest_hsv["v_min"]])
