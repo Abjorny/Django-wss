@@ -21,14 +21,14 @@ task = None
 task_slam = None
 settings = Settings.objects.first()
 
-
+FPS = 60 
 FIXED_WIDTH = 640
 FIXED_HEIGHT = 480
 
 sensor_find = {
     "x-min" : 0,
     "x-max" : FIXED_WIDTH,
-    "y-min" : 0,
+    "y-min" : FIXED_HEIGHT // 2,
     "y-max" : FIXED_HEIGHT
 }
 
@@ -114,14 +114,15 @@ async def read_data():
 
     frame = get_frame_from_socket() 
     frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
-
-
+    
+    cv2.rectangle(frame, (sensor_find["x-min"], sensor_find["y-min"]), (sensor_find["x-max"], sensor_find["y-max"]), (255, 0, 0))
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+
     lower = np.array([latest_hsv["h_min"], latest_hsv["s_min"], latest_hsv["v_min"]])
     upper = np.array([latest_hsv["h_max"], latest_hsv["s_max"], latest_hsv["v_max"]])
     mask = cv2.inRange(hsv, lower, upper)
     frame = cv2.bitwise_and(frame, frame, mask=mask)
-
+    
     _, buffer = cv2.imencode('.jpg', frame, [int(cv2.IMWRITE_JPEG_QUALITY), 40])
     image_data = base64.b64encode(buffer).decode('utf-8')        
 
@@ -144,7 +145,7 @@ async def send_periodic_messages():
             }
         )
 
-        await asyncio.sleep(1 / 30)
+        await asyncio.sleep(1 / FPS)
         gc.collect()
 
 class MyConsumer(AsyncWebsocketConsumer):
