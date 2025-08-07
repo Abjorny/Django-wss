@@ -99,6 +99,20 @@ const Camera = () => {
         dotsContainerRef.current.appendChild(dot);
     };
 
+    const updateSliderValueText = () => {
+    ['h', 's', 'v'].forEach((c) => {
+        const minVal = hsvRefs[`${c}-min`]?.current?.value;
+        const maxVal = hsvRefs[`${c}-max`]?.current?.value;
+
+        const minSpan = document.getElementById(`${c}-min-val`);
+        const maxSpan = document.getElementById(`${c}-max-val`);
+
+        if (minSpan) minSpan.textContent = minVal;
+        if (maxSpan) maxSpan.textContent = maxVal;
+    });
+};
+
+
     const handleImageClick = (event) => {
         if (points.length >= 4) resetPoints();
         const rect = imgRef.current.getBoundingClientRect();
@@ -149,6 +163,7 @@ const Camera = () => {
                                     onInput={() => {
                                         sendHSV();
                                         updateHSVOutput();
+                                         updateSliderValueText();
                                     }}
                                 />
                             </div>,
@@ -166,6 +181,7 @@ const Camera = () => {
                                     onInput={() => {
                                         sendHSV();
                                         updateHSVOutput();
+                                        updateSliderValueText();
                                     }}
                                 />
                             </div>,
