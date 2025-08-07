@@ -119,7 +119,7 @@ def search_color_two(frame, range1, range2):
             if w1 * h1 > w * h:
                 area_result = area
                 x,y,w,h = x1,y1,w1,h1
-    return x, y, w, h, area_result
+    return x, y, w, h, area_result, mask
     
 
 async def printLog(message):
@@ -146,12 +146,13 @@ async def read_data():
     frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
     if robotState == "red":
         await printLog("go to red")
-        x, y, w, h, area = search_color_two(
+        x, y, w, h, area, mask = search_color_two(
             frame,
             [settings.hsv_red_one.min_color_hsv, settings.hsv_red_one.max_color_hsv,],
             [settings.hsv_red_two.min_color_hsv, settings.hsv_red_two.max_color_hsv,]
         )
         cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 2)
+        frame = mask
     cv2.rectangle(frame, (sensor_find["x-min"], sensor_find["y-min"]), (sensor_find["x-max"], sensor_find["y-max"]), (0, 0, 255), 2)
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
