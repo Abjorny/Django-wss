@@ -172,9 +172,10 @@ async def read_data():
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
     if robotState == "red":
+        blurred = cv2.blur(hsv, (5, 5))  
         data = await get_settings_data()
         x, y, w, h, area, mask = search_color_two(
-            hsv,
+            blurred,
             [data["hsv_red1_min"], data["hsv_red1_max"]],
             [data["hsv_red2_min"], data["hsv_red2_max"]],
         )
