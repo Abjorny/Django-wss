@@ -100,17 +100,17 @@ const Camera = () => {
     };
 
     const updateSliderValueText = () => {
-    ['h', 's', 'v'].forEach((c) => {
-        const minVal = hsvRefs[`${c}-min`]?.current?.value;
-        const maxVal = hsvRefs[`${c}-max`]?.current?.value;
+        ['h', 's', 'v'].forEach((c) => {
+            const minVal = hsvRefs[`${c}-min`]?.current?.value;
+            const maxVal = hsvRefs[`${c}-max`]?.current?.value;
 
-        const minSpan = document.getElementById(`${c}-min-val`);
-        const maxSpan = document.getElementById(`${c}-max-val`);
+            const minSpan = document.getElementById(`${c}-min-val`);
+            const maxSpan = document.getElementById(`${c}-max-val`);
 
-        if (minSpan) minSpan.textContent = minVal;
-        if (maxSpan) maxSpan.textContent = maxVal;
-    });
-};
+            if (minSpan) minSpan.textContent = minVal;
+            if (maxSpan) maxSpan.textContent = maxVal;
+        });
+    };
 
 
     const handleImageClick = (event) => {
@@ -124,6 +124,10 @@ const Camera = () => {
             pointsOutputRef.current.textContent = JSON.stringify(newPoints);
         addDot(x, y);
     };
+  const handleChange = (e) => {
+    const selectedValue = e.target.value;
+    alert(selectedValue)
+  };
 
     useEffect(() => {
         connectCamera();
@@ -163,7 +167,7 @@ const Camera = () => {
                                     onInput={() => {
                                         sendHSV();
                                         updateHSVOutput();
-                                         updateSliderValueText();
+                                        updateSliderValueText();
                                     }}
                                 />
                             </div>,
@@ -187,17 +191,18 @@ const Camera = () => {
                             </div>,
                         ]))}
                         <div className="form-check mt-3">
-                            <input
-                                className="form-check-input"
-                                type="checkbox"
-                                id="is-two-checkbox"
-                                onChange={e => camera?.send(JSON.stringify({ type: 'change_two', value: e.target.checked }))}
-
-                            />
-
-                            <label className="form-check-label" htmlFor="is-two-checkbox">
-                                Использовать компас
-                            </label>
+                            <label htmlFor="citySelect" className="form-label">Выберите вариант</label>
+                            <select
+                                id="citySelect"
+                                className="form-select"
+                                onChange={handleChange}
+                                defaultValue=""
+                            >
+                                <option value="" disabled>-- Выберите --</option>
+                                <option value="none">Нету</option>
+                                <option value="red">По красному</option>
+                                <option value="compass">По компосу</option>
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -206,9 +211,8 @@ const Camera = () => {
             <div className="my-3 d-flex flex-wrap gap-2">
                 <button className="btn btn-success" onClick={() => camera?.send(JSON.stringify({ type: 'zapl' }))}>Забрать воду</button>
                 <button className="btn btn-danger" onClick={() => camera?.send(JSON.stringify({ type: 'water' }))}>Поставить запладку</button>
-                <button className="btn btn-primary" onClick={() => camera?.send(JSON.stringify({ type: 'findred' }))}>Поставить запладку</button>
- 
-                
+
+
                 <button className="btn btn-info" onClick={() => {
                     navigator.clipboard.writeText(JSON.stringify(points)).then(() => alert('Скопировано!'));
                 }}>Скопировать точки</button>
