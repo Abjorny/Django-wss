@@ -91,6 +91,37 @@ def get_frame_from_socket():
 
         return np.array(img)
 
+def search_color(frame, min, max):
+    x,y,w,h = 0,0,0,0
+    mask = cv2.inRange(frame,min,max)
+    counturs, hierarchy = cv2.findContours(mask,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
+    area_result = 0
+    for countur in counturs:
+        area = cv2.contourArea(countur)
+        if area > 100:
+            x1,y1,w1,h1 = cv2.boundingRect(countur)
+            if w1 * h1 > w * h:
+                area_result = area
+                x,y,w,h = x1,y1,w1,h1
+    return x, y, w, h, area_result
+
+def search_color_two(frame, range1, range2):
+    x,y,w,h = 0,0,0,0
+    mask1 = cv2.inRange(frame, range1[0], range1[1])
+    mask2 = cv2.inRange(frame, range2[0], range2[1])
+    mask = mask1 | mask2
+    counturs, hierarchy = cv2.findContours(mask,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
+    area_result = 0
+    for countur in counturs:
+        area = cv2.contourArea(countur)
+        if area > 100:
+            x1,y1,w1,h1 = cv2.boundingRect(countur)
+            if w1 * h1 > w * h:
+                area_result = area
+                x,y,w,h = x1,y1,w1,h1
+    return x, y, w, h, area_result
+    
+
 async def printLog(message):
     channel_layer = get_channel_layer()
     return await channel_layer.group_send(
@@ -102,10 +133,9 @@ async def printLog(message):
     )
 
 async def read_data():
-    global lib_hsv,  old_data, robotState
-    await printLog(f"state: {robotState}")
+    global lib_hsv,  old_data, robotState, settings
     if not local:
-        if robotState == "compos":
+        if robotState == "compass":
             await printLog(f"Compos go: {old_data}")
             await uartController.sendCommand(f"3{old_data}")
         else:
@@ -114,7 +144,13 @@ async def read_data():
 
     frame = get_frame_from_socket() 
     frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
-    
+    if robotState == "red":
+        x, y, w, h, area = search_color_two(
+            frame,
+            [settings.hsv_red_one.min_color_hsv, settings.hsv_red_one.max_color_hsv,],
+            [settings.hsv_red_two.min_color_hsv, settings.hsv_red_two.max_color_hsv,]
+        )
+        cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 2)
     cv2.rectangle(frame, (sensor_find["x-min"], sensor_find["y-min"]), (sensor_find["x-max"], sensor_find["y-max"]), (0, 0, 255), 2)
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
