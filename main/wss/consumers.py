@@ -103,7 +103,7 @@ async def printLog(message):
 
 async def read_data():
     global lib_hsv,  old_data, robotState
-    # await printLog(robotState)
+    await printLog(robotState)
     if not local:
         if robotState == "compos":
             await printLog(f"Compos go: {old_data}")
