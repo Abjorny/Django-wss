@@ -40,7 +40,7 @@ latest_hsv = {
     "v_max": 255
 }
 
-robotTwo = False
+robotState = ""
 lib_hsv = None
 old_data = 0
 
@@ -102,14 +102,13 @@ async def printLog(message):
     )
 
 async def read_data():
-    global lib_hsv,  old_data
+    global lib_hsv,  old_data, robotState
     if not local:
-        if robotTwo:
-            await printLog("robotTw")
+        if robotState == "compos":
+            await printLog(f"Compos go: {old_data}")
             await uartController.sendCommand(f"3{old_data}")
         else:
             old_data = await uartController.sendValueAndWait(4)
-            await printLog(f"read data: {old_data}")
 
 
     frame = get_frame_from_socket() 
@@ -163,16 +162,15 @@ class MyConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_discard(self.group_name, self.channel_name)
 
     async def receive(self, text_data):
-        global latest_hsv, robotTwo
+        global latest_hsv, robotState
         data = json.loads(text_data)
         type_message = data.get("type")
 
-        if type_message == "change_two":
-            robotTwo = not robotTwo
+        if type_message == "change_state":
+            robotState = data.get("value")
         
         elif  type_message == "hsv":
             hsv_data = data.get("data", {})
-            robotTwo = hsv_data.get("isTwo", False)
             latest_hsv.update({
                 "h_min": hsv_data.get("h_min", latest_hsv["h_min"]),
                 "h_max": hsv_data.get("h_max", latest_hsv["h_max"]),
