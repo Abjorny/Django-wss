@@ -29,7 +29,6 @@ pyasn1_modules==0.4.1
 pycparser==2.22
 pyOpenSSL==24.3.0
 pyserial==3.5
-python-prctl==1.8.1
 redis==5.2.1
 referencing==0.36.2
 rpds-py==0.25.1
