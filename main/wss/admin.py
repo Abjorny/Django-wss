@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Sensor, HsvObject, Settings
+from .models import  HsvObject, Settings
 from unfold.admin import ModelAdmin, forms
 
 class HsvObjectAdminForm(forms.ModelForm):
@@ -35,32 +35,13 @@ class HsvObjectAdmin(ModelAdmin):
     )
 
 
-@admin.register(Sensor)
-class SensorAdmin(ModelAdmin):
-    list_display = ("name",)
-    search_fields = ("name",)
-    fieldsets = (
-        (None, {"fields": ("name",)}),
-        ("Зоны интереса", {
-            "fields": ("area_cord_one", "area_cord_two", "area_cord_check", "area_cordTwo_one", "area_cordTwo_two", "area_cordTwo_check")
-        }),
-    )
-
 @admin.register(Settings)
 class SettingsAdmin(ModelAdmin):
     list_display = ("sensor_center_one", "sensor_center_two")
     fieldsets = (
-        ("Центральные датчики", {
-            "fields": ("sensor_center_one", "sensor_center_two", "sensor_left", "sensor_right")
-        }),
-        ("Красные датчики", {
-            "fields": ("sensor_red_front", "sensor_red_front_two", "sensor_red_left", "sensor_red_right")
-        }),
         ("HSV Настройки", {
             "fields": (
                 "hsv_red_one", "hsv_red_two",
-                "hsv_blue", "hsv_green",
-                "hsv_white", "hsv_black"
             )
         }),
     )
