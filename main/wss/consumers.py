@@ -7,6 +7,7 @@ import struct
 import gc
 from io import BytesIO
 from .models import Settings
+from asgiref.sync import sync_to_async
 from PIL import Image, ImageDraw, ImageFont
 import cv2
 import base64
@@ -91,6 +92,7 @@ def get_frame_from_socket():
 
         return np.array(img)
 
+@sync_to_async
 def search_color(frame, min, max):
     x,y,w,h = 0,0,0,0
     mask = cv2.inRange(frame,min,max)
@@ -105,6 +107,7 @@ def search_color(frame, min, max):
                 x,y,w,h = x1,y1,w1,h1
     return x, y, w, h, area_result
 
+@sync_to_async
 def search_color_two(frame, range1, range2):
     x,y,w,h = 0,0,0,0
     mask1 = cv2.inRange(frame, range1[0], range1[1])
