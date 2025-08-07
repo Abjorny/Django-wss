@@ -52,8 +52,21 @@ else:
     uartController = None
 
 @sync_to_async
-def get_settings():
-    return Settings.objects.first()
+def get_settings_data():
+    settings = Settings.objects.first()
+    if not settings:
+        return None
+    
+    hsv_red1 = settings.hsv_red_one
+    hsv_red2 = settings.hsv_red_two
+    
+    return {
+        "hsv_red1_min": np.array(hsv_red1.min_color_hsv),
+        "hsv_red1_max": np.array(hsv_red1.max_color_hsv),
+        "hsv_red2_min": np.array(hsv_red2.min_color_hsv),
+        "hsv_red2_max": np.array(hsv_red2.max_color_hsv),
+    }
+
 
 
 def resize_frame(frame, width=FIXED_WIDTH, height=FIXED_HEIGHT):
@@ -152,13 +165,14 @@ async def read_data():
     frame = get_frame_from_socket() 
     frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
     if robotState == "red":
-        settings = await get_settings()
+        data = await get_settings_data()
         await printLog("go to red")
         x, y, w, h, area, mask = search_color_two(
             frame,
-            [settings.hsv_red_one.min_color_hsv, settings.hsv_red_one.max_color_hsv,],
-            [settings.hsv_red_two.min_color_hsv, settings.hsv_red_two.max_color_hsv,]
+            [data["hsv_red1_min"], data["hsv_red1_max"]],
+            [data["hsv_red2_min"], data["hsv_red2_max"]],
         )
+
         cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 2)
         frame = mask
     cv2.rectangle(frame, (sensor_find["x-min"], sensor_find["y-min"]), (sensor_find["x-max"], sensor_find["y-max"]), (0, 0, 255), 2)
