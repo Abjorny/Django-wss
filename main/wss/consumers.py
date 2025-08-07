@@ -31,8 +31,8 @@ ERRORS = [0] * 10
 ERR = 0
 
 sensor_find = {
-    "x-min" : 0 + 10,
-    "x-max" : FIXED_WIDTH - 10,
+    "x-min" : 0 + 30,
+    "x-max" : FIXED_WIDTH - 30,
     "y-min" : FIXED_HEIGHT // 2,
     "y-max" : FIXED_HEIGHT - 10
 }
@@ -172,7 +172,11 @@ async def read_data():
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
     if robotState == "red":
-        blurred = cv2.blur(hsv, (5, 5))  
+        blurred = cv2.blur(hsv, (5, 5))[
+            sensor_find["y-min"]:sensor_find["y-max"],
+            sensor_find["x-min"]:sensor_find["x-max"]
+        ]
+
         data = await get_settings_data()
         x, y, w, h, area, mask = search_color_two(
             blurred,
