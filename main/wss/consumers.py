@@ -173,7 +173,7 @@ async def read_data():
 
     if robotState == "red":
         blurred = cv2.blur(hsv, (5, 5))[
-            sensor_find["y-max"]:sensor_find["y-min"],
+            sensor_find["y-min"]:sensor_find["y-max"],
             sensor_find["x-min"]:sensor_find["x-max"]
         ]
 
@@ -183,7 +183,8 @@ async def read_data():
             [data["hsv_red1_min"], data["hsv_red1_max"]],
             [data["hsv_red2_min"], data["hsv_red2_max"]],
         )
-
+        y = y + sensor_find["y-min"]
+        x = x + sensor_find["x-min"]
 
         cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 2)
         e = FIXED_WIDTH // 2 - (x + w // 2)
