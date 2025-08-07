@@ -6,6 +6,7 @@ import numpy as np
 import struct
 import gc
 from io import BytesIO
+from .models import Settings
 from PIL import Image, ImageDraw, ImageFont
 import cv2
 import base64
@@ -18,9 +19,18 @@ logger = logging.getLogger(__name__)
 
 task = None
 task_slam = None
+settings = Settings.objects.first()
+
 
 FIXED_WIDTH = 640
-FIXED_HEIGHT = 280
+FIXED_HEIGHT = 480
+
+sensor_find = {
+    "x-min" : 0,
+    "x-max" : FIXED_WIDTH,
+    "y-min" : 0,
+    "y-max" : FIXED_HEIGHT
+}
 
 latest_hsv = {
     "h_min": 0,
@@ -136,7 +146,6 @@ async def send_periodic_messages():
 
         await asyncio.sleep(1 / 30)
         gc.collect()
-
 
 class MyConsumer(AsyncWebsocketConsumer):
     
