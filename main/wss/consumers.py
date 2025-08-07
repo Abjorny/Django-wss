@@ -31,11 +31,12 @@ ERRORS = [0] * 10
 ERR = 0
 
 sensor_find = {
-    "x-min" : 0 + 80,
-    "x-max" : FIXED_WIDTH - 30,
-    "y-min" : FIXED_HEIGHT // 2,
-    "y-max" : FIXED_HEIGHT - 10
+    "x_min": 0 + 80,
+    "x_max": FIXED_WIDTH - 80,
+    "y_min": FIXED_HEIGHT // 2,
+    "y_max": FIXED_HEIGHT - 10
 }
+
 
 latest_hsv = {
     "h_min": 0,
@@ -173,8 +174,8 @@ async def read_data():
 
     if robotState == "red":
         blurred = cv2.blur(hsv, (5, 5))[
-            sensor_find["y-min"]:sensor_find["y-max"],
-            sensor_find["x-min"]:sensor_find["x-max"]
+            sensor_find["y_min"]:sensor_find["y_max"],
+            sensor_find["x_min"]:sensor_find["x_max"]
         ]
 
         data = await get_settings_data()
@@ -183,8 +184,8 @@ async def read_data():
             [data["hsv_red1_min"], data["hsv_red1_max"]],
             [data["hsv_red2_min"], data["hsv_red2_max"]],
         )
-        y = y + sensor_find["y-min"]
-        x = x + sensor_find["x-min"]
+        y = y + sensor_find["y_min"]
+        x = x + sensor_find["x_min"]
 
         cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 2)
         e = FIXED_WIDTH // 2 - (x + w // 2)
@@ -199,7 +200,7 @@ async def read_data():
 
         await printLog(f"go to red, e: {e}, U: {U}, MA: {MA}, MB: {MB}")
         
-    cv2.rectangle(frame, (sensor_find["x-min"], sensor_find["y-min"]), (sensor_find["x-max"], sensor_find["y-max"]), (0, 0, 255), 2)
+    cv2.rectangle(frame, (sensor_find["x_min"], sensor_find["y_min"]), (sensor_find["x_max"], sensor_find["y_max"]), (0, 0, 255), 2)
 
     lower = np.array([latest_hsv["h_min"], latest_hsv["s_min"], latest_hsv["v_min"]])
     upper = np.array([latest_hsv["h_max"], latest_hsv["s_max"], latest_hsv["v_max"]])
