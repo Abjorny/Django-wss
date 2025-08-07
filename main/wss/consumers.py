@@ -164,11 +164,13 @@ async def read_data():
 
     frame = get_frame_from_socket() 
     frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
+    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+
     if robotState == "red":
         data = await get_settings_data()
         await printLog("go to red")
         x, y, w, h, area, mask = search_color_two(
-            frame,
+            hsv,
             [data["hsv_red1_min"], data["hsv_red1_max"]],
             [data["hsv_red2_min"], data["hsv_red2_max"]],
         )
@@ -176,7 +178,6 @@ async def read_data():
         cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 2)
         
     cv2.rectangle(frame, (sensor_find["x-min"], sensor_find["y-min"]), (sensor_find["x-max"], sensor_find["y-max"]), (0, 0, 255), 2)
-    hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
     lower = np.array([latest_hsv["h_min"], latest_hsv["s_min"], latest_hsv["v_min"]])
     upper = np.array([latest_hsv["h_max"], latest_hsv["s_max"], latest_hsv["v_max"]])
