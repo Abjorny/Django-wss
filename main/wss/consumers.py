@@ -145,6 +145,7 @@ async def read_data():
     frame = get_frame_from_socket() 
     frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
     if robotState == "red":
+        await printLog("go to red")
         x, y, w, h, area = search_color_two(
             frame,
             [settings.hsv_red_one.min_color_hsv, settings.hsv_red_one.max_color_hsv,],
