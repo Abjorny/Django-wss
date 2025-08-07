@@ -19,7 +19,7 @@ local = False
 logger = logging.getLogger(__name__)
 
 task = None
-settings = Settings.objects.first()
+
 
 FPS = 30 
 FIXED_WIDTH = 640
@@ -50,6 +50,10 @@ if not local:
     uartController = UartControllerAsync() 
 else:
     uartController = None
+
+@sync_to_async
+def get_settings():
+    return Settings.objects.first()
 
 
 def resize_frame(frame, width=FIXED_WIDTH, height=FIXED_HEIGHT):
@@ -92,7 +96,7 @@ def get_frame_from_socket():
 
         return np.array(img)
 
-@sync_to_async
+
 def search_color(frame, min, max):
     x,y,w,h = 0,0,0,0
     mask = cv2.inRange(frame,min,max)
@@ -107,7 +111,7 @@ def search_color(frame, min, max):
                 x,y,w,h = x1,y1,w1,h1
     return x, y, w, h, area_result
 
-@sync_to_async
+
 def search_color_two(frame, range1, range2):
     x,y,w,h = 0,0,0,0
     mask1 = cv2.inRange(frame, range1[0], range1[1])
@@ -136,7 +140,7 @@ async def printLog(message):
     )
 
 async def read_data():
-    global lib_hsv,  old_data, robotState, settings
+    global lib_hsv,  old_data, robotState
     if not local:
         if robotState == "compass":
             await printLog(f"Compos go: {old_data}")
@@ -148,6 +152,7 @@ async def read_data():
     frame = get_frame_from_socket() 
     frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
     if robotState == "red":
+        settings = await get_settings()
         await printLog("go to red")
         x, y, w, h, area, mask = search_color_two(
             frame,
