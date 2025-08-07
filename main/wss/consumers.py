@@ -174,7 +174,7 @@ async def read_data():
         )
 
         cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 2)
-        frame = mask
+        
     cv2.rectangle(frame, (sensor_find["x-min"], sensor_find["y-min"]), (sensor_find["x-max"], sensor_find["y-max"]), (0, 0, 255), 2)
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
