@@ -53,4 +53,3 @@ class UartControllerAsync(UartController):
         await self.sendCommand(value)
         response = self._read_until_dollar()
         return response
-
