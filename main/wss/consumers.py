@@ -173,7 +173,7 @@ async def read_data():
 
     if robotState == "red":
         blurred = cv2.blur(hsv, (5, 5))[
-            sensor_find["y-min"]:sensor_find["y-max"],
+            sensor_find["y-max"]:sensor_find["y-min"],
             sensor_find["x-min"]:sensor_find["x-max"]
         ]
 
