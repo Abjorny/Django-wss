@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 task = None
 settings = Settings.objects.first()
 
-FPS = 60 
+FPS = 30 
 FIXED_WIDTH = 640
 FIXED_HEIGHT = 480
 
@@ -103,7 +103,7 @@ async def printLog(message):
 
 async def read_data():
     global lib_hsv,  old_data, robotState
-    await printLog(robotState)
+    await printLog(f"state: {robotState}")
     if not local:
         if robotState == "compos":
             await printLog(f"Compos go: {old_data}")
