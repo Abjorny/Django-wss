@@ -109,6 +109,7 @@ async def read_data():
             await uartController.sendCommand(f"3{old_data}")
         else:
             old_data = await uartController.sendValueAndWait(4)
+            print(old_data)
 
 
     frame = get_frame_from_socket() 
