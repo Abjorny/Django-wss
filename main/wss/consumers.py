@@ -231,7 +231,7 @@ async def read_data():
 
         else:
             e = FIXED_WIDTH // 2 + 20 - (x + w // 2)
-            if abs(e) < 5: e = 0
+
 
             Up = KP * e  
             Ud = KD * (e - EOLD_X) 
