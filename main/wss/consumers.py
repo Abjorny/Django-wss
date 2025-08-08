@@ -226,9 +226,8 @@ async def read_data():
             MA = int(MA)
             MB = int(MB)
 
-            MA = 30
-            MB = 30
-            
+
+
             if not local:
                 await uartController.sendCommand(f"2{MB + 200}{MA+200}")
 
