@@ -234,7 +234,8 @@ async def read_data():
                 Ud = 8 * KD * (e - EOLD_Y)
                 EOLD_Y = e
                 U2 = Up + Ud    
-                if  abs(U1) < 5 and abs(U2) < 5:
+
+                if  abs(U1) < 5 and abs(U2) < 10:
                     if time.time() - TIMER > 1:
                         await uartController.sendCommand("12")
                         THREE_STATE_RED = True
