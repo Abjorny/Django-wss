@@ -210,7 +210,11 @@ async def read_data():
                 MB = 0
                 TWO_STATE_RED = True
             await printLog(f"go to red, e: {int(e)}, U: {int(U)}, MA: {int(MA)}, MB: {int(MB)}, twoState: {TWO_STATE_RED}")
+            if MA > 50: MA = 50
+            if MB > 50: MB = 50
 
+            if MA < -20: MA = -20
+            if MB < -20: MB = -20
         
         else:
             e = FIXED_WIDTH // 2 - (x + w // 2)
@@ -220,7 +224,7 @@ async def read_data():
             EOLD_X = e
             U1 = Up + Ud
 
-            e = FIXED_HEIGHT // 2 - (y +h // 2)
+            e = (sensor_find["y_max"] - sensor_find["y_min"]) // 2 - y1
             Up = KP * e
             Ud = KD * (e - EOLD_Y)
             EOLD_Y = e
@@ -228,15 +232,16 @@ async def read_data():
 
             U = U1 + U2
 
-            MA = 30 + U
-            MB = 30 - U
+            MA = 0 + U
+            MB = 0 - U
+            if MA > 20: MA = 20
+            if MB > 20: MB = 20
+
+            if MA < -20: MA = -20
+            if MB < -20: MB = -20
             await printLog(f"go to red, e: {int(e)}, U1: {int(U1)}, U2: {int(U2)} U: {int(U)}, MA: {int(MA)}, MB: {int(MB)}, twoState: {TWO_STATE_RED}")
     
-        if MA > 50: MA = 50
-        if MB > 50: MB = 50
 
-        if MA < -20: MA = -20
-        if MB < -20: MB = -20
 
 
         MA = int(MA)
