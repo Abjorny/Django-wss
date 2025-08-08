@@ -6,6 +6,7 @@ const Camera = () => {
     const dotsContainerRef = useRef(null);
     const [points, setPoints] = useState([]);
     const [camera, setCamera] = useState(null);
+    const [compos, setCompos ] = useState(0);
     const reconnectAttempts = useRef(0);
     const maxReconnectAttempts = 10;
     const reconnectDelayMs = 2000;
@@ -22,7 +23,6 @@ const Camera = () => {
     const hsvOutputRef = useRef(null);
     const pointsOutputRef = useRef(null);
     const messageInfoRef = useRef(null);
-    const redLeftRef = useRef(null);
 
     const connectCamera = () => {
         const ws = new WebSocket(`ws://${window.location.hostname}:8000/ws/api/get_image`);
@@ -38,7 +38,7 @@ const Camera = () => {
         ws.onmessage = (event) => {
             const data = JSON.parse(event.data);
             if (data.message.image) {
-                redLeftRef.current.textContent = 'Компас: ' + data.message.compos;
+                setCompos(data.message.compos);
                 imgRef.current.src = `data:image/jpeg;base64,${data.message.image}`;
             } else if (data.message) {
                 messageInfoRef.current.textContent = data.message;
@@ -229,7 +229,7 @@ const Camera = () => {
             </div>
 
             <div className="mt-2">
-                <span ref={redLeftRef}>Компас: 0</span>
+                <span>Компас: {compos}</span>
             </div>
 
             <div className='container-missions mt-2'>
