@@ -230,11 +230,11 @@ async def read_data():
                 U1 = Up + Ud
 
                 e = (sensor_find["y_max"] - sensor_find["y_min"]) // 4 - y1
-                Up = KP * e * 5
-                Ud = 5 * KD * (e - EOLD_Y)
+                Up = KP * e * 8
+                Ud = 8 * KD * (e - EOLD_Y)
                 EOLD_Y = e
                 U2 = Up + Ud    
-                if  abs(U1) < 3 and abs(U2) < 3:
+                if  abs(U1) < 5 and abs(U2) < 5:
                     if time.time() - TIMER > 1:
                         await uartController.sendCommand("12")
                         THREE_STATE_RED = True
