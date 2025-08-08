@@ -251,6 +251,12 @@ async def read_data():
             MA = U1 
             MB = U2
 
+            if MA > 20: MA = 20
+            if MB > 20: MB = 20
+
+            if MA < -20: MA = -20
+            if MB < -20: MB = -20
+            
             if THREE_STATE_RED:
                 data_three = str(uartController._read_until_dollar()).lower()
                 if data_three == "ok":
@@ -258,7 +264,6 @@ async def read_data():
             else:
                 await printLog(f"go to red, e: {int(e)}, U1: {int(U1)}, U2: {int(U2)}, MA: {int(MA)}, MB: {int(MB)}, twoState: {TWO_STATE_RED}")
 
-                    
                 
             MA = int(MA)
             MB = int(MB)
