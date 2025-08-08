@@ -25,14 +25,14 @@ FPS = 30
 FIXED_WIDTH = 640
 FIXED_HEIGHT = 480
 
-KP = 1
-KD = 10
+KP = 0.3
+KD = 3
 ERRORS = [0] * 10 
 ERR = 0
 
 sensor_find = {
-    "x_min": 0 + 80,
-    "x_max": FIXED_WIDTH - 80,
+    "x_min": 0 + 160,
+    "x_max": FIXED_WIDTH - 160,
     "y_min": FIXED_HEIGHT // 2,
     "y_max": FIXED_HEIGHT - 10
 }
