@@ -199,14 +199,14 @@ async def read_data():
             if not TWO_STATE_RED:
                 e = FIXED_WIDTH // 2 - (x + w // 2)
 
-                Up = KP * e
-                Ud = KD * (e - EOLD)
+                Up = KP * e * 2
+                Ud = KD * (e - EOLD) * 2
                 EOLD = e
                 U = Up + Ud
 
 
-                MA = 30 + U
-                MB = 30 - U
+                MA = 20 + U
+                MB = 20 - U
 
                 if y1 > (sensor_find["y_max"] - sensor_find["y_min"]) // 4 :
                     MA = 0
@@ -215,8 +215,8 @@ async def read_data():
                     TIMER = time.time()
                 
                 await printLog(f"go to red, e: {int(e)}, U: {int(U)}, MA: {int(MA)}, MB: {int(MB)}, twoState: {TWO_STATE_RED}")
-                if MA > 50: MA = 50
-                if MB > 50: MB = 50
+                if MA > 40: MA = 40
+                if MB > 40: MB = 40
 
                 if MA < -20: MA = -20
                 if MB < -20: MB = -20
