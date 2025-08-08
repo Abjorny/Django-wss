@@ -252,7 +252,7 @@ async def read_data():
             MA = int(MA)
             MB = int(MB)
             if not local:
-                await uartController.sendCommand(f"2{MA + 200}{MB+200}")
+                await uartController.sendCommand(f"2{MB + 200}{MA+200}")
         else:
             data_three = str(uartController._read_until_dollar()).lower()
             if data_three == "ok":
