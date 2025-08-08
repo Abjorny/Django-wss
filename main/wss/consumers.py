@@ -236,8 +236,8 @@ async def read_data():
             U1 = Up + Ud
 
             e = (sensor_find["y_max"] - sensor_find["y_min"]) // 4 - y1
-            Up = KP * e * 8
-            Ud = 8 * KD * (e - EOLD_Y)
+            Up = KP * e * 10
+            Ud = 10 * KD * (e - EOLD_Y)
             EOLD_Y = e
             U2 = Up + Ud    
 
