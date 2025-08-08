@@ -206,7 +206,7 @@ async def read_data():
                 MA = 30 + U
                 MB = 30 - U
 
-                if y1 > (sensor_find["y_max"] - sensor_find["y_min"]) // 2:
+                if y1 > (sensor_find["y_max"] - sensor_find["y_min"]) // 3:
                     MA = 0
                     MB = 0
                     TWO_STATE_RED = True
@@ -227,7 +227,7 @@ async def read_data():
                 EOLD_X = e
                 U1 = Up + Ud
 
-                e = (sensor_find["y_max"] - sensor_find["y_min"]) // 2 - y1
+                e = (sensor_find["y_max"] - sensor_find["y_min"]) // 3 - y1
                 Up = KP * e
                 Ud = KD * (e - EOLD_Y)
                 EOLD_Y = e
@@ -237,8 +237,8 @@ async def read_data():
                     await uartController.sendCommand("12")
                     THREE_STATE_RED = True
 
-                MA = 0 + U2 + U1
-                MB = 0 + U2 - U1
+                MA = 0 + U2 - U1
+                MB = 0 + U2 + U1
 
 
                 if MA > 20: MA = 20
