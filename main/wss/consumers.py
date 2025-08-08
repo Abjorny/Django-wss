@@ -13,6 +13,7 @@ import cv2
 import base64
 import logging
 import socket
+import time
 from .Uart.UartController import UartControllerAsync
 
 local = False
@@ -26,6 +27,7 @@ FIXED_WIDTH = 640
 FIXED_HEIGHT = 480
 TWO_STATE_RED = False
 THREE_STATE_RED = False
+TIMER = time.time()
 
 KP = 0.2
 KD = 0.5
@@ -163,7 +165,7 @@ async def printLog(message):
     )
 
 async def read_data():
-    global lib_hsv,  old_data, robotState, KP, KD, EOLD, TWO_STATE_RED, EOLD_X, EOLD_Y, THREE_STATE_RED
+    global lib_hsv,  old_data, robotState, TIMER, KP, KD, EOLD, TWO_STATE_RED, EOLD_X, EOLD_Y, THREE_STATE_RED
     if not local:
         if robotState == "compass":
             await printLog(f"Compos go: {old_data}")
@@ -210,7 +212,7 @@ async def read_data():
                     MA = 0
                     MB = 0
                     TWO_STATE_RED = True
-                
+                    TIMER = time.time()
                 
                 await printLog(f"go to red, e: {int(e)}, U: {int(U)}, MA: {int(MA)}, MB: {int(MB)}, twoState: {TWO_STATE_RED}")
                 if MA > 50: MA = 50
@@ -232,10 +234,12 @@ async def read_data():
                 Ud = 2 * KD * (e - EOLD_Y)
                 EOLD_Y = e
                 U2 = Up + Ud    
-
                 if  abs(U1) < 3 and abs(U2) < 3:
-                    await uartController.sendCommand("12")
-                    THREE_STATE_RED = True
+                    if time.time() - TIMER > 3:
+                        await uartController.sendCommand("12")
+                        THREE_STATE_RED = True
+                else:
+                    TIMER = time.time()
 
                 MA = 0 + U2 + U1
                 MB = 0 + U2 - U1
