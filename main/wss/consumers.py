@@ -220,6 +220,12 @@ async def read_data():
 
             if MA < -20: MA = -20
             if MB < -20: MB = -20
+            MA = int(MA)
+            MB = int(MB)
+            if not local:
+                await uartController.sendCommand(f"2{MB + 200}{MA+200}")
+
+
 
         else:
             e = FIXED_WIDTH // 2 + 20 - (x + w // 2)
@@ -254,10 +260,10 @@ async def read_data():
 
                     
                 
-        MA = int(MA)
-        MB = int(MB)
-        if not local:
-            await uartController.sendCommand(f"2{MB + 200}{MA+200}")
+            MA = int(MA)
+            MB = int(MB)
+            if not local:
+                await uartController.sendCommand(f"6{MB + 200}{MA+200}")
 
 
 
