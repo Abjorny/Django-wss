@@ -34,9 +34,9 @@ EOLD_X = 0
 EOLD_Y = 0
 
 sensor_find = {
-    "x_min": 0 + 160,
-    "x_max": FIXED_WIDTH - 160,
-    "y_min": FIXED_HEIGHT // 2,
+    "x_min": 0 + 60,
+    "x_max": FIXED_WIDTH - 60,
+    "y_min": FIXED_HEIGHT // 2 + 80,
     "y_max": FIXED_HEIGHT - 10
 }
 
