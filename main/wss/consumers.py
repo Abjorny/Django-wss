@@ -214,6 +214,7 @@ async def read_data():
             if y1 > (sensor_find["y_max"] - sensor_find["y_min"]) // 2:
                 MA = 0
                 MB = 0
+                TWO_STATE_RED = True
         
         
         else:
@@ -240,7 +241,7 @@ async def read_data():
 
             if MA < -20: MA = -20
             if MB < -20: MB = -20
-            
+
         U =  int(U)
         e = int(e)
         MA = int(MA)
