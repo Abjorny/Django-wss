@@ -248,7 +248,7 @@ async def read_data():
             else:
                 TIMER = time.time()
 
-            MA = U1 
+            MA = U1 * -1
             MB = U2
 
             if MA > 20: MA = 20
@@ -256,7 +256,7 @@ async def read_data():
 
             if MA < -20: MA = -20
             if MB < -20: MB = -20
-            
+
             if THREE_STATE_RED:
                 data_three = str(uartController._read_until_dollar()).lower()
                 if data_three == "ok":
