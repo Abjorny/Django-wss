@@ -222,8 +222,13 @@ async def read_data():
 
             if MA < -20: MA = -20
             if MB < -20: MB = -20
+
             MA = int(MA)
             MB = int(MB)
+
+            MA = 30
+            MB = 30
+            
             if not local:
                 await uartController.sendCommand(f"2{MB + 200}{MA+200}")
 
