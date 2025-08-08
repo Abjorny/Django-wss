@@ -263,7 +263,7 @@ async def read_data():
             MA = int(MA)
             MB = int(MB)
             if not local:
-                await uartController.sendCommand(f"6{MB + 200}{MA+200}")
+                await uartController.sendCommand(f"6{MA + 200}{MB+200}")
 
 
 
