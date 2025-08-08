@@ -201,14 +201,14 @@ async def read_data():
         if not TWO_STATE_RED:
             e = FIXED_WIDTH // 2 - (x + w // 2)
 
-            Up = KP * e * 2
-            Ud = KD * (e - EOLD) * 2
+            Up = KP * e 
+            Ud = KD * (e - EOLD) 
             EOLD = e
             U = Up + Ud
 
 
-            MA = 20 + U
-            MB = 20 - U
+            MA = 10 + U
+            MB = 10 - U
 
             if y1 > (sensor_find["y_max"] - sensor_find["y_min"]) // 4 :
                 MA = 0
@@ -217,11 +217,11 @@ async def read_data():
                 TIMER = time.time()
             
             await printLog(f"go to red, e: {int(e)}, U: {int(U)}, MA: {int(MA)}, MB: {int(MB)}, twoState: {TWO_STATE_RED}")
-            if MA > 40: MA = 40
-            if MB > 40: MB = 40
+            if MA > 20: MA = 20
+            if MB > 20: MB = 20
 
-            if MA < -20: MA = -20
-            if MB < -20: MB = -20
+            if MA < -10: MA = -10
+            if MB < -10: MB = -10
 
             MA = int(MA)
             MB = int(MB)
@@ -237,8 +237,8 @@ async def read_data():
             e = FIXED_WIDTH // 2 + 20 - (x + w // 2)
 
 
-            Up = KP * e  * 1.5
-            Ud = KD * (e - EOLD_X) * 1.5
+            Up = KP * e 
+            Ud = KD * (e - EOLD_X) 
             EOLD_X = e
             U1 = Up + Ud
             
@@ -252,8 +252,8 @@ async def read_data():
             e = (sensor_find["y_max"] - sensor_find["y_min"]) // 4 - y1
             if abs(e) < 5: e = 0
 
-            Up = KP * e * 10
-            Ud = 10 * KD * (e - EOLD_Y)
+            Up = KP * e * 2
+            Ud = 2 * KD * (e - EOLD_Y)
             EOLD_Y = e
             U2 = Up + Ud    
 
@@ -267,11 +267,11 @@ async def read_data():
             MA = U1 * -1
             MB = U2
 
-            if MA > 30: MA = 30
-            if MB > 30: MB = 30
+            if MA > 15: MA = 15
+            if MB > 20: MB = 20
 
-            if MA < -30: MA = -30
-            if MB < -30: MB = -30
+            if MA < -15: MA = -15
+            if MB < -20: MB = -20
 
             if THREE_STATE_RED:
                 data_three = str(uartController._read_until_dollar()).lower()
