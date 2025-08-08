@@ -38,6 +38,7 @@ const Camera = () => {
         ws.onmessage = (event) => {
             const data = JSON.parse(event.data);
             if (data.message.image) {
+                console.log(data.message.compos);
                 setCompos(data.message.compos);
                 imgRef.current.src = `data:image/jpeg;base64,${data.message.image}`;
             } else if (data.message) {
