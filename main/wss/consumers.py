@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 task = None
 
 
-FPS = 60 
+FPS = 60
 FIXED_WIDTH = 640
 FIXED_HEIGHT = 480
 TWO_STATE_RED = False
@@ -55,7 +55,7 @@ old_data = 0
 
 
 if not local:
-    uartController = UartControllerAsync() 
+    uartController = UartControllerAsync()
 else:
     uartController = None
 
@@ -64,10 +64,10 @@ def get_settings_data():
     settings = Settings.objects.first()
     if not settings:
         return None
-    
+
     hsv_red1 = settings.hsv_red_one
     hsv_red2 = settings.hsv_red_two
-    
+
     return {
         "hsv_red1_min": np.array(hsv_red1.min_color_hsv),
         "hsv_red1_max": np.array(hsv_red1.max_color_hsv),
@@ -148,14 +148,14 @@ def search_color_two(frame, range1, range2):
                 area_result = area
                 x,y,w,h = x1,y1,w1,h1
     return x, y, w, h, area_result, mask
-    
+
 
 async def printLog(message):
     channel_layer = get_channel_layer()
     return await channel_layer.group_send(
         "broadcast_group",
         {
-            "type": "info_message",  
+            "type": "info_message",
             "text": message,
         }
     )
@@ -170,7 +170,7 @@ async def read_data():
             old_data = await uartController.sendValueAndWait(4)
 
 
-    frame = get_frame_from_socket() 
+    frame = get_frame_from_socket()
     frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
@@ -192,7 +192,7 @@ async def read_data():
         x = x1 + sensor_find["x_min"]
 
         cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 2)
-        
+
         if not TWO_STATE_RED:
             e = FIXED_WIDTH // 2 - (x + w // 2)
 
@@ -200,8 +200,8 @@ async def read_data():
             Ud = KD * (e - EOLD)
             EOLD = e
             U = Up + Ud
-            
-                
+
+
             MA = 30 + U
             MB = 30 - U
 
@@ -215,7 +215,7 @@ async def read_data():
 
             if MA < -20: MA = -20
             if MB < -20: MB = -20
-        
+
         else:
             e = FIXED_WIDTH // 2 - (x + w // 2)
 
@@ -230,17 +230,18 @@ async def read_data():
             EOLD_Y = e
             U2 = Up + Ud
 
-            U = U1 + U2
+    
+            MA = 0 + U2 + U1
+            MB = 0 + U2 - U1
 
-            MA = 0 + U
-            MB = 0 - U
+
             if MA > 20: MA = 20
             if MB > 20: MB = 20
 
             if MA < -20: MA = -20
             if MB < -20: MB = -20
             await printLog(f"go to red, e: {int(e)}, U1: {int(U1)}, U2: {int(U2)} U: {int(U)}, MA: {int(MA)}, MB: {int(MB)}, twoState: {TWO_STATE_RED}")
-    
+
 
 
 
@@ -256,13 +257,14 @@ async def read_data():
     upper = np.array([latest_hsv["h_max"], latest_hsv["s_max"], latest_hsv["v_max"]])
     mask = cv2.inRange(hsv, lower, upper)
     frame = cv2.bitwise_and(frame, frame, mask=mask)
-    
+
     _, buffer = cv2.imencode('.jpg', frame, [int(cv2.IMWRITE_JPEG_QUALITY), 40])
-    image_data = base64.b64encode(buffer).decode('utf-8')        
+    image_data = base64.b64encode(buffer).decode('utf-8')
 
     return image_data
 
 async def send_periodic_messages():
+
     global old_data
     channel_layer = get_channel_layer()
 
@@ -283,7 +285,7 @@ async def send_periodic_messages():
         gc.collect()
 
 class MyConsumer(AsyncWebsocketConsumer):
-    
+
     async def connect(self):
         global task
         self.group_name = "broadcast_group"
@@ -303,7 +305,7 @@ class MyConsumer(AsyncWebsocketConsumer):
 
         if type_message == "change_state":
             robotState = data.get("value")
-        
+
         elif  type_message == "hsv":
             hsv_data = data.get("data", {})
             latest_hsv.update({
@@ -315,7 +317,7 @@ class MyConsumer(AsyncWebsocketConsumer):
                 "v_max": hsv_data.get("v_max", latest_hsv["v_max"]),
             })
             logger.info(f"Updated HSV: {latest_hsv}")
-        
+
         elif type_message == "water":
             if not local:
                 await uartController.sendCommand(11)
@@ -325,15 +327,15 @@ class MyConsumer(AsyncWebsocketConsumer):
             if not local:
                 await uartController.sendCommand(12)
                 await printLog("Поставить запладку!")
-        
+
 
 
     async def info_message(self, event):
         await self.send(text_data=json.dumps({
-            "message": event["text"]  
+            "message": event["text"]
         }))
 
-    
+
     async def broadcast_message(self, event):
         message = event["message"]
         await self.send(text_data=json.dumps({
