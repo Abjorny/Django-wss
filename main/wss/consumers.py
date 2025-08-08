@@ -195,76 +195,71 @@ async def read_data():
         x = x1 + sensor_find["x_min"]
 
         cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 2)
-        if not THREE_STATE_RED:
-            if not TWO_STATE_RED:
-                e = FIXED_WIDTH // 2 - (x + w // 2)
+ 
+        if not TWO_STATE_RED:
+            e = FIXED_WIDTH // 2 - (x + w // 2)
 
-                Up = KP * e * 2
-                Ud = KD * (e - EOLD) * 2
-                EOLD = e
-                U = Up + Ud
+            Up = KP * e * 2
+            Ud = KD * (e - EOLD) * 2
+            EOLD = e
+            U = Up + Ud
 
 
-                MA = 20 + U
-                MB = 20 - U
+            MA = 20 + U
+            MB = 20 - U
 
-                if y1 > (sensor_find["y_max"] - sensor_find["y_min"]) // 4 :
-                    MA = 0
-                    MB = 0
-                    TWO_STATE_RED = True
-                    TIMER = time.time()
-                
-                await printLog(f"go to red, e: {int(e)}, U: {int(U)}, MA: {int(MA)}, MB: {int(MB)}, twoState: {TWO_STATE_RED}")
-                if MA > 40: MA = 40
-                if MB > 40: MB = 40
+            if y1 > (sensor_find["y_max"] - sensor_find["y_min"]) // 4 :
+                MA = 0
+                MB = 0
+                TWO_STATE_RED = True
+                TIMER = time.time()
+            
+            await printLog(f"go to red, e: {int(e)}, U: {int(U)}, MA: {int(MA)}, MB: {int(MB)}, twoState: {TWO_STATE_RED}")
+            if MA > 40: MA = 40
+            if MB > 40: MB = 40
 
-                if MA < -20: MA = -20
-                if MB < -20: MB = -20
+            if MA < -20: MA = -20
+            if MB < -20: MB = -20
 
+        else:
+            e = FIXED_WIDTH // 2 + 20 - (x + w // 2)
+
+            Up = KP * e * 0.8
+            Ud = KD * (e - EOLD_X) * 0.8
+            EOLD_X = e
+            U1 = Up + Ud
+
+            e = (sensor_find["y_max"] - sensor_find["y_min"]) // 4 - y1
+            Up = KP * e * 8
+            Ud = 8 * KD * (e - EOLD_Y)
+            EOLD_Y = e
+            U2 = Up + Ud    
+
+            if  abs(U1) < 5 and abs(U2) < 10 and THREE_STATE_RED == False:
+                if time.time() - TIMER > 1:
+                    await uartController.sendCommand("12")
+                    THREE_STATE_RED = True
             else:
-                e = FIXED_WIDTH // 2 + 20 - (x + w // 2)
+                TIMER = time.time()
 
-                Up = KP * e * 0.8
-                Ud = KD * (e - EOLD_X) * 0.8
-                EOLD_X = e
-                U1 = Up + Ud
+            MA = U1
+            MB = U2
 
-                e = (sensor_find["y_max"] - sensor_find["y_min"]) // 4 - y1
-                Up = KP * e * 8
-                Ud = 8 * KD * (e - EOLD_Y)
-                EOLD_Y = e
-                U2 = Up + Ud    
-
-                if  abs(U1) < 5 and abs(U2) < 10:
-                    if time.time() - TIMER > 1:
-                        await uartController.sendCommand("12")
-                        THREE_STATE_RED = True
-                else:
-                    TIMER = time.time()
-
-                MA = 0 + U2 + U1
-                MB = 0 + U2 - U1
-
-
-                if MA > 20: MA = 20
-                if MB > 20: MB = 20
-
-                if MA < -20: MA = -20
-                if MB < -20: MB = -20
-
+            if THREE_STATE_RED:
+                data_three = str(uartController._read_until_dollar()).lower()
+                if data_three == "ok":
+                    await printLog("OK")
+            else:
                 await printLog(f"go to red, e: {int(e)}, U1: {int(U1)}, U2: {int(U2)}, MA: {int(MA)}, MB: {int(MB)}, twoState: {TWO_STATE_RED}")
 
-            MA = int(MA)
-            MB = int(MB)
-            if not local:
-                await uartController.sendCommand(f"2{MB + 200}{MA+200}")
-        else:
-            data_three = str(uartController._read_until_dollar()).lower()
-            if data_three == "ok":
-                await printLog("OK")
-                THREE_STATE_RED = False
+                    
                 
-                
+        MA = int(MA)
+        MB = int(MB)
+        if not local:
+            await uartController.sendCommand(f"2{MB + 200}{MA+200}")
+
+
 
 
     
