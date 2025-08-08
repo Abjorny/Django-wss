@@ -222,7 +222,7 @@ async def read_data():
                 if MB < -20: MB = -20
 
             else:
-                e = FIXED_WIDTH // 2 - (x + w // 2)
+                e = FIXED_WIDTH // 2 + 20 - (x + w // 2)
 
                 Up = KP * e * 0.8
                 Ud = KD * (e - EOLD_X) * 0.8
@@ -230,8 +230,8 @@ async def read_data():
                 U1 = Up + Ud
 
                 e = (sensor_find["y_max"] - sensor_find["y_min"]) // 4 - y1
-                Up = KP * e * 3
-                Ud = 3 * KD * (e - EOLD_Y)
+                Up = KP * e * 5
+                Ud = 5 * KD * (e - EOLD_Y)
                 EOLD_Y = e
                 U2 = Up + Ud    
                 if  abs(U1) < 3 and abs(U2) < 3:
