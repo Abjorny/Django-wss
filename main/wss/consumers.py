@@ -204,18 +204,13 @@ async def read_data():
                 
             MA = 30 + U
             MB = 30 - U
-    
-            if MA > 50: MA = 50
-            if MB > 50: MB = 50
-
-            if MA < -20: MA = -20
-            if MB < -20: MB = -20
 
             if y1 > (sensor_find["y_max"] - sensor_find["y_min"]) // 2:
                 MA = 0
                 MB = 0
                 TWO_STATE_RED = True
-        
+            await printLog(f"go to red, e: {int(e)}, U: {int(U)}, MA: {int(MA)}, MB: {int(MB)}, twoState: {TWO_STATE_RED}")
+
         
         else:
             e = FIXED_WIDTH // 2 - (x + w // 2)
@@ -235,21 +230,19 @@ async def read_data():
 
             MA = 30 + U
             MB = 30 - U
+            await printLog(f"go to red, e: {int(e)}, U1: {U1}, U2: {U2} U: {int(U)}, MA: {int(MA)}, MB: {int(MB)}, twoState: {TWO_STATE_RED}")
     
-            if MA > 50: MA = 50
-            if MB > 50: MB = 50
+        if MA > 50: MA = 50
+        if MB > 50: MB = 50
 
-            if MA < -20: MA = -20
-            if MB < -20: MB = -20
+        if MA < -20: MA = -20
+        if MB < -20: MB = -20
 
-        U =  int(U)
-        e = int(e)
+
         MA = int(MA)
         MB = int(MB)
         if not local:
-            # await printLog("go")
             await uartController.sendCommand(f"2{MA + 200}{MB+200}")
-        await printLog(f"go to red, e: {e}, U: {U}, MA: {MA}, MB: {MB}")
     else:
         TWO_STATE_RED = False
     cv2.rectangle(frame, (sensor_find["x_min"], sensor_find["y_min"]), (sensor_find["x_max"], sensor_find["y_max"]), (0, 0, 255), 2)
