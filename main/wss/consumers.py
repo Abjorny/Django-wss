@@ -240,7 +240,7 @@ async def read_data():
 
             if MA < -20: MA = -20
             if MB < -20: MB = -20
-            await printLog(f"go to red, e: {int(e)}, U1: {int(U1)}, U2: {int(U2)} U: {int(U)}, MA: {int(MA)}, MB: {int(MB)}, twoState: {TWO_STATE_RED}")
+            await printLog(f"go to red, e: {int(e)}, U1: {int(U1)}, U2: {int(U2)}, MA: {int(MA)}, MB: {int(MB)}, twoState: {TWO_STATE_RED}")
 
 
 
