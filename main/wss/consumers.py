@@ -138,6 +138,7 @@ def search_color_two(frame, range1, range2):
     mask1 = cv2.inRange(frame, range1[0], range1[1])
     mask2 = cv2.inRange(frame, range2[0], range2[1])
     mask = cv2.bitwise_or(mask1, mask2)
+    mask = cv2.blur(mask, (5, 5))
     counturs, hierarchy = cv2.findContours(mask,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
     area_result = 0
     for countur in counturs:
@@ -175,7 +176,7 @@ async def read_data():
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
     if robotState == "red":
-        blurred = cv2.blur(hsv, (5, 5))[
+        blurred = blurred[
             sensor_find["y_min"]:sensor_find["y_max"],
             sensor_find["x_min"]:sensor_find["x_max"]
         ]
