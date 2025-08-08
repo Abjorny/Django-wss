@@ -35,21 +35,30 @@ const Camera = () => {
             imgRef.current.style.display = '';
         };
 
-        ws.onmessage = (event) => {
-            const data = JSON.parse(event.data);
+ws.onmessage = (event) => {
+    try {
+        const data = JSON.parse(event.data);
+        console.log('Raw data from WS:', data);
 
-            if (data.message.compos !== undefined) {
-                setCompos(data.message.compos);
-            }
+        if (data?.message?.compos !== undefined) {
+            setCompos(() => {
+                console.log('New compos value:', data.message.compos);
+                return data.message.compos;
+            });
+        }
 
-            if (data.message.image) {
-                imgRef.current.src = `data:image/jpeg;base64,${data.message.image}`;
-            }
+        if (data?.message?.image) {
+            imgRef.current.src = `data:image/jpeg;base64,${data.message.image}`;
+        }
 
-            if (!data.message.image && typeof data.message === 'string') {
-                messageInfoRef.current.textContent = data.message;
-            }
-        };
+        if (!data?.message?.image && typeof data?.message === 'string') {
+            messageInfoRef.current.textContent = data.message;
+        }
+    } catch (err) {
+        console.error('Error parsing WS message:', err);
+    }
+};
+
 
 
         ws.onclose = (e) => {
