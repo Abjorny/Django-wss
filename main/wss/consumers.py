@@ -234,8 +234,8 @@ async def read_data():
                 U2 = Up + Ud    
 
                 if  abs(U1) < 3 and abs(U2) < 3:
-                    await uartController.sendCommand("11")
-                    THREE_STATE_RED = False
+                    await uartController.sendCommand("12")
+                    THREE_STATE_RED = True
 
                 MA = 0 + U2 + U1
                 MB = 0 + U2 - U1
