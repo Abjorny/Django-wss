@@ -4,9 +4,9 @@ import './Camera.css';
 const Camera = () => {
     const imgRef = useRef(null);
     const dotsContainerRef = useRef(null);
+    const composRef = useRef(null); // 🔹 Компас напрямую через DOM
     const [points, setPoints] = useState([]);
     const [camera, setCamera] = useState(null);
-    const [compos, setCompos] = useState({ value: 0, ts: Date.now() });
 
     const reconnectAttempts = useRef(0);
     const maxReconnectAttempts = 10;
@@ -27,7 +27,6 @@ const Camera = () => {
 
     const connectCamera = () => {
         const ws = new WebSocket(`ws://${window.location.hostname}:8000/ws/api/get_image`);
-
         setCamera(ws);
 
         ws.onopen = () => {
@@ -39,12 +38,15 @@ const Camera = () => {
         ws.onmessage = (event) => {
             const data = JSON.parse(event.data);
             if (data.message.image) {
-                if (data.message.compos !== compos.value) {
-                    setCompos({ value: data.message.compos, ts: Date.now() });
+                // 🔹 Обновляем компас напрямую
+                if (composRef.current) {
+                    composRef.current.textContent = data.message.compos;
                 }
                 imgRef.current.src = `data:image/jpeg;base64,${data.message.image}`;
             } else if (data.message) {
-                messageInfoRef.current.textContent = data.message;
+                if (messageInfoRef.current) {
+                    messageInfoRef.current.textContent = data.message;
+                }
             }
         };
 
@@ -54,9 +56,7 @@ const Camera = () => {
             setCamera(null);
             if (reconnectAttempts.current < maxReconnectAttempts) {
                 reconnectAttempts.current++;
-                setTimeout(() => {
-                    connectCamera();
-                }, reconnectDelayMs);
+                setTimeout(connectCamera, reconnectDelayMs);
             }
         };
 
@@ -84,14 +84,16 @@ const Camera = () => {
         const hMax = parseInt(hsvRefs['h-max'].current.value);
         const sMax = parseInt(hsvRefs['s-max'].current.value);
         const vMax = parseInt(hsvRefs['v-max'].current.value);
-        hsvOutputRef.current.textContent = `np.array([${hMin}, ${sMin}, ${vMin}])\nnp.array([${hMax}, ${sMax}, ${vMax}])`;
+        hsvOutputRef.current.textContent =
+            `np.array([${hMin}, ${sMin}, ${vMin}])\nnp.array([${hMax}, ${sMax}, ${vMax}])`;
     };
 
     const resetPoints = () => {
         setPoints([]);
         dotsContainerRef.current.innerHTML = '';
-        if (pointsOutputRef.current)
+        if (pointsOutputRef.current) {
             pointsOutputRef.current.textContent = '[]';
+        }
     };
 
     const addDot = (x, y) => {
@@ -115,7 +117,6 @@ const Camera = () => {
         });
     };
 
-
     const handleImageClick = (event) => {
         if (points.length >= 4) resetPoints();
         const rect = imgRef.current.getBoundingClientRect();
@@ -123,14 +124,16 @@ const Camera = () => {
         const y = Math.round(event.clientY - rect.top);
         const newPoints = [...points, [x, y]];
         setPoints(newPoints);
-        if (pointsOutputRef.current)
+        if (pointsOutputRef.current) {
             pointsOutputRef.current.textContent = JSON.stringify(newPoints);
+        }
         addDot(x, y);
     };
-  const handleChange = (e) => {
-    const selectedValue = e.target.value;
-    camera?.send(JSON.stringify({ type: 'change_state',  value: selectedValue }));
-  };
+
+    const handleChange = (e) => {
+        const selectedValue = e.target.value;
+        camera?.send(JSON.stringify({ type: 'change_state', value: selectedValue }));
+    };
 
     useEffect(() => {
         connectCamera();
@@ -150,7 +153,8 @@ const Camera = () => {
                         className="img-fluid border rounded"
                         onClick={handleImageClick}
                     />
-                    <div id="dots-container" ref={dotsContainerRef} className="position-absolute top-0 start-0 w-100 h-100"></div>
+                    <div id="dots-container" ref={dotsContainerRef}
+                         className="position-absolute top-0 start-0 w-100 h-100"></div>
                 </div>
 
                 <div className="col-md-4">
@@ -201,7 +205,7 @@ const Camera = () => {
                                 onChange={handleChange}
                                 defaultValue=""
                             >
-                                <option value="" >-- Выберите --</option>
+                                <option value="">-- Выберите --</option>
                                 <option value="red">По красному</option>
                                 <option value="compass">По компосу</option>
                             </select>
@@ -211,9 +215,10 @@ const Camera = () => {
             </div>
 
             <div className="my-3 d-flex flex-wrap gap-2">
-                <button className="btn btn-success" onClick={() => camera?.send(JSON.stringify({ type: 'zapl' }))}>Забрать воду</button>
-                <button className="btn btn-danger" onClick={() => camera?.send(JSON.stringify({ type: 'water' }))}>Поставить запладку</button>
-
+                <button className="btn btn-success"
+                        onClick={() => camera?.send(JSON.stringify({ type: 'zapl' }))}>Забрать воду</button>
+                <button className="btn btn-danger"
+                        onClick={() => camera?.send(JSON.stringify({ type: 'water' }))}>Поставить запладку</button>
 
                 <button className="btn btn-info" onClick={() => {
                     navigator.clipboard.writeText(JSON.stringify(points)).then(() => alert('Скопировано!'));
@@ -232,7 +237,7 @@ const Camera = () => {
             </div>
 
             <div className="mt-2">
-                <span>Компас: {compos.value}</span>
+                <span>Компас: <span ref={composRef}>0</span></span>
             </div>
 
             <div className='container-missions mt-2'>
@@ -255,18 +260,15 @@ const Camera = () => {
                         +
                     </button>
 
-
                     <div className="action-mission d-flex align-items-center gap-4 mt-4" style={{ height: '30px', width: '100%' }}>
-                        <button className="btn btn-success w-50" >
+                        <button className="btn btn-success w-50">
                             Запустить
                         </button>
-                        <button className="btn btn-danger w-50" >
+                        <button className="btn btn-danger w-50">
                             Обновить
                         </button>
                     </div>
-
                 </div>
-
             </div>
         </div>
     );
