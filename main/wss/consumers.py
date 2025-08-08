@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 task = None
 
 
-FPS = 30 
+FPS = 60 
 FIXED_WIDTH = 640
 FIXED_HEIGHT = 480
 
