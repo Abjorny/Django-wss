@@ -35,31 +35,16 @@ const Camera = () => {
             imgRef.current.style.display = '';
         };
 
-ws.onmessage = (event) => {
-    try {
-        const data = JSON.parse(event.data);
-        console.log('Raw data from WS:', data);
-
-        if (data?.message?.compos !== undefined) {
-            setCompos(() => {
-                console.log('New compos value:', data.message.compos);
-                return data.message.compos;
-            });
-        }
-
-        if (data?.message?.image) {
-            imgRef.current.src = `data:image/jpeg;base64,${data.message.image}`;
-        }
-
-        if (!data?.message?.image && typeof data?.message === 'string') {
-            messageInfoRef.current.textContent = data.message;
-        }
-    } catch (err) {
-        console.error('Error parsing WS message:', err);
-    }
-};
-
-
+        ws.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            if (data.message.image) {
+                console.log(data.message.compos);
+                setCompos(data.message.compos);
+                imgRef.current.src = `data:image/jpeg;base64,${data.message.image}`;
+            } else if (data.message) {
+                messageInfoRef.current.textContent = data.message;
+            }
+        };
 
         ws.onclose = (e) => {
             console.error('WebSocket closed unexpectedly', e);
