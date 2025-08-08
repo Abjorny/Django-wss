@@ -25,10 +25,9 @@ FPS = 30
 FIXED_WIDTH = 640
 FIXED_HEIGHT = 480
 
-KP = 0.3
-KD = 3
-ERRORS = [0] * 10 
-ERR = 0
+KP = 0.15
+KD = 1
+EOLD = 0
 
 sensor_find = {
     "x_min": 0 + 160,
@@ -159,7 +158,7 @@ async def printLog(message):
     )
 
 async def read_data():
-    global lib_hsv,  old_data, robotState, KP, KD, ERR, ERRORS
+    global lib_hsv,  old_data, robotState, KP, KD, EOLD
     if not local:
         if robotState == "compass":
             await printLog(f"Compos go: {old_data}")
@@ -191,10 +190,10 @@ async def read_data():
 
         cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 2)
         e = FIXED_WIDTH // 2 - (x + w // 2)
-        ERRORS[ERR] = e
-        ERR = (ERR + 1) % 10
+
         Up = KP * e
-        Ud = KD * (e - ERRORS[ERR])
+        Ud = KD * (e - EOLD)
+        EOLD = e
         U = Up + Ud
         
             
