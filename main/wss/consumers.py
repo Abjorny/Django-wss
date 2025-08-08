@@ -27,7 +27,7 @@ FIXED_HEIGHT = 480
 TWO_STATE_RED = False
 THREE_STATE_RED = False
 
-KP = 0.15
+KP = 0.2
 KD = 0.5
 EOLD = 0
 EOLD_X = 0
