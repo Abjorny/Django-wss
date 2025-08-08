@@ -233,8 +233,8 @@ async def read_data():
             e = FIXED_WIDTH // 2 + 20 - (x + w // 2)
 
 
-            Up = KP * e  
-            Ud = KD * (e - EOLD_X) 
+            Up = KP * e  * 1.5
+            Ud = KD * (e - EOLD_X) * 1.5
             EOLD_X = e
             U1 = Up + Ud
             
@@ -242,14 +242,14 @@ async def read_data():
             for i in range(9):
                 LAST_Y[i] = LAST_Y[i + 1] 
             LAST_Y[9] = y1
-
+ 
             y1 = sum(LAST_Y)  // 10
         
             e = (sensor_find["y_max"] - sensor_find["y_min"]) // 4 - y1
             if abs(e) < 5: e = 0
 
-            Up = KP * e * 15
-            Ud = 15 * KD * (e - EOLD_Y)
+            Up = KP * e * 10
+            Ud = 10 * KD * (e - EOLD_Y)
             EOLD_Y = e
             U2 = Up + Ud    
 
