@@ -212,7 +212,7 @@ async def read_data():
             MB = 0
         if not local:
             # await printLog("go")
-            await uartController.sendCommand(f"{MA + 200}{MB+200}")
+            await uartController.sendCommand(f"2{MA + 200}{MB+200}")
         await printLog(f"go to red, e: {e}, U: {U}, MA: {MA}, MB: {MB}")
         
     cv2.rectangle(frame, (sensor_find["x_min"], sensor_find["y_min"]), (sensor_find["x_max"], sensor_find["y_max"]), (0, 0, 255), 2)
