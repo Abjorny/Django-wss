@@ -26,7 +26,7 @@ FIXED_WIDTH = 640
 FIXED_HEIGHT = 480
 
 KP = 0.15
-KD = 1
+KD = 0.5
 EOLD = 0
 
 sensor_find = {
