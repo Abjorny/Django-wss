@@ -6,7 +6,8 @@ const Camera = () => {
     const dotsContainerRef = useRef(null);
     const [points, setPoints] = useState([]);
     const [camera, setCamera] = useState(null);
-    const [compos, setCompos ] = useState(0);
+    const [compos, setCompos] = useState({ value: 0, ts: Date.now() });
+
     const reconnectAttempts = useRef(0);
     const maxReconnectAttempts = 10;
     const reconnectDelayMs = 2000;
@@ -38,8 +39,9 @@ const Camera = () => {
         ws.onmessage = (event) => {
             const data = JSON.parse(event.data);
             if (data.message.image) {
-                console.log(data.message.compos);
-                setCompos(data.message.compos);
+                if (data.message.compos !== compos.value) {
+                    setCompos({ value: data.message.compos, ts: Date.now() });
+                }
                 imgRef.current.src = `data:image/jpeg;base64,${data.message.image}`;
             } else if (data.message) {
                 messageInfoRef.current.textContent = data.message;
@@ -230,7 +232,7 @@ const Camera = () => {
             </div>
 
             <div className="mt-2">
-                <span>Компас: {compos}</span>
+                <span>Компас: {compos.value}</span>
             </div>
 
             <div className='container-missions mt-2'>
