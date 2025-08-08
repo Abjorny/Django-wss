@@ -210,7 +210,7 @@ async def read_data():
             MA = 10 + U
             MB = 10 - U
 
-            if y1 > (sensor_find["y_max"] - sensor_find["y_min"]) // 4 :
+            if y1 > (sensor_find["y_max"] - sensor_find["y_min"]) // 6 :
                 MA = 0
                 MB = 0
                 TWO_STATE_RED = True
@@ -245,6 +245,7 @@ async def read_data():
 
             for i in range(9):
                 LAST_Y[i] = LAST_Y[i + 1] 
+
             LAST_Y[9] = y1
  
             y1 = sum(LAST_Y)  // 10
