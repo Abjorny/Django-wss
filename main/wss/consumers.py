@@ -210,6 +210,8 @@ async def read_data():
         if y1 > (sensor_find["y_max"] - sensor_find["y_min"]) // 2:
             MA = 0
             MB = 0
+        U =  int(U)
+        e = int(e)
         MA = int(MA)
         MB = int(MB)
         if not local:
