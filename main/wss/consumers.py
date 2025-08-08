@@ -249,17 +249,19 @@ async def read_data():
 
                 await printLog(f"go to red, e: {int(e)}, U1: {int(U1)}, U2: {int(U2)}, MA: {int(MA)}, MB: {int(MB)}, twoState: {TWO_STATE_RED}")
 
+            MA = int(MA)
+            MB = int(MB)
+            if not local:
+                await uartController.sendCommand(f"2{MA + 200}{MB+200}")
         else:
             data_three = str(uartController._read_until_dollar()).lower()
             if data_three == "ok":
+                await printLog("OK")
                 THREE_STATE_RED = False
                 
                 
 
-        MA = int(MA)
-        MB = int(MB)
-        if not local:
-            await uartController.sendCommand(f"2{MA + 200}{MB+200}")
+
     
     else:
         TWO_STATE_RED = False
