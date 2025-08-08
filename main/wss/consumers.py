@@ -210,7 +210,7 @@ async def read_data():
             MA = 10 + U
             MB = 10 - U
 
-            if y1 > (sensor_find["y_max"] - sensor_find["y_min"]) // 6 :
+            if y1 > (sensor_find["y_max"] - sensor_find["y_min"]) // 4 :
                 MA = 0
                 MB = 0
                 TWO_STATE_RED = True
