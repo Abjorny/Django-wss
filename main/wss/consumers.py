@@ -208,7 +208,7 @@ async def read_data():
                 MA = 30 + U
                 MB = 30 - U
 
-                if y1 > (sensor_find["y_max"] - sensor_find["y_min"]) // 3:
+                if y1 > (sensor_find["y_max"] - sensor_find["y_min"]) // 4 :
                     MA = 0
                     MB = 0
                     TWO_STATE_RED = True
@@ -224,14 +224,14 @@ async def read_data():
             else:
                 e = FIXED_WIDTH // 2 - (x + w // 2)
 
-                Up = KP * e
-                Ud = KD * (e - EOLD_X)
+                Up = KP * e * 0.8
+                Ud = KD * (e - EOLD_X) * 0.8
                 EOLD_X = e
                 U1 = Up + Ud
 
-                e = (sensor_find["y_max"] - sensor_find["y_min"]) // 3 - y1
-                Up = KP * e * 2
-                Ud = 2 * KD * (e - EOLD_Y)
+                e = (sensor_find["y_max"] - sensor_find["y_min"]) // 4 - y1
+                Up = KP * e * 3
+                Ud = 3 * KD * (e - EOLD_Y)
                 EOLD_Y = e
                 U2 = Up + Ud    
                 if  abs(U1) < 3 and abs(U2) < 3:
