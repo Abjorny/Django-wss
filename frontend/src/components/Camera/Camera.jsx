@@ -37,14 +37,20 @@ const Camera = () => {
 
         ws.onmessage = (event) => {
             const data = JSON.parse(event.data);
-            if (data.message.image) {
-                console.log(data.message.compos);
+
+            if (data.message.compos !== undefined) {
                 setCompos(data.message.compos);
+            }
+
+            if (data.message.image) {
                 imgRef.current.src = `data:image/jpeg;base64,${data.message.image}`;
-            } else if (data.message) {
+            }
+
+            if (!data.message.image && typeof data.message === 'string') {
                 messageInfoRef.current.textContent = data.message;
             }
         };
+
 
         ws.onclose = (e) => {
             console.error('WebSocket closed unexpectedly', e);
