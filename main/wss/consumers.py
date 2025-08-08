@@ -248,7 +248,7 @@ async def read_data():
             else:
                 TIMER = time.time()
 
-            MA = U1 * -1
+            MA = U1 
             MB = U2
 
             if THREE_STATE_RED:
