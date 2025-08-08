@@ -34,6 +34,8 @@ KD = 0.5
 EOLD = 0
 EOLD_X = 0
 EOLD_Y = 0
+LAST_Y = [0] * 10
+
 
 sensor_find = {
     "x_min": 0 + 60,
@@ -165,7 +167,7 @@ async def printLog(message):
     )
 
 async def read_data():
-    global lib_hsv,  old_data, robotState, TIMER, KP, KD, EOLD, TWO_STATE_RED, EOLD_X, EOLD_Y, THREE_STATE_RED
+    global lib_hsv,  old_data, robotState, TIMER, KP, KD, EOLD, TWO_STATE_RED, EOLD_X, EOLD_Y, THREE_STATE_RED, LAST_Y
     if not local:
         if robotState == "compass":
             await printLog(f"Compos go: {old_data}")
@@ -229,13 +231,23 @@ async def read_data():
 
         else:
             e = FIXED_WIDTH // 2 + 20 - (x + w // 2)
+            if abs(e) < 5: e = 0
 
-            Up = KP * e * 0.8
-            Ud = KD * (e - EOLD_X) * 0.8
+            Up = KP * e  
+            Ud = KD * (e - EOLD_X) 
             EOLD_X = e
             U1 = Up + Ud
+            
 
+            for i in range(9):
+                LAST_Y[i] = LAST_Y[i + 1] 
+            LAST_Y[9] = y1
+
+            y1 = sum(LAST_Y)  // 10
+        
             e = (sensor_find["y_max"] - sensor_find["y_min"]) // 4 - y1
+            if abs(e) < 5: e = 0
+
             Up = KP * e * 15
             Ud = 15 * KD * (e - EOLD_Y)
             EOLD_Y = e
@@ -251,11 +263,11 @@ async def read_data():
             MA = U1 * -1
             MB = U2
 
-            if MA > 20: MA = 20
-            if MB > 20: MB = 20
+            if MA > 30: MA = 30
+            if MB > 30: MB = 30
 
-            if MA < -20: MA = -20
-            if MB < -20: MB = -20
+            if MA < -30: MA = -30
+            if MB < -30: MB = -30
 
             if THREE_STATE_RED:
                 data_three = str(uartController._read_until_dollar()).lower()
