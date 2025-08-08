@@ -25,6 +25,7 @@ FPS = 60
 FIXED_WIDTH = 640
 FIXED_HEIGHT = 480
 TWO_STATE_RED = False
+THREE_STATE_RED = False
 
 KP = 0.15
 KD = 0.5
@@ -162,7 +163,7 @@ async def printLog(message):
     )
 
 async def read_data():
-    global lib_hsv,  old_data, robotState, KP, KD, EOLD, TWO_STATE_RED, EOLD_X, EOLD_Y
+    global lib_hsv,  old_data, robotState, KP, KD, EOLD, TWO_STATE_RED, EOLD_X, EOLD_Y, THREE_STATE_RED
     if not local:
         if robotState == "compass":
             await printLog(f"Compos go: {old_data}")
@@ -192,65 +193,78 @@ async def read_data():
         x = x1 + sensor_find["x_min"]
 
         cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 2)
+        if not THREE_STATE_RED:
+            if not TWO_STATE_RED:
+                e = FIXED_WIDTH // 2 - (x + w // 2)
 
-        if not TWO_STATE_RED:
-            e = FIXED_WIDTH // 2 - (x + w // 2)
-
-            Up = KP * e
-            Ud = KD * (e - EOLD)
-            EOLD = e
-            U = Up + Ud
+                Up = KP * e
+                Ud = KD * (e - EOLD)
+                EOLD = e
+                U = Up + Ud
 
 
-            MA = 30 + U
-            MB = 30 - U
+                MA = 30 + U
+                MB = 30 - U
 
-            if y1 > (sensor_find["y_max"] - sensor_find["y_min"]) // 2:
-                MA = 0
-                MB = 0
-                TWO_STATE_RED = True
-            await printLog(f"go to red, e: {int(e)}, U: {int(U)}, MA: {int(MA)}, MB: {int(MB)}, twoState: {TWO_STATE_RED}")
-            if MA > 50: MA = 50
-            if MB > 50: MB = 50
+                if y1 > (sensor_find["y_max"] - sensor_find["y_min"]) // 2:
+                    MA = 0
+                    MB = 0
+                    TWO_STATE_RED = True
+                
+                
+                await printLog(f"go to red, e: {int(e)}, U: {int(U)}, MA: {int(MA)}, MB: {int(MB)}, twoState: {TWO_STATE_RED}")
+                if MA > 50: MA = 50
+                if MB > 50: MB = 50
 
-            if MA < -20: MA = -20
-            if MB < -20: MB = -20
+                if MA < -20: MA = -20
+                if MB < -20: MB = -20
+
+            else:
+                e = FIXED_WIDTH // 2 - (x + w // 2)
+
+                Up = KP * e
+                Ud = KD * (e - EOLD_X)
+                EOLD_X = e
+                U1 = Up + Ud
+
+                e = (sensor_find["y_max"] - sensor_find["y_min"]) // 2 - y1
+                Up = KP * e
+                Ud = KD * (e - EOLD_Y)
+                EOLD_Y = e
+                U2 = Up + Ud    
+
+                if  abs(U1) < 3 and abs(U2) < 3:
+                    await uartController.sendCommand("11")
+                    THREE_STATE_RED = False
+
+                MA = 0 + U2 + U1
+                MB = 0 + U2 - U1
+
+
+                if MA > 20: MA = 20
+                if MB > 20: MB = 20
+
+                if MA < -20: MA = -20
+                if MB < -20: MB = -20
+
+                await printLog(f"go to red, e: {int(e)}, U1: {int(U1)}, U2: {int(U2)}, MA: {int(MA)}, MB: {int(MB)}, twoState: {TWO_STATE_RED}")
 
         else:
-            e = FIXED_WIDTH // 2 - (x + w // 2)
-
-            Up = KP * e
-            Ud = KD * (e - EOLD_X)
-            EOLD_X = e
-            U1 = Up + Ud
-
-            e = (sensor_find["y_max"] - sensor_find["y_min"]) // 2 - y1
-            Up = KP * e
-            Ud = KD * (e - EOLD_Y)
-            EOLD_Y = e
-            U2 = Up + Ud
-
-    
-            MA = 0 + U2 + U1
-            MB = 0 + U2 - U1
-
-
-            if MA > 20: MA = 20
-            if MB > 20: MB = 20
-
-            if MA < -20: MA = -20
-            if MB < -20: MB = -20
-            await printLog(f"go to red, e: {int(e)}, U1: {int(U1)}, U2: {int(U2)}, MA: {int(MA)}, MB: {int(MB)}, twoState: {TWO_STATE_RED}")
-
-
-
+            data_three = str(uartController._read_until_dollar()).lower()
+            if data_three == "ok":
+                THREE_STATE_RED = False
+                
+                
 
         MA = int(MA)
         MB = int(MB)
         if not local:
             await uartController.sendCommand(f"2{MA + 200}{MB+200}")
+    
     else:
         TWO_STATE_RED = False
+        THREE_STATE_RED = False
+    
     cv2.rectangle(frame, (sensor_find["x_min"], sensor_find["y_min"]), (sensor_find["x_max"], sensor_find["y_max"]), (0, 0, 255), 2)
 
     lower = np.array([latest_hsv["h_min"], latest_hsv["s_min"], latest_hsv["v_min"]])
