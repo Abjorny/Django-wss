@@ -237,8 +237,8 @@ async def read_data():
                     await uartController.sendCommand("12")
                     THREE_STATE_RED = True
 
-                MA = 0 + U2 - U1
-                MB = 0 + U2 + U1
+                MA = 0 + U2 + U1
+                MB = 0 + U2 - U1
 
 
                 if MA > 20: MA = 20
