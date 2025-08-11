@@ -29,7 +29,7 @@ def returnAngleItem(data, sensorData, frame):
         else:
             quater = 4
     else:
-        if y_center_item > y_center_frame:
+        if y_center_item < y_center_frame:
             quater = 2
         else:
             quater = 3
