@@ -38,8 +38,8 @@ def returnAngleItem(data, sensorData, frame):
         else:
             quater = 4
     
-    delta_y = abs(delta_y)
-    delta_x = abs(delta_x)
+    # delta_y = abs(delta_y)
+    # delta_x = abs(delta_x)
 
     if quater == 1:
         if delta_y > delta_x:
