@@ -66,4 +66,4 @@ def returnAngleItem(data, sensorData, frame):
             angle = math.degrees(math.atan(delta_y / delta_x))
 
     cv2.line(frame, (x_center_sensor, y_center_sensor), (x_center_item, y_center_item), (0, 255, 255), 2)
-    return angle
+    return f"{angle}, {quater}"
