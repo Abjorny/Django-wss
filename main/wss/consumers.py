@@ -201,6 +201,7 @@ async def read_data():
         angle, dist = utilis.returnAngleItem([x1,y1, w, h], sensor_find, frame)
         angle += 100
         dist += 100
+        old_data = int(old_data.replace("$", ""))
         await uartController.sendCommand(f"5{dist}{angle}{old_data + 100}")
         await printLog(f"Angle: {angle}, Dist: {dist}")
 
