@@ -198,7 +198,7 @@ async def read_data():
         x = x1 + sensor_find["x_min"]
 
         cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 2)
-        angle = utilis.returnAngleItem(sensor_find, [x1,y1, w, h], frame)
+        angle = utilis.returnAngleItem([x1,y1, w, h], sensor_find, frame)
         await printLog(f"Angle: {angle}")
 
         if not TWO_STATE_RED:
