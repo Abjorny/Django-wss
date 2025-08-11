@@ -14,7 +14,6 @@ import base64
 import logging
 import socket
 import time
-import wss.utilis as utilis
 from .Uart.UartController import UartControllerAsync
 
 local = False
@@ -41,7 +40,7 @@ LAST_Y = [0] * 10
 sensor_find = {
     "x_min": 0 + 60,
     "x_max": FIXED_WIDTH - 60,
-    "y_min": FIXED_HEIGHT // 2,
+    "y_min": FIXED_HEIGHT // 2 + 60,
     "y_max": FIXED_HEIGHT - 10
 }
 
@@ -174,10 +173,7 @@ async def read_data():
             await printLog(f"Compos go: {old_data}")
             await uartController.sendCommand(f"3{old_data}")
         else:
-            if robotState != "red":
-                old_data = await uartController.sendValueAndWait(4)
-                if old_data:
-                    old_data = int(old_data.replace("$", ""))
+            old_data = await uartController.sendValueAndWait(4)
 
 
     frame = get_frame_from_socket()
@@ -196,115 +192,107 @@ async def read_data():
             [data["hsv_red2_min"], data["hsv_red2_max"]],
         )
 
-        if x1 != 0 or y1 != 0:
-            y = y1 + sensor_find["y_min"]
-            x = x1 + sensor_find["x_min"]
 
-            cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 2)
-            angle, dist = utilis.returnAngleItem([x1,y1, w, h], sensor_find, frame)
-            await printLog(f"Angle: {angle}, Dist: {dist}")
-            
-            angle += 100
-            dist += 100
+        y = y1 + sensor_find["y_min"]
+        x = x1 + sensor_find["x_min"]
 
-            angle = int(angle)
-            dist = int(dist)
-            if old_data:
-                await uartController.sendCommand(f"5{dist}{angle}{old_data + 100}")
-
-    #     if not TWO_STATE_RED:
-    #         e = FIXED_WIDTH // 2 - (x + w // 2)
-
-    #         Up = KP * e 
-    #         Ud = KD * (e - EOLD) 
-    #         EOLD = e
-    #         U = Up + Ud
-
-
-    #         MA = 10 + U
-    #         MB = 10 - U
-
-    #         if y1 > (sensor_find["y_max"] - sensor_find["y_min"]) // 4 :
-    #             MA = 0
-    #             MB = 0
-    #             TWO_STATE_RED = True
-    #             TIMER = time.time()
-            
-    #         # await printLog(f"go to red, e: {int(e)}, U: {int(U)}, MA: {int(MA)}, MB: {int(MB)}, twoState: {TWO_STATE_RED}")
-    #         if MA > 20: MA = 20
-    #         if MB > 20: MB = 20
-
-    #         if MA < -10: MA = -10
-    #         if MB < -10: MB = -10
-
-    #         MA = int(MA)
-    #         MB = int(MB)
-
-
-
-    #         if not local:
-    #             await uartController.sendCommand(f"2{MB + 200}{MA+200}")
-
-
-
-    #     else:
-    #         e = FIXED_WIDTH // 2 + 20 - (x + w // 2)
-
-
-    #         Up = KP * e * 0.8
-    #         Ud = KD * (e - EOLD_X)  * 0.8
-    #         EOLD_X = e
-    #         U1 = Up + Ud
-            
-
-    #         for i in range(9):
-    #             LAST_Y[i] = LAST_Y[i + 1] 
-
-    #         LAST_Y[9] = y1
+        cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 2)
  
-    #         y1 = sum(LAST_Y)  // 10
+        if not TWO_STATE_RED:
+            e = FIXED_WIDTH // 2 - (x + w // 2)
+
+            Up = KP * e 
+            Ud = KD * (e - EOLD) 
+            EOLD = e
+            U = Up + Ud
+
+
+            MA = 10 + U
+            MB = 10 - U
+
+            if y1 > (sensor_find["y_max"] - sensor_find["y_min"]) // 4 :
+                MA = 0
+                MB = 0
+                TWO_STATE_RED = True
+                TIMER = time.time()
+            
+            await printLog(f"go to red, e: {int(e)}, U: {int(U)}, MA: {int(MA)}, MB: {int(MB)}, twoState: {TWO_STATE_RED}")
+            if MA > 20: MA = 20
+            if MB > 20: MB = 20
+
+            if MA < -10: MA = -10
+            if MB < -10: MB = -10
+
+            MA = int(MA)
+            MB = int(MB)
+
+
+
+            if not local:
+                await uartController.sendCommand(f"2{MB + 200}{MA+200}")
+
+
+
+        else:
+            e = FIXED_WIDTH // 2 + 20 - (x + w // 2)
+
+
+            Up = KP * e * 0.8
+            Ud = KD * (e - EOLD_X)  * 0.8
+            EOLD_X = e
+            U1 = Up + Ud
+            
+
+            for i in range(9):
+                LAST_Y[i] = LAST_Y[i + 1] 
+
+            LAST_Y[9] = y1
+ 
+            y1 = sum(LAST_Y)  // 10
         
-    #         e = (sensor_find["y_max"] - sensor_find["y_min"]) // 4 - y1
+            e = (sensor_find["y_max"] - sensor_find["y_min"]) // 4 - y1
 
-    #         Up = KP * e * 1.5
-    #         Ud = 1.5 * KD * (e - EOLD_Y)
-    #         EOLD_Y = e
-    #         U2 = Up + Ud    
+            Up = KP * e * 1.5
+            Ud = 1.5 * KD * (e - EOLD_Y)
+            EOLD_Y = e
+            U2 = Up + Ud    
 
-    #         if  abs(U1) < 5 and abs(U2) < 20 and THREE_STATE_RED == False:
-    #             if time.time() - TIMER > 1.5:
-    #                 await uartController.sendCommand("12")
-    #                 THREE_STATE_RED = True
-    #         else:
-    #             TIMER = time.time()
+            if  abs(U1) < 5 and abs(U2) < 20 and THREE_STATE_RED == False:
+                if time.time() - TIMER > 1.5:
+                    await uartController.sendCommand("12")
+                    THREE_STATE_RED = True
+            else:
+                TIMER = time.time()
 
-    #         MA = U1 * -1
-    #         MB = U2
+            MA = U1 * -1
+            MB = U2
 
-    #         if MA > 15: MA = 15
-    #         if MB > 20: MB = 20
+            if MA > 15: MA = 15
+            if MB > 20: MB = 20
 
-    #         if MA < -15: MA = -15
-    #         if MB < -20: MB = -20
+            if MA < -15: MA = -15
+            if MB < -20: MB = -20
 
-    #         if THREE_STATE_RED:
-    #             data_three = str(uartController._read_until_dollar()).lower()
-    #             if data_three == "ok":
-    #                 await printLog("OK")
-    #         else:
-    #             pass
-    #             # await printLog(f"go to red, e: {int(e)}, U1: {int(U1)}, U2: {int(U2)}, MA: {int(MA)}, MB: {int(MB)}, twoState: {TWO_STATE_RED}")
+            if THREE_STATE_RED:
+                data_three = str(uartController._read_until_dollar()).lower()
+                if data_three == "ok":
+                    await printLog("OK")
+            else:
+                await printLog(f"go to red, e: {int(e)}, U1: {int(U1)}, U2: {int(U2)}, MA: {int(MA)}, MB: {int(MB)}, twoState: {TWO_STATE_RED}")
 
                 
-    #         MA = int(MA)
-    #         MB = int(MB)
-    #         if not local:
-    #             await uartController.sendCommand(f"6{MA + 200}{MB+200}")
+            MA = int(MA)
+            MB = int(MB)
+            if not local:
+                await uartController.sendCommand(f"6{MA + 200}{MB+200}")
 
 
-    # else:
-    #     TWO_STATE_RED = False
-    #     THREE_STATE_RED = False
+
+
+    
+    else:
+        TWO_STATE_RED = False
+        THREE_STATE_RED = False
     
     cv2.rectangle(frame, (sensor_find["x_min"], sensor_find["y_min"]), (sensor_find["x_max"], sensor_find["y_max"]), (0, 0, 255), 2)
 
