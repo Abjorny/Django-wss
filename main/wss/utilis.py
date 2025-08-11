@@ -55,7 +55,7 @@ def returnAngleItem(data, sensorData, frame):
 
     elif quater == 3:
         if delta_y > delta_x:
-            angle = 225 + math.degrees(math.atan(delta_x / delta_y))
+            angle = 180 + math.degrees(math.atan(delta_x / delta_y))
         else:
             angle = 225 - math.degrees(math.atan(delta_y / delta_x))
 
