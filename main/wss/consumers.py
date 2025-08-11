@@ -281,7 +281,8 @@ async def read_data():
                 if data_three == "ok":
                     await printLog("OK")
             else:
-                await printLog(f"go to red, e: {int(e)}, U1: {int(U1)}, U2: {int(U2)}, MA: {int(MA)}, MB: {int(MB)}, twoState: {TWO_STATE_RED}")
+                pass
+                # await printLog(f"go to red, e: {int(e)}, U1: {int(U1)}, U2: {int(U2)}, MA: {int(MA)}, MB: {int(MB)}, twoState: {TWO_STATE_RED}")
 
                 
             MA = int(MA)
