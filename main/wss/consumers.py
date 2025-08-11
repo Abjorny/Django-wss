@@ -28,6 +28,7 @@ FIXED_HEIGHT = 480
 TWO_STATE_RED = False
 THREE_STATE_RED = False
 TIMER = time.time()
+TIMER_PRED = time.time()
 
 KP = 0.2
 KD = 0.5
@@ -167,7 +168,7 @@ async def printLog(message):
     )
 
 async def read_data():
-    global lib_hsv,  old_data, robotState, TIMER, KP, KD, EOLD, TWO_STATE_RED, EOLD_X, EOLD_Y, THREE_STATE_RED, LAST_Y
+    global lib_hsv,  old_data, robotState, TIMER, KP, KD, EOLD, TWO_STATE_RED, EOLD_X, EOLD_Y, THREE_STATE_RED, LAST_Y, TIMER_PRED
     if not local:
         if robotState == "compass":
             await printLog(f"Compos go: {old_data}")
@@ -215,6 +216,7 @@ async def read_data():
                 MB = 0
                 TWO_STATE_RED = True
                 TIMER = time.time()
+                TIMER_PRED = time.time()
             
             await printLog(f"go to red, e: {int(e)}, U: {int(U)}, MA: {int(MA)}, MB: {int(MB)}, twoState: {TWO_STATE_RED}")
             if MA > 20: MA = 20
@@ -257,12 +259,13 @@ async def read_data():
             EOLD_Y = e
             U2 = Up + Ud    
 
-            if  abs(U1) < 7 and abs(U2) < 20 and THREE_STATE_RED == False:
+            if  abs(U1) < 7 and abs(U2) < 20 and THREE_STATE_RED == False and time.time() - TIMER_PRED > 5:
                 if time.time() - TIMER > 1.5:
                     await uartController.sendCommand("12")
                     THREE_STATE_RED = True
             else:
                 TIMER = time.time()
+                
 
             MA = U1 * -1
             MB = U2
