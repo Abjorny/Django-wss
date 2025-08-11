@@ -24,13 +24,13 @@ def returnAngleItem(data, sensorData, frame):
     quater = 0
 
     if x_center_item > x_center_frame:
-        if y_center_item < y_center_frame:
+        if y_center_item > y_center_frame:
             quater = 1
         else:
-            quater = 2
-    else:
-        if y_center_item < y_center_frame:
             quater = 4
+    else:
+        if y_center_item > y_center_frame:
+            quater = 2
         else:
             quater = 3
     
