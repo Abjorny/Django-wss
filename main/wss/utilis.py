@@ -11,8 +11,10 @@ def returnAngleItem(data, sensorData, frame):
     w = data[2]
     h = data[3]
 
-    height, width = frame.shape
-
+    shape = frame.shape
+    height = shape[0]
+    width = shape[1]
+    
     y_center_frame = height // 2
     x_center_frame = width // 2
 
