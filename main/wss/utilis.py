@@ -49,21 +49,21 @@ def returnAngleItem(data, sensorData, frame):
     
     elif quater == 2:
         if delta_y > delta_x:
-            angle =  math.degrees(math.atan(delta_x / delta_y)) + 315
+            angle =  360 - math.degrees(math.atan(delta_x / delta_y)) 
         else:
-            angle = 360 - math.degrees(math.atan(delta_y / delta_x))
+            angle = 315 + math.degrees(math.atan(delta_y / delta_x))
 
     elif quater == 3:
         if delta_y > delta_x:
-            angle = 225 - math.degrees(math.atan(delta_x / delta_y))
+            angle = 225 + math.degrees(math.atan(delta_x / delta_y))
         else:
-            angle = math.degrees(math.atan(delta_y / delta_x)) + 225
+            angle = 225 - math.degrees(math.atan(delta_y / delta_x))
 
     elif quater == 4:
         if delta_y > delta_x:
-            angle = math.degrees(math.atan(delta_x / delta_y)) + 135
+            angle = 180 - math.degrees(math.atan(delta_x / delta_y)) 
         else:
-            angle = 135 - math.degrees(math.atan(delta_y / delta_x)) 
+            angle = 135 + math.degrees(math.atan(delta_y / delta_x)) 
 
     cv2.line(frame, (x_center_sensor, y_center_sensor), (x_center_item, y_center_item), (0, 255, 255), 2)
     return f"{angle}, {quater}"
