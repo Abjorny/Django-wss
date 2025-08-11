@@ -15,16 +15,16 @@ def returnAngleItem(data, sensorData, frame):
     height = shape[0]
     width = shape[1]
 
-    y_center_frame = height // 2
-    x_center_frame = width // 2
+    y_center_sensor = (y_min + y_max) // 2
+    x_center_sensor = (x_max + x_min) // 2
 
     y_center_item = y1 + y_min + (h // 2)
     x_center_item = x1 + x_min + (w // 2)
 
     quater = 0
 
-    delta_x = x_center_frame - x_center_item
-    delta_y = y_center_frame - y_center_item
+    delta_x = x_center_sensor - x_center_item
+    delta_y = y_center_sensor - y_center_item
     if delta_x > 0:
         if delta_y > 0:
             quater = 2
@@ -36,5 +36,5 @@ def returnAngleItem(data, sensorData, frame):
         else:
             quater = 4
     
-    cv2.line(frame, (x_center_frame, y_center_frame), (x_center_item, y_center_item), (0, 255, 255), 2)
+    cv2.line(frame, (x_center_sensor, y_center_sensor), (x_center_item, y_center_item), (0, 255, 255), 2)
     return quater
