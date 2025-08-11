@@ -14,6 +14,7 @@ import base64
 import logging
 import socket
 import time
+import utilis
 from .Uart.UartController import UartControllerAsync
 
 local = False
@@ -197,7 +198,9 @@ async def read_data():
         x = x1 + sensor_find["x_min"]
 
         cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 2)
- 
+        angle = utilis.returnAngleItem(sensor_find, [x1,y1, w, h], frame)
+        await printLog(f"Angle: {angle}")
+
         if not TWO_STATE_RED:
             e = FIXED_WIDTH // 2 - (x + w // 2)
 
@@ -216,7 +219,7 @@ async def read_data():
                 TWO_STATE_RED = True
                 TIMER = time.time()
             
-            await printLog(f"go to red, e: {int(e)}, U: {int(U)}, MA: {int(MA)}, MB: {int(MB)}, twoState: {TWO_STATE_RED}")
+            # await printLog(f"go to red, e: {int(e)}, U: {int(U)}, MA: {int(MA)}, MB: {int(MB)}, twoState: {TWO_STATE_RED}")
             if MA > 20: MA = 20
             if MB > 20: MB = 20
 
@@ -287,9 +290,6 @@ async def read_data():
                 await uartController.sendCommand(f"6{MA + 200}{MB+200}")
 
 
-
-
-    
     else:
         TWO_STATE_RED = False
         THREE_STATE_RED = False
