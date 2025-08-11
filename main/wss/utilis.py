@@ -18,7 +18,7 @@ def returnAngleItem(data, sensorData, frame):
     y_center_sensor = (y_min + y_max) // 2
     x_center_sensor = (x_max + x_min) // 2
 
-    y_center_item = y1 + y_min + (h // 2)
+    y_center_item = y1 + y_min + (h // 2) + 20
     x_center_item = x1 + x_min + (w // 2)
 
     quater = 0
