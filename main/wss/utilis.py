@@ -14,12 +14,25 @@ def returnAngleItem(data, sensorData, frame):
     shape = frame.shape
     height = shape[0]
     width = shape[1]
-    
+
     y_center_frame = height // 2
     x_center_frame = width // 2
 
     y_center_item = y1 + y_min + (h // 2)
     x_center_item = x1 + x_min + (w // 2)
 
+    quater = 0
+
+    if x_center_item > y_center_frame:
+        if y_center_item > y_center_frame:
+            quater = 1
+        else:
+            quater = 2
+    else:
+        if y_center_item > y_center_frame:
+            quater = 4
+        else:
+            quater = 3
+    
     cv2.line(frame, (x_center_frame, y_center_frame), (x_center_item, y_center_item), (0, 255, 255), 2)
-    return 0 
+    return quater
