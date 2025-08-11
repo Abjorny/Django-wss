@@ -195,20 +195,20 @@ async def read_data():
             [data["hsv_red2_min"], data["hsv_red2_max"]],
         )
 
+        if x1 != 0 or y1 != 0:
+            y = y1 + sensor_find["y_min"]
+            x = x1 + sensor_find["x_min"]
 
-        y = y1 + sensor_find["y_min"]
-        x = x1 + sensor_find["x_min"]
+            cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 2)
+            angle, dist = utilis.returnAngleItem([x1,y1, w, h], sensor_find, frame)
+            await printLog(f"Angle: {angle}, Dist: {dist}")
+            
+            angle += 100
+            dist += 100
 
-        cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 2)
-        angle, dist = utilis.returnAngleItem([x1,y1, w, h], sensor_find, frame)
-        await printLog(f"Angle: {angle}, Dist: {dist}")
-        
-        angle += 100
-        dist += 100
-
-        angle = int(angle)
-        dist = int(dist)
-        await uartController.sendCommand(f"5{dist}{angle}{old_data + 100}")
+            angle = int(angle)
+            dist = int(dist)
+            await uartController.sendCommand(f"5{dist}{angle}{old_data + 100}")
 
     #     if not TWO_STATE_RED:
     #         e = FIXED_WIDTH // 2 - (x + w // 2)
