@@ -176,6 +176,7 @@ async def read_data():
         else:
             if robotState != "red":
                 old_data = await uartController.sendValueAndWait(4)
+                old_data = int(old_data.replace("$", ""))
 
 
     frame = get_frame_from_socket()
@@ -204,7 +205,6 @@ async def read_data():
         
         angle += 100
         dist += 100
-        old_data = int(old_data.replace("$", ""))
         await uartController.sendCommand(f"5{dist}{angle}{old_data + 100}")
 
     #     if not TWO_STATE_RED:
