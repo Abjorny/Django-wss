@@ -176,7 +176,8 @@ async def read_data():
         else:
             if robotState != "red":
                 old_data = await uartController.sendValueAndWait(4)
-                old_data = int(old_data.replace("$", ""))
+                if old_data:
+                    old_data = int(old_data.replace("$", ""))
 
 
     frame = get_frame_from_socket()
