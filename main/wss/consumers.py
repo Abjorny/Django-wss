@@ -41,7 +41,7 @@ LAST_Y = [0] * 10
 sensor_find = {
     "x_min": 0 + 60,
     "x_max": FIXED_WIDTH - 60,
-    "y_min": FIXED_HEIGHT // 2 + 60,
+    "y_min": FIXED_HEIGHT // 2,
     "y_max": FIXED_HEIGHT - 10
 }
 
