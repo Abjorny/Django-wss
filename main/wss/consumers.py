@@ -174,7 +174,8 @@ async def read_data():
             await printLog(f"Compos go: {old_data}")
             await uartController.sendCommand(f"3{old_data}")
         else:
-            old_data = await uartController.sendValueAndWait(4)
+            if robotState != "red":
+                old_data = await uartController.sendValueAndWait(4)
 
 
     frame = get_frame_from_socket()
@@ -199,11 +200,12 @@ async def read_data():
 
         cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 2)
         angle, dist = utilis.returnAngleItem([x1,y1, w, h], sensor_find, frame)
+        await printLog(f"Angle: {angle}, Dist: {dist}")
+        
         angle += 100
         dist += 100
         old_data = int(old_data.replace("$", ""))
         await uartController.sendCommand(f"5{dist}{angle}{old_data + 100}")
-        await printLog(f"Angle: {angle}, Dist: {dist}")
 
     #     if not TWO_STATE_RED:
     #         e = FIXED_WIDTH // 2 - (x + w // 2)
