@@ -14,7 +14,7 @@ import base64
 import logging
 import socket
 import time
-import wss.utilis
+import wss.utilis as utilis
 from .Uart.UartController import UartControllerAsync
 
 local = False
