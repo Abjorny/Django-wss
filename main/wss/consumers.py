@@ -205,6 +205,9 @@ async def read_data():
         
         angle += 100
         dist += 100
+
+        angle = int(angle)
+        dist = int(dist)
         await uartController.sendCommand(f"5{dist}{angle}{old_data + 100}")
 
     #     if not TWO_STATE_RED:
