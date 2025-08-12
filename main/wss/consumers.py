@@ -59,11 +59,6 @@ robotState = ""
 lib_hsv = None
 old_data = 0
 
-cap = cv2.VideoCapture(0)  
-
-cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
-cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
-
 
 if not local:
     uartController = UartControllerAsync()
@@ -91,6 +86,42 @@ def get_settings_data():
 def resize_frame(frame, width=FIXED_WIDTH, height=FIXED_HEIGHT):
     return cv2.resize(frame, (width, height))
 
+def get_frame_from_socket():
+    try:
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.connect(("127.0.0.1", 9999))
+            s.sendall(b'GETI')
+            raw_len = s.recv(4)
+            img_len = struct.unpack('>I', raw_len)[0]
+            img_data = b''
+            while len(img_data) < img_len:
+                chunk = s.recv(4096)
+                if not chunk:
+                    break
+                img_data += chunk
+            img = Image.open(BytesIO(img_data)).convert("RGB")
+            return np.array(img)
+
+    except (ConnectionError, socket.error, OSError) as e:
+        img = Image.new('RGB', (FIXED_WIDTH, FIXED_HEIGHT), color='black')
+        draw = ImageDraw.Draw(img)
+
+        try:
+            font = ImageFont.truetype("arial.ttf", 32)
+        except IOError:
+            font = ImageFont.load_default()
+
+        text = "Reconnect..."
+
+        bbox = draw.textbbox((0, 0), text, font=font)
+        text_width = bbox[2] - bbox[0]
+        text_height = bbox[3] - bbox[1]
+
+        x = (FIXED_WIDTH - text_width) / 2
+        y = (FIXED_HEIGHT - text_height) / 2
+        draw.text((x, y), text, font=font, fill='white')
+
+        return np.array(img)
 
 
 def search_color(frame, min, max):
@@ -137,7 +168,7 @@ async def printLog(message):
     )
 
 async def read_data():
-    global lib_hsv,  old_data, robotState, TIMER, KP, KD, EOLD, TWO_STATE_RED, EOLD_X, EOLD_Y, THREE_STATE_RED, LAST_Y, TIMER_PRED, cap
+    global lib_hsv,  old_data, robotState, TIMER, KP, KD, EOLD, TWO_STATE_RED, EOLD_X, EOLD_Y, THREE_STATE_RED, LAST_Y, TIMER_PRED
     if not local:
         if robotState == "compass":
             await printLog(f"Compos go: {old_data}")
@@ -145,9 +176,9 @@ async def read_data():
         else:
             old_data = await uartController.sendValueAndWait(4)
 
-    ret1, frame = cap.read()
 
-    # frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
+    frame = get_frame_from_socket()
+    frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
     if robotState == "red":
