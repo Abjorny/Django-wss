@@ -1,16 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './Camera.css';
+import { socket } from '../../socket';
 
 const Camera = () => {
     const imgRef = useRef(null);
     const dotsContainerRef = useRef(null);
     const composRef = useRef(null);
-    const [points, setPoints] = useState([]);
-    const [camera, setCamera] = useState(null);
 
-    const reconnectAttempts = useRef(0);
-    const maxReconnectAttempts = 10;
-    const reconnectDelayMs = 2000;
+    const [points, setPoints] = useState([]);
+
 
     const hsvRefs = {
         'h-min': useRef(null),
@@ -25,56 +23,13 @@ const Camera = () => {
     const pointsOutputRef = useRef(null);
     const messageInfoRef = useRef(null);
 
-    const connectCamera = () => {
-        const ws = new WebSocket(`ws://${window.location.hostname}:8000/ws/api/get_image`);
-        setCamera(ws);
-
-        ws.onopen = () => {
-            console.log('WebSocket connected');
-            reconnectAttempts.current = 0;
-            imgRef.current.style.display = '';
-        };
-
-        ws.onmessage = (event) => {
-            const data = JSON.parse(event.data);
-            if (data.message.image) {
-                // 🔹 Обновляем компас напрямую
-                if (composRef.current) {
-                    composRef.current.textContent = data.message.compos;
-                }
-                imgRef.current.src = `data:image/jpeg;base64,${data.message.image}`;
-            } else if (data.message) {
-                if (messageInfoRef.current) {
-                    messageInfoRef.current.textContent = data.message;
-                }
-            }
-        };
-
-        ws.onclose = (e) => {
-            console.error('WebSocket closed unexpectedly', e);
-            imgRef.current.style.display = 'none';
-            setCamera(null);
-            if (reconnectAttempts.current < maxReconnectAttempts) {
-                reconnectAttempts.current++;
-                setTimeout(connectCamera, reconnectDelayMs);
-            }
-        };
-
-        ws.onerror = (e) => {
-            console.error('WebSocket error:', e);
-            ws.close();
-        };
-    };
-
     const sendHSV = () => {
-        if (camera && camera.readyState === WebSocket.OPEN) {
-            const hsv = {};
-            Object.entries(hsvRefs).forEach(([id, ref]) => {
-                hsv[id.replace('-', '_')] = parseInt(ref.current.value);
-            });
-            hsv.isTwo = false;
-            camera.send(JSON.stringify({ type: 'hsv', data: hsv }));
-        }
+        const hsv = {};
+        Object.entries(hsvRefs).forEach(([id, ref]) => {
+            hsv[id.replace('-', '_')] = parseInt(ref.current.value);
+        });
+        hsv.isTwo = false;
+        socket.emit({ type: 'hsv', data: hsv });
     };
 
     const updateHSVOutput = () => {
@@ -132,11 +87,22 @@ const Camera = () => {
 
     const handleChange = (e) => {
         const selectedValue = e.target.value;
-        camera?.send(JSON.stringify({ type: 'change_state', value: selectedValue }));
+        socket.emit({ type: 'change_state', value: selectedValue });
     };
 
     useEffect(() => {
-        connectCamera();
+        socket.on('message', (data) => {
+            if (data.message.image) {
+                if (composRef.current) {
+                    composRef.current.textContent = data.message.compos;
+                }
+                imgRef.current.src = `data:image/jpeg;base64,${data.message.image}`;
+            } else if (data.message) {
+                if (messageInfoRef.current) {
+                    messageInfoRef.current.textContent = data.message;
+                }
+            }
+        });
         window.addEventListener('keydown', (e) => {
             if (e.key.toLowerCase() === 'r') resetPoints();
         });
@@ -154,7 +120,7 @@ const Camera = () => {
                         onClick={handleImageClick}
                     />
                     <div id="dots-container" ref={dotsContainerRef}
-                         className="position-absolute top-0 start-0 w-100 h-100"></div>
+                        className="position-absolute top-0 start-0 w-100 h-100"></div>
                 </div>
 
                 <div className="col-md-4">
@@ -216,9 +182,9 @@ const Camera = () => {
 
             <div className="my-3 d-flex flex-wrap gap-2">
                 <button className="btn btn-success"
-                        onClick={() => camera?.send(JSON.stringify({ type: 'zapl' }))}>Забрать воду</button>
+                    onClick={() => socket.emit({ type: 'zapl' })}>Забрать воду</button>
                 <button className="btn btn-danger"
-                        onClick={() => camera?.send(JSON.stringify({ type: 'water' }))}>Поставить запладку</button>
+                    onClick={() => socket.emit(JSON.stringify({ type: 'water' }))}>Поставить запладку</button>
 
                 <button className="btn btn-info" onClick={() => {
                     navigator.clipboard.writeText(JSON.stringify(points)).then(() => alert('Скопировано!'));
