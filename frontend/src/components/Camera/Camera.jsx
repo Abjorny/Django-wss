@@ -4,7 +4,7 @@ import './Camera.css';
 const Camera = () => {
     const imgRef = useRef(null);
     const dotsContainerRef = useRef(null);
-    const composRef = useRef(null);zz
+    const composRef = useRef(null);
     const [points, setPoints] = useState([]);
     const [camera, setCamera] = useState(null);
 
@@ -38,7 +38,6 @@ const Camera = () => {
         ws.onmessage = (event) => {
             const data = JSON.parse(event.data);
             if (data.message.image) {
-                // 🔹 Обновляем компас напрямую
                 if (composRef.current) {
                     composRef.current.textContent = data.message.compos;
                 }
