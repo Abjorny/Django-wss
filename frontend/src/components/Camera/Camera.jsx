@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
-import './Camera.css';
 import { socket } from '../../socket';
+import './Camera.css';
+
 
 const Camera = () => {
     const imgRef = useRef(null);
