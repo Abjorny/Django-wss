@@ -1,8 +1,12 @@
 import Camera from "./components/Camera/Camera"
-
+import { useState } from "react"
 
 function App() {
+  const [page, setPage] = useState("camera");
 
+  const pages = {
+    "camera" : <Camera />
+  }
   return (
     <>
       <div class="container-navigator">
@@ -10,7 +14,7 @@ function App() {
       </div>
 
       <div id="container-camera">
-         <Camera />
+        {pages[page]}
       </div>
 
     </>

@@ -4,7 +4,7 @@ import './Camera.css';
 const Camera = () => {
     const imgRef = useRef(null);
     const dotsContainerRef = useRef(null);
-    const composRef = useRef(null); // 🔹 Компас напрямую через DOM
+    const composRef = useRef(null);
     const [points, setPoints] = useState([]);
     const [camera, setCamera] = useState(null);
 
