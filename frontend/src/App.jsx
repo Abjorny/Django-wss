@@ -6,11 +6,11 @@ function App() {
   const [page, setPage] = useState("camera");
 
   const pages = {
-    camera: {
+    "camera": {
       value: <Camera />,
       text: "Камера",
     },
-    stereo: {
+    "stereo": {
       value: <Stereo />,
       text: "Стерео",
     },
