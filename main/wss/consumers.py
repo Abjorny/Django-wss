@@ -20,11 +20,11 @@ local = False
 logger = logging.getLogger(__name__)
 
 task = None
-
+stereoTask = None
 
 FPS = 60
 FIXED_WIDTH = 640
-FIXED_HEIGHT = 480
+FIXED_HEIGHT = 280
 TWO_STATE_RED = False
 THREE_STATE_RED = False
 TIMER = time.time()
@@ -81,8 +81,6 @@ def get_settings_data():
         "hsv_red2_max": np.array(hsv_red2.max_color_hsv),
     }
 
-
-
 def resize_frame(frame, width=FIXED_WIDTH, height=FIXED_HEIGHT):
     return cv2.resize(frame, (width, height))
 
@@ -123,7 +121,6 @@ def get_frame_from_socket():
 
         return np.array(img)
 
-
 def search_color(frame, min, max):
     x,y,w,h = 0,0,0,0
     mask = cv2.inRange(frame,min,max)
@@ -137,7 +134,6 @@ def search_color(frame, min, max):
                 area_result = area
                 x,y,w,h = x1,y1,w1,h1
     return x, y, w, h, area_result
-
 
 def search_color_two(frame, range1, range2):
     x,y,w,h = 0,0,0,0
@@ -155,7 +151,6 @@ def search_color_two(frame, range1, range2):
                 area_result = area
                 x,y,w,h = x1,y1,w1,h1
     return x, y, w, h, area_result, mask
-
 
 async def printLog(message):
     channel_layer = get_channel_layer()
@@ -289,10 +284,6 @@ async def read_data():
             if not local:
                 await uartController.sendCommand(f"6{MA + 200}{MB+200}")
 
-
-
-
-    
     else:
         TWO_STATE_RED = False
         THREE_STATE_RED = False
@@ -330,7 +321,8 @@ async def send_periodic_messages():
         await asyncio.sleep(1 / FPS)
         gc.collect()
 
-class MyConsumer(AsyncWebsocketConsumer):
+
+class Camera(AsyncWebsocketConsumer):
 
     async def connect(self):
         global task
@@ -374,16 +366,27 @@ class MyConsumer(AsyncWebsocketConsumer):
                 await uartController.sendCommand(12)
                 await printLog("Поставить запладку!")
 
-
-
     async def info_message(self, event):
         await self.send(text_data=json.dumps({
             "message": event["text"]
         }))
-
 
     async def broadcast_message(self, event):
         message = event["message"]
         await self.send(text_data=json.dumps({
             "message": message
         }))
+
+class Stereo(AsyncWebsocketConsumer):
+    async def connect(self):
+        global stereoTask
+        self.group_name = "broadcast_group"
+        await self.channel_layer.group_add(self.group_name, self.channel_name)
+        await self.accept()
+
+        if stereoTask is None or stereoTask.done():
+            stereoTask = asyncio.create_task(send_periodic_messages())
+
+    async def disconnect(self, close_code):
+        await self.channel_layer.group_discard(self.group_name, self.channel_name)
+
