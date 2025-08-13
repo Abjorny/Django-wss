@@ -312,7 +312,7 @@ async def read_data():
 
             for i, contour in enumerate(contours):
                 area = cv2.contourArea(contour)
-                if area < 400:
+                if area < 200:
                     continue
 
                 parent_idx = hierarchy[i][3] 
@@ -330,7 +330,7 @@ async def read_data():
                             white_inside = cv2.bitwise_and(white_pixels, white_pixels, mask=mask_child)
                             white_area = cv2.countNonZero(white_inside)
 
-                            if white_area > 100:
+                            if white_area > 50:
                                 x1, y1, w, h = cv2.boundingRect(child)
                                 y_white = y1 + sensor_find["y_min"]
                                 x_white = x1 + sensor_find["x_min"]
