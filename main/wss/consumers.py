@@ -313,7 +313,7 @@ async def read_data():
                 if w1_z > 0 and h1_z >0:
                     y = y1_z + sensor_find["y_min"] 
                     x = x1_z + sensor_find["x_min"] 
-                    cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 2)
+                    cv2.rectangle(frame, (x, y), (x + w1_z, y + h1_z), (0, 0, 255), 2)
                 
                     sensord = sensor[y1_z: y1_z + h1_z, x1_z: x1_z + w1_z]
                     x1, y1, w, h, area, mask = search_color(
