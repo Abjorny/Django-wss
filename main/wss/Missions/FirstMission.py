@@ -2,6 +2,7 @@ from asgiref.sync import sync_to_async
 from wss.models import Settings
 from wss.Uart.UartController import UartControllerAsync 
 import asyncio
+import time
 
 uartController = UartControllerAsync()
 
@@ -20,7 +21,8 @@ async def startFirstMission():
     
     actions = await sync_to_async(list)(mission.actions.all())
     for action in actions:
-        await uartController.sendCommand(f"3{mission.speed + 200}{action.compos + 200}")
-        await asyncio.sleep(action.time)
+        timer = time.time()
+        while time.time() - timer < action.time:
+            await uartController.sendCommand(f"3{mission.speed + 200}{action.compos + 200}")
         
     await uartController.sendCommand(f"3{200}{action.compos + 200}")
