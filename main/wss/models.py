@@ -41,7 +41,7 @@ class HsvObject(models.Model):
 class Settings(models.Model):
     hsv_red_one = models.ForeignKey(HsvObject, on_delete=models.CASCADE, verbose_name="HSV красного первый", related_name='hsv_red_one')
     hsv_red_two = models.ForeignKey(HsvObject, on_delete=models.CASCADE, verbose_name="HSV красного второй", related_name='hsv_red_two')
-    first_mission = models.ForeignKey(Mission, on_delete=models.CASCADE, verbose_name="Первая миссия", related_name='first_mission')
+    first_mission = models.ForeignKey(Mission, on_delete=models.CASCADE, verbose_name="Первая миссия", related_name='first_mission', null = True, blank= True)
 
     def clean(self):
         if not self.pk and Settings.objects.exists():
