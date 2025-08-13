@@ -76,11 +76,18 @@ def get_settings_data():
     hsv_red1 = settings.hsv_red_one
     hsv_red2 = settings.hsv_red_two
 
+    hsv_black = settings.hsv_black
+    hsv_white = settings.hsv_white
+
     return {
         "hsv_red1_min": np.array(hsv_red1.min_color_hsv),
         "hsv_red1_max": np.array(hsv_red1.max_color_hsv),
         "hsv_red2_min": np.array(hsv_red2.min_color_hsv),
         "hsv_red2_max": np.array(hsv_red2.max_color_hsv),
+        "hsv_black_min": np.array(hsv_black.min_color_hsv),
+        "hsv_black_max": np.array(hsv_black.max_color_hsv),
+        "hsv_white_min": np.array(hsv_white.min_color_hsv),
+        "hsv_white_max": np.array(hsv_white.max_color_hsv),
     }
 
 def resize_frame(frame, width=FIXED_WIDTH, height=FIXED_HEIGHT):
@@ -126,6 +133,7 @@ def get_frame_from_socket():
 def search_color(frame, min, max):
     x,y,w,h = 0,0,0,0
     mask = cv2.inRange(frame,min,max)
+    mask = cv2.blur(mask, (5, 5))
     counturs, hierarchy = cv2.findContours(mask,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
     area_result = 0
     for countur in counturs:
@@ -135,7 +143,7 @@ def search_color(frame, min, max):
             if w1 * h1 > w * h:
                 area_result = area
                 x,y,w,h = x1,y1,w1,h1
-    return x, y, w, h, area_result
+    return x, y, w, h, area_result, mask
 
 def search_color_two(frame, range1, range2):
     x,y,w,h = 0,0,0,0
@@ -178,6 +186,7 @@ async def read_data():
     frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
+    
     if robotState == "red":
 
         data = await get_settings_data()
@@ -285,6 +294,50 @@ async def read_data():
             MB = int(MB)
             if not local:
                 await uartController.sendCommand(f"6{MA + 200}{MB+200}")
+
+    elif robotState == "black":
+        data = await get_settings_data()
+        sensor = hsv[
+                sensor_find["y_min"]:sensor_find["y_max"],
+                sensor_find["x_min"]:sensor_find["x_max"]
+        ]
+        x1, y1, w, h, area, mask = search_color(
+            sensor,
+            [data["hsv_black_min"], data["hsv_black_max"]],
+        )
+        if w > 0 and h >0:
+            sensor = sensor[y1: y1 + h, x1: x1 + w]
+            x1, y1, w, h, area, mask = search_color(
+                sensor,
+                [data["hsv_white_min"], data["hsv_white_max"]],
+            )
+            if w > 0 and h >0:
+                y = y1 + sensor_find["y_min"]
+                x = x1 + sensor_find["x_min"]
+
+                cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 2)
+        
+                e = FIXED_WIDTH // 2 - (x + w // 2)
+
+                Up = KP * e 
+                Ud = KD * (e - EOLD) 
+                EOLD = e
+                U = Up + Ud
+
+
+                MA = 10 + U
+                MB = 10 - U
+
+                await printLog(f"go to red, e: {int(e)}, U: {int(U)}, MA: {int(MA)}, MB: {int(MB)}, twoState: {TWO_STATE_RED}")
+                if MA > 20: MA = 20
+                if MB > 20: MB = 20
+
+                if MA < -10: MA = -10
+                if MB < -10: MB = -10
+
+                MA = int(MA)
+                MB = int(MB)
+                await uartController.sendCommand(f"2{MB + 200}{MA+200}")
 
     else:
         TWO_STATE_RED = False

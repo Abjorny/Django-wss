@@ -207,6 +207,7 @@ const Camera = () => {
                                 <option value="">-- Выберите --</option>
                                 <option value="red">По красному</option>
                                 <option value="compass">По компосу</option>
+                                <option value="black">По черному и белому</option>
                             </select>
                         </div>
                     </div>
@@ -219,7 +220,7 @@ const Camera = () => {
                 <button className="btn btn-danger"
                         onClick={() => camera?.send(JSON.stringify({ type: 'water' }))}>Поставить запладку</button>
                 <button className="btn btn-success"
-                        onClick={() => camera?.send(JSON.stringify({ type: 'mission-first' }))}>Старт 1я миссия</button>
+                        onClick={() => camera?.send(JSON.stringify({ type: 'mission-first' }))}>Старт 1я</button>
 
                 <button className="btn btn-info" onClick={() => {
                     navigator.clipboard.writeText(JSON.stringify(points)).then(() => alert('Скопировано!'));

@@ -41,6 +41,11 @@ class HsvObject(models.Model):
 class Settings(models.Model):
     hsv_red_one = models.ForeignKey(HsvObject, on_delete=models.CASCADE, verbose_name="HSV красного первый", related_name='hsv_red_one')
     hsv_red_two = models.ForeignKey(HsvObject, on_delete=models.CASCADE, verbose_name="HSV красного второй", related_name='hsv_red_two')
+    
+    hsv_black = models.ForeignKey(HsvObject, on_delete=models.CASCADE, verbose_name="HSV черного", related_name='hsv_black')
+    hsv_white = models.ForeignKey(HsvObject, on_delete=models.CASCADE, verbose_name="HSV белого", related_name='hsv_white')
+    
+    
     first_mission = models.ForeignKey(Mission, on_delete=models.CASCADE, verbose_name="Первая миссия", related_name='first_mission', null = True, blank= True)
 
     def clean(self):
