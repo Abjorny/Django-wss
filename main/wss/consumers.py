@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 task = None
 stereoTask = None
 
-FPS = 60
+FPS = 30
 FIXED_WIDTH = 640
 FIXED_HEIGHT = 280
 TWO_STATE_RED = False
