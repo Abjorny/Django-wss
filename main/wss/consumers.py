@@ -312,7 +312,7 @@ async def read_data():
 
             for i, contour in enumerate(contours):
                 area = cv2.contourArea(contour)
-                if area < 100:
+                if area < 400:
                     continue
 
                 parent_idx = hierarchy[i][3] 
@@ -320,7 +320,6 @@ async def read_data():
                     x1_z, y1_z, w1_z, h1_z = cv2.boundingRect(contour)
                     y_black = y1_z + sensor_find["y_min"]
                     x_black = x1_z + sensor_find["x_min"]
-                    cv2.rectangle(frame, (x_black, y_black), (x_black + w1_z, y_black + h1_z), (0, 0, 255), 2)
 
                     for j, child in enumerate(contours):
                         if hierarchy[j][3] == i:
@@ -331,10 +330,11 @@ async def read_data():
                             white_inside = cv2.bitwise_and(white_pixels, white_pixels, mask=mask_child)
                             white_area = cv2.countNonZero(white_inside)
 
-                            if white_area > 0:
+                            if white_area > 100:
                                 x1, y1, w, h = cv2.boundingRect(child)
                                 y_white = y1 + sensor_find["y_min"]
                                 x_white = x1 + sensor_find["x_min"]
+                                cv2.rectangle(frame, (x_black, y_black), (x_black + w1_z, y_black + h1_z), (0, 0, 255), 2)
                                 cv2.rectangle(frame, (x_white, y_white), (x_white + w, y_white + h), (0, 255, 0), 2)
 
                                 e = FIXED_WIDTH // 2 - (x_white + w // 2)
