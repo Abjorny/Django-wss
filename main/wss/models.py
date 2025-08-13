@@ -15,7 +15,7 @@ class Action(models.Model):
     mission = models.ForeignKey(Mission, on_delete=models.CASCADE, related_name='actions')
     time = models.PositiveIntegerField("Время")
     compos = models.PositiveIntegerField("Компос")
-    order = models.PositiveIntegerField(default=0, editable=False, db_index=True)
+    order = models.PositiveIntegerField(default=0)
 
 
     class Meta:
