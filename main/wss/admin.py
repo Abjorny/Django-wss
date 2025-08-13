@@ -1,7 +1,8 @@
-from django.contrib import admin
-from .models import  HsvObject, Settings, Mission, Action
-from adminsortable2.admin import SortableInlineAdminMixin
+from adminsortable2.admin import SortableInlineAdminMixin, SortableAdminBase
 from unfold.admin import ModelAdmin, forms
+from django.contrib import admin
+from .models import HsvObject, Settings, Mission, Action
+
 
 class HsvObjectAdminForm(forms.ModelForm):
     class Meta:
@@ -20,13 +21,15 @@ class HsvObjectAdminForm(forms.ModelForm):
             raise forms.ValidationError("Введите список из трёх чисел [H, S, V]")
         return value
 
+
 class ActionInline(SortableInlineAdminMixin, admin.TabularInline):
     model = Action
     extra = 1
     fields = ('time', 'compos')
 
+
 @admin.register(Mission)
-class MissionAdmin(admin.ModelAdmin):
+class MissionAdmin(SortableAdminBase, admin.ModelAdmin):  # ✅ добавили SortableAdminBase
     inlines = [ActionInline]
 
 
@@ -36,12 +39,8 @@ class HsvObjectAdmin(ModelAdmin):
     list_display = ("name", "min_color_hsv", "max_color_hsv")
     search_fields = ("name",)
     fieldsets = (
-        (None, {
-            "fields": ("name",)
-        }),
-        ("HSV Диапазон", {
-            "fields": ("min_color_hsv", "max_color_hsv")
-        }),
+        (None, {"fields": ("name",)}),
+        ("HSV Диапазон", {"fields": ("min_color_hsv", "max_color_hsv")}),
     )
 
 
