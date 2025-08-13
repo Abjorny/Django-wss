@@ -318,7 +318,7 @@ async def read_data():
                     sensord = sensor[y1_z: y1_z + h1_z, x1_z: x1_z + w1_z]
                     x1, y1, w, h, area, mask = search_color(
                         sensord,
-                        [data["hsv_white_min"], data["hsv_white_max"]],
+                        data["hsv_white_min"], data["hsv_white_max"],
                     )
 
                     if w > 0 and h >0:
