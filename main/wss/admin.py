@@ -1,5 +1,5 @@
 from adminsortable2.admin import SortableInlineAdminMixin, SortableAdminBase
-from unfold.admin import ModelAdmin, forms
+from unfold.admin import ModelAdmin, forms, TabularInline
 from django.contrib import admin
 from .models import HsvObject, Settings, Mission, Action
 
@@ -22,14 +22,14 @@ class HsvObjectAdminForm(forms.ModelForm):
         return value
 
 
-class ActionInline(SortableInlineAdminMixin, admin.TabularInline):
+class ActionInline(SortableInlineAdminMixin, TabularInline):
     model = Action
     extra = 1
     fields = ('time', 'compos')
 
 
 @admin.register(Mission)
-class MissionAdmin(SortableAdminBase, admin.ModelAdmin):  # ✅ добавили SortableAdminBase
+class MissionAdmin(SortableAdminBase, ModelAdmin):  # ✅ добавили SortableAdminBase
     inlines = [ActionInline]
 
 
