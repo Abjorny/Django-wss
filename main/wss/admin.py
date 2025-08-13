@@ -49,7 +49,7 @@ class SettingsAdmin(ModelAdmin):
     fieldsets = (
         ("HSV Настройки", {
             "fields": (
-                "hsv_red_one", "hsv_red_two",
+                "hsv_red_one", "hsv_red_two", "first_mission"
             )
         }),
     )
