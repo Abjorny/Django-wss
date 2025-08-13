@@ -301,53 +301,60 @@ async def read_data():
             sensor_find["y_min"]:sensor_find["y_max"],
             sensor_find["x_min"]:sensor_find["x_max"]
         ]
-        mask = cv2.inRange(sensor,data["hsv_black_min"],data["hsv_black_max"])
-        mask = cv2.blur(mask, (5, 5))
-        counturs, hierarchy = cv2.findContours(mask,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
-     
-        for countur in counturs:
-            area = cv2.contourArea(countur)
-            if area > 100:
-                x1_z,y1_z,w1_z,h1_z = cv2.boundingRect(countur)
-                
-                if w1_z > 0 and h1_z >0:
-                    y = y1_z + sensor_find["y_min"] 
-                    x = x1_z + sensor_find["x_min"] 
-                    cv2.rectangle(frame, (x, y), (x + w1_z, y + h1_z), (0, 0, 255), 2)
-                
-                    sensord = sensor[y1_z: y1_z + h1_z, x1_z: x1_z + w1_z]
-                    x1, y1, w, h, area, mask = search_color(
-                        sensord,
-                        data["hsv_white_min"], data["hsv_white_max"],
-                    )
 
-                    if w > 0 and h >0:
-                        y = y1 + sensor_find["y_min"] + y1_z
-                        x = x1 + sensor_find["x_min"] + x1_z
-                        cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 2)
-                
-                        e = FIXED_WIDTH // 2 - (x + w // 2)
+        mask_black = cv2.inRange(sensor, data["hsv_black_min"], data["hsv_black_max"])
+        mask_black = cv2.blur(mask_black, (5, 5))
 
-                        Up = KP * e 
-                        Ud = KD * (e - EOLD) 
-                        EOLD = e
-                        U = Up + Ud
+        contours, hierarchy = cv2.findContours(mask_black, cv2.RETR_CCOMP, cv2.CHAIN_APPROX_SIMPLE)
 
+        if hierarchy is not None:
+            hierarchy = hierarchy[0]  
 
-                        MA = 10 + U
-                        MB = 10 - U
+            for i, contour in enumerate(contours):
+                area = cv2.contourArea(contour)
+                if area < 100:
+                    continue
 
-                        await printLog(f"go to red, e: {int(e)}, U: {int(U)}, MA: {int(MA)}, MB: {int(MB)}, twoState: {TWO_STATE_RED}")
-                        if MA > 20: MA = 20
-                        if MB > 20: MB = 20
+                parent_idx = hierarchy[i][3] 
+                if parent_idx == -1:
+                    x1_z, y1_z, w1_z, h1_z = cv2.boundingRect(contour)
+                    y_black = y1_z + sensor_find["y_min"]
+                    x_black = x1_z + sensor_find["x_min"]
+                    cv2.rectangle(frame, (x_black, y_black), (x_black + w1_z, y_black + h1_z), (0, 0, 255), 2)
 
-                        if MA < -10: MA = -10
-                        if MB < -10: MB = -10
+                    for j, child in enumerate(contours):
+                        if hierarchy[j][3] == i:
+                            mask_child = np.zeros(sensor.shape[:2], dtype=np.uint8)
+                            cv2.drawContours(mask_child, contours, j, 255, -1)
 
-                        MA = int(MA)
-                        MB = int(MB)
-                        await uartController.sendCommand(f"2{MB + 200}{MA+200}")
-                        break
+                            white_pixels = cv2.inRange(sensor, data["hsv_white_min"], data["hsv_white_max"])
+                            white_inside = cv2.bitwise_and(white_pixels, white_pixels, mask=mask_child)
+                            white_area = cv2.countNonZero(white_inside)
+
+                            if white_area > 0:
+                                x1, y1, w, h = cv2.boundingRect(child)
+                                y_white = y1 + sensor_find["y_min"]
+                                x_white = x1 + sensor_find["x_min"]
+                                cv2.rectangle(frame, (x_white, y_white), (x_white + w, y_white + h), (0, 255, 0), 2)
+
+                                e = FIXED_WIDTH // 2 - (x_white + w // 2)
+                                Up = KP * e
+                                Ud = KD * (e - EOLD)
+                                EOLD = e
+                                U = Up + Ud
+
+                                MA = 10 + U
+                                MB = 10 - U
+
+                                await printLog(f"go to white-in-black, e: {int(e)}, U: {int(U)}, MA: {int(MA)}, MB: {int(MB)}")
+                                if MA > 20: MA = 20
+                                if MB > 20: MB = 20
+                                if MA < -10: MA = -10
+                                if MB < -10: MB = -10
+
+                                await uartController.sendCommand(f"2{MB + 200}{MA + 200}")
+                                break
+
     else:
         TWO_STATE_RED = False
         THREE_STATE_RED = False
