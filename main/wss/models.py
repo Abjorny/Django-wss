@@ -3,6 +3,27 @@ from django.core.exceptions import ValidationError
 
 
 
+
+class Mission(models.Model):
+    name = models.CharField(max_length=100)
+    speed = models.PositiveIntegerField("Скорость")
+    def __str__(self):
+        return self.name
+
+
+class Action(models.Model):
+    mission = models.ForeignKey(Mission, on_delete=models.CASCADE, related_name='actions')
+    time = models.PositiveIntegerField("Время")
+    compos = models.PositiveIntegerField("Компос")
+    order = models.PositiveIntegerField(default=0, editable=False, db_index=True)
+
+
+    class Meta:
+        ordering = ['order'] 
+
+    def __str__(self):
+        return f"{self.mission.name} — {self.compos} ({self.time}s)"
+
 class HsvObject(models.Model):
     name = models.CharField(max_length=100, verbose_name="Заголовок для админ панели")
     min_color_hsv = models.JSONField("Минимальный (HSV)", default=list)
@@ -20,6 +41,7 @@ class HsvObject(models.Model):
 class Settings(models.Model):
     hsv_red_one = models.ForeignKey(HsvObject, on_delete=models.CASCADE, verbose_name="HSV красного первый", related_name='hsv_red_one')
     hsv_red_two = models.ForeignKey(HsvObject, on_delete=models.CASCADE, verbose_name="HSV красного второй", related_name='hsv_red_two')
+    first_mission = models.ForeignKey(Mission, on_delete=models.CASCADE, verbose_name="Первая миссия", related_name='first_mission')
 
     def clean(self):
         if not self.pk and Settings.objects.exists():

@@ -218,6 +218,8 @@ const Camera = () => {
                         onClick={() => camera?.send(JSON.stringify({ type: 'zapl' }))}>Забрать воду</button>
                 <button className="btn btn-danger"
                         onClick={() => camera?.send(JSON.stringify({ type: 'water' }))}>Поставить запладку</button>
+                <button className="btn btn-success"
+                        onClick={() => camera?.send(JSON.stringify({ type: 'mission-first' }))}>Старт 1я миссия</button>
 
                 <button className="btn btn-info" onClick={() => {
                     navigator.clipboard.writeText(JSON.stringify(points)).then(() => alert('Скопировано!'));

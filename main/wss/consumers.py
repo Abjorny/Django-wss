@@ -1,5 +1,8 @@
 import asyncio
 from channels.generic.websocket import AsyncWebsocketConsumer
+from .Uart.UartController import UartControllerAsync
+from .Missions.FirstMission import startFirstMission
+
 from channels.layers import get_channel_layer
 import json
 import numpy as np
@@ -14,7 +17,6 @@ import base64
 import logging
 import socket
 import time
-from .Uart.UartController import UartControllerAsync
 
 local = False
 logger = logging.getLogger(__name__)
@@ -366,6 +368,9 @@ class Camera(AsyncWebsocketConsumer):
                 await uartController.sendCommand(12)
                 await printLog("Поставить запладку!")
 
+        elif type_message == "mission-first":
+            asyncio.create_task(startFirstMission())
+            
     async def info_message(self, event):
         await self.send(text_data=json.dumps({
             "message": event["text"]
@@ -376,17 +381,4 @@ class Camera(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps({
             "message": message
         }))
-
-class Stereo(AsyncWebsocketConsumer):
-    async def connect(self):
-        global stereoTask
-        self.group_name = "broadcast_group"
-        await self.channel_layer.group_add(self.group_name, self.channel_name)
-        await self.accept()
-
-        if stereoTask is None or stereoTask.done():
-            stereoTask = asyncio.create_task(send_periodic_messages())
-
-    async def disconnect(self, close_code):
-        await self.channel_layer.group_discard(self.group_name, self.channel_name)
 

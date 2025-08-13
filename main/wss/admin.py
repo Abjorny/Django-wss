@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import  HsvObject, Settings
+from .models import  HsvObject, Settings, Mission, Action
+from adminsortable2.admin import SortableInlineAdminMixin
 from unfold.admin import ModelAdmin, forms
 
 class HsvObjectAdminForm(forms.ModelForm):
@@ -18,6 +19,15 @@ class HsvObjectAdminForm(forms.ModelForm):
         if not isinstance(value, list) or len(value) != 3:
             raise forms.ValidationError("Введите список из трёх чисел [H, S, V]")
         return value
+
+class ActionInline(SortableInlineAdminMixin, admin.TabularInline):
+    model = Action
+    extra = 1
+    fields = ('time', 'compos')
+
+@admin.register(Mission)
+class MissionAdmin(admin.ModelAdmin):
+    inlines = [ActionInline]
 
 
 @admin.register(HsvObject)
