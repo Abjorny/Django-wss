@@ -20,5 +20,7 @@ async def startFirstMission():
     
     actions = await sync_to_async(list)(mission.actions.all())
     for action in actions:
-        await uartController.sendCommand(f"3{mission.speed}{action.compos}")
+        await uartController.sendCommand(f"3{mission.speed + 200}{action.compos + 200}")
         await asyncio.sleep(action.time)
+        
+    await uartController.sendCommand(f"3{200}{action.compos + 200}")
