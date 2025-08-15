@@ -26,7 +26,7 @@ stereoTask = None
 
 FPS = 30
 FIXED_WIDTH = 640
-FIXED_HEIGHT = 280
+FIXED_HEIGHT = 480
 TWO_STATE_RED = False
 THREE_STATE_RED = False
 TIMER = time.time()
@@ -42,7 +42,7 @@ LAST_Y = [0] * 10
 
 sensor_find = {
     "x_min": 0 + 60,
-    "x_max": FIXED_WIDTH // 2 - 60,
+    "x_max": FIXED_WIDTH  - 60,
     "y_min": FIXED_HEIGHT // 2,
     "y_max": FIXED_HEIGHT - 10
 }
@@ -391,7 +391,6 @@ async def send_periodic_messages():
 
         await asyncio.sleep(1 / FPS)
         gc.collect()
-
 
 class Camera(AsyncWebsocketConsumer):
 
