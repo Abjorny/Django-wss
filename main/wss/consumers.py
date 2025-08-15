@@ -223,6 +223,7 @@ async def read_data():
                 TWO_STATE_RED = True
                 TIMER = time.time()
                 TIMER_PRED = time.time()
+                await uartController.sendCommand("12")
             
             await printLog(f"go to red, e: {int(e)}, U: {int(U)}, MA: {int(MA)}, MB: {int(MB)}, twoState: {TWO_STATE_RED}")
             if MA > 20: MA = 20
@@ -267,7 +268,7 @@ async def read_data():
 
             if  abs(U1) < 5 and abs(U2) < 10 and THREE_STATE_RED == False and time.time() - TIMER_PRED > 10:
                 if time.time() - TIMER > 1.5:
-                    await uartController.sendCommand("12")
+                    
                     THREE_STATE_RED = True
             else:
                 TIMER = time.time()
