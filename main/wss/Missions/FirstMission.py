@@ -24,5 +24,6 @@ async def startFirstMission():
         timer = time.time()
         while time.time() - timer < action.time:
             await uartController.sendCommand(f"3{mission.speed + 200}{action.compos + 200}")
+            await asyncio.sleep(0.05)  
         
     await uartController.sendCommand(f"3{200}{action.compos + 200}")

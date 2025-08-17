@@ -1,36 +1,37 @@
-import asyncio
 from channels.generic.websocket import AsyncWebsocketConsumer
-from .Uart.UartController import UartControllerAsync
 from .Missions.FirstMission import startFirstMission
-
+from .Missions import TwoMission
+from .Uart.UartController import UartControllerAsync
 from channels.layers import get_channel_layer
-import json
-import numpy as np
-import struct
-import gc
-from io import BytesIO
-from .models import Settings
 from asgiref.sync import sync_to_async
-from PIL import Image, ImageDraw, ImageFont
-import cv2
+
+from .models import Settings
+from .Camera import Camera
+from .MainLD import MainLD
+import numpy as np
+
+import asyncio
 import base64
 import logging
-import socket
 import time
+import json
+import cv2
+import gc
 
 local = False
 logger = logging.getLogger(__name__)
 
 task = None
-stereoTask = None
+task_action = None
 
-FPS = 30
 FIXED_WIDTH = 640
 FIXED_HEIGHT = 480
 TWO_STATE_RED = False
 THREE_STATE_RED = False
 TIMER = time.time()
-TIMER_PRED = time.time()
+
+camera = Camera()
+mainLD = MainLD()
 
 KP = 0.2
 KD = 0.5
@@ -93,43 +94,6 @@ def get_settings_data():
 def resize_frame(frame, width=FIXED_WIDTH, height=FIXED_HEIGHT):
     return cv2.resize(frame, (width, height))
 
-def get_frame_from_socket():
-    try:
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            s.connect(("127.0.0.1", 9999))
-            s.sendall(b'GETI')
-            raw_len = s.recv(4)
-            img_len = struct.unpack('>I', raw_len)[0]
-            img_data = b''
-            while len(img_data) < img_len:
-                chunk = s.recv(4096)
-                if not chunk:
-                    break
-                img_data += chunk
-            img = Image.open(BytesIO(img_data)).convert("RGB")
-            return np.array(img)
-
-    except (ConnectionError, socket.error, OSError) as e:
-        img = Image.new('RGB', (FIXED_WIDTH, FIXED_HEIGHT), color='black')
-        draw = ImageDraw.Draw(img)
-
-        try:
-            font = ImageFont.truetype("arial.ttf", 32)
-        except IOError:
-            font = ImageFont.load_default()
-
-        text = "Reconnect..."
-
-        bbox = draw.textbbox((0, 0), text, font=font)
-        text_width = bbox[2] - bbox[0]
-        text_height = bbox[3] - bbox[1]
-
-        x = (FIXED_WIDTH - text_width) / 2
-        y = (FIXED_HEIGHT - text_height) / 2
-        draw.text((x, y), text, font=font, fill='white')
-
-        return np.array(img)
-
 def search_color(frame, min, max):
     x,y,w,h = 0,0,0,0
     mask = cv2.inRange(frame,min,max)
@@ -173,7 +137,7 @@ async def printLog(message):
     )
 
 async def read_data():
-    global lib_hsv,  old_data, robotState, TIMER, KP, KD, EOLD, TWO_STATE_RED, EOLD_X, EOLD_Y, THREE_STATE_RED, LAST_Y, TIMER_PRED
+    global lib_hsv,  old_data, robotState, TIMER, KP, KD, EOLD, TWO_STATE_RED, EOLD_X, EOLD_Y, THREE_STATE_RED, LAST_Y, camera, mainLD
     if not local:
         if robotState == "compass":
             await printLog(f"Compos go: {old_data}")
@@ -182,121 +146,11 @@ async def read_data():
             old_data = await uartController.sendValueAndWait(4)
 
 
-    frame = get_frame_from_socket()
+    frame = camera.image
     frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
-    
-    if robotState == "red":
-
-        data = await get_settings_data()
-        x1, y1, w, h, area, mask = search_color_two(
-            hsv[
-                sensor_find["y_min"]:sensor_find["y_max"],
-                sensor_find["x_min"]:sensor_find["x_max"]
-            ],
-            [data["hsv_red1_min"], data["hsv_red1_max"]],
-            [data["hsv_red2_min"], data["hsv_red2_max"]],
-        )
-
-
-        y = y1 + sensor_find["y_min"]
-        x = x1 + sensor_find["x_min"]
-
-        cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 0, 255), 2)
- 
-        if not TWO_STATE_RED:
-            e = FIXED_WIDTH // 2 - (x + w // 2)
-
-            Up = KP * e 
-            Ud = KD * (e - EOLD) 
-            EOLD = e
-            U = Up + Ud
-
-
-            MA = 10 + U
-            MB = 10 - U
-
-            if y1 > (sensor_find["y_max"] - sensor_find["y_min"]) // 4 :
-                MA = 0
-                MB = 0
-                TWO_STATE_RED = True
-                TIMER = time.time()
-                TIMER_PRED = time.time()
-                await uartController.sendCommand("12")
-            
-            await printLog(f"go to red, e: {int(e)}, U: {int(U)}, MA: {int(MA)}, MB: {int(MB)}, twoState: {TWO_STATE_RED}")
-            if MA > 20: MA = 20
-            if MB > 20: MB = 20
-
-            if MA < -10: MA = -10
-            if MB < -10: MB = -10
-
-            MA = int(MA)
-            MB = int(MB)
-
-
-
-            if not local:
-                await uartController.sendCommand(f"2{MB + 200}{MA+200}")
-
-
-
-        else:
-            e = FIXED_WIDTH // 2 + 20 - (x + w // 2)
-
-
-            Up = KP * e 
-            Ud = KD * (e - EOLD_X)  
-            EOLD_X = e
-            U1 = Up + Ud
-            
-
-            for i in range(9):
-                LAST_Y[i] = LAST_Y[i + 1] 
-
-            LAST_Y[9] = y1
- 
-            y1 = sum(LAST_Y)  // 10
-        
-            e = (sensor_find["y_max"] - sensor_find["y_min"]) // 4 - y1
-
-            Up = KP * e * 3
-            Ud = 3 * KD * (e - EOLD_Y)
-            EOLD_Y = e
-            U2 = Up + Ud    
-
-            if  abs(U1) < 5 and abs(U2) < 10 and THREE_STATE_RED == False and time.time() - TIMER_PRED > 10:
-                if time.time() - TIMER > 1.5:
-                    
-                    THREE_STATE_RED = True
-            else:
-                TIMER = time.time()
-                
-
-            MA = U1 * -1
-            MB = U2
-
-            if MA > 15: MA = 15
-            if MB > 20: MB = 20
-
-            if MA < -15: MA = -15
-            if MB < -20: MB = -20
-
-            if THREE_STATE_RED:
-                data_three = str(uartController._read_until_dollar()).lower()
-                if data_three == "ok":
-                    await printLog("OK")
-            else:
-                await printLog(f"go to red, e: {int(e)}, U1: {int(U1)}, U2: {int(U2)}, MA: {int(MA)}, MB: {int(MB)}, twoState: {TWO_STATE_RED}")
-
-                
-            MA = int(MA)
-            MB = int(MB)
-            if not local:
-                await uartController.sendCommand(f"6{MA + 200}{MB+200}")
-
-    elif robotState == "black":
+    if robotState  == "black":
         data = await get_settings_data()
         sensor = hsv[
             sensor_find["y_min"]:sensor_find["y_max"],
@@ -369,8 +223,13 @@ async def read_data():
 
     _, buffer = cv2.imencode('.jpg', frame, [int(cv2.IMWRITE_JPEG_QUALITY), 40])
     image_data = base64.b64encode(buffer).decode('utf-8')
+    img = np.full((mainLD.size_window, mainLD.size_window, 3), 255, dtype=np.uint8)
+    mainLD.draw_rows(img)
+    mainLD.draw_point(img)
 
-    return image_data
+    _, buffer = cv2.imencode('.jpg', img, [int(cv2.IMWRITE_JPEG_QUALITY), 40])
+    image_data_leadar = base64.b64encode(buffer).decode('utf-8')
+    return image_data, image_data_leadar
 
 async def send_periodic_messages():
 
@@ -378,22 +237,23 @@ async def send_periodic_messages():
     channel_layer = get_channel_layer()
 
     while True:
-        image_data = await read_data()
+        image_data, image_data_leadar = await read_data()
         await channel_layer.group_send(
             "broadcast_group",
             {
                 "type": "broadcast_message",
                 "message": {
                     "image": image_data,
+                    "leadar" : image_data_leadar,
                     "compos" : old_data
                 },
             }
         )
 
-        await asyncio.sleep(1 / FPS)
+        await asyncio.sleep(1 / camera.fps)
         gc.collect()
 
-class Camera(AsyncWebsocketConsumer):
+class MainWebUtilis(AsyncWebsocketConsumer):
 
     async def connect(self):
         global task
@@ -408,7 +268,7 @@ class Camera(AsyncWebsocketConsumer):
         await self.channel_layer.group_discard(self.group_name, self.channel_name)
 
     async def receive(self, text_data):
-        global latest_hsv, robotState
+        global latest_hsv, robotState, task_action
         data = json.loads(text_data)
         type_message = data.get("type")
 
@@ -437,9 +297,37 @@ class Camera(AsyncWebsocketConsumer):
                 await uartController.sendCommand(12)
                 await printLog("Поставить запладку!")
 
-        elif type_message == "mission-first":
-            asyncio.create_task(startFirstMission())
-            
+        elif type_message == "mission-first": 
+            if task_action is not None and not task_action.done():
+                task_action.cancel()
+                try:
+                    await task_action
+                except asyncio.CancelledError:
+                    print("Задача была отменена")
+            task_action = asyncio.create_task(startFirstMission())
+
+        elif type_message == "mission-two":
+            if task_action is not None and not task_action.done():
+                task_action.cancel()
+                try:
+                    await task_action
+                except asyncio.CancelledError:
+                    print("Задача была отменена")
+            task_action = asyncio.create_task(TwoMission.startTwoMission())
+        
+        elif type_message == "mission-all":
+            async def start_all_missions():
+                await startFirstMission()
+                await TwoMission.startTwoMission()
+            if task_action is not None and not task_action.done():
+                task_action.cancel()
+                try:
+                    await task_action
+                except asyncio.CancelledError:
+                    print("Задача была отменена")
+            task_action = asyncio.create_task(start_all_missions())
+
+
     async def info_message(self, event):
         await self.send(text_data=json.dumps({
             "message": event["text"]
@@ -450,4 +338,3 @@ class Camera(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps({
             "message": message
         }))
-

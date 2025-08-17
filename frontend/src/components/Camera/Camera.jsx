@@ -3,6 +3,7 @@ import './Camera.css';
 
 const Camera = () => {
     const imgRef = useRef(null);
+    const leadarRef = useRef(null);
     const dotsContainerRef = useRef(null);
     const composRef = useRef(null);
     const [points, setPoints] = useState([]);
@@ -41,6 +42,7 @@ const Camera = () => {
                 if (composRef.current) {
                     composRef.current.textContent = data.message.compos;
                 }
+                leadarRef.current.src = `data:image/jpeg;base64,${data.message.leadar}`;
                 imgRef.current.src = `data:image/jpeg;base64,${data.message.image}`;
             } else if (data.message) {
                 if (messageInfoRef.current) {
@@ -152,6 +154,13 @@ const Camera = () => {
                         className="img-fluid border rounded"
                         onClick={handleImageClick}
                     />
+                        <img
+                        ref={leadarRef}
+                        src=""
+                        alt="Webcam Feed"
+                        className="img-fluid border rounded"
+                        onClick={handleImageClick}
+                    />
                     <div id="dots-container" ref={dotsContainerRef}
                          className="position-absolute top-0 start-0 w-100 h-100"></div>
                 </div>
@@ -205,7 +214,6 @@ const Camera = () => {
                                 defaultValue=""
                             >
                                 <option value="">-- Выберите --</option>
-                                <option value="red">По красному</option>
                                 <option value="compass">По компосу</option>
                                 <option value="black">По черному и белому</option>
                             </select>
@@ -221,6 +229,8 @@ const Camera = () => {
                         onClick={() => camera?.send(JSON.stringify({ type: 'water' }))}>Поставить запладку</button>
                 <button className="btn btn-success"
                         onClick={() => camera?.send(JSON.stringify({ type: 'mission-first' }))}>Старт 1я</button>
+                <button className="btn btn-danger"
+                        onClick={() => camera?.send(JSON.stringify({ type: 'mission-two' }))}>Старт 2я</button>
 
                 <button className="btn btn-info" onClick={() => {
                     navigator.clipboard.writeText(JSON.stringify(points)).then(() => alert('Скопировано!'));
