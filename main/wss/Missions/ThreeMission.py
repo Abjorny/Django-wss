@@ -46,7 +46,7 @@ async def goToBlack(frame, sensor_find):
         dist = (mainLD.points[i - 1] + mainLD.points[i]  + mainLD.points[i +1] ) / 3
         angles.append({dist : [i]})
 
-    dist = min[angles]
+    dist = min(angles)
     angle = angles[dist]
     x,y = mainLD.calc_cords_point(angle,  dist)
     mainLD.addLineAction( (mainLD.size_window // 2  , mainLD.size_window), (x,y), (255, 0, 0), 1)
