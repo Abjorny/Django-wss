@@ -43,8 +43,8 @@ async def goToBlack(frame, sensor_find):
     angles = []
 
     points = mainLD.points
-    n = len(points)
-    for i in range(1, n-1):
+
+    for i in range(226, 315):
         dist = (points[i - 1] + points[i] + points[i + 1]) / 3
         angles.append({dist: [i]})
 
