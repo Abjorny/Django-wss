@@ -3,9 +3,20 @@ import threading
 import math
 import cv2
 
-
 class MainLD:
+    _instance = None  # хранит единственный экземпляр
+
+    def __new__(cls, *args, **kwargs):
+        if cls._instance is None:
+            cls._instance = super(MainLD, cls).__new__(cls)
+        return cls._instance
+
     def __init__(self):
+        # чтобы не переинициализировать при повторном создании
+        if hasattr(self, "_initialized") and self._initialized:
+            return
+        self._initialized = True
+
         self.size_window = 700
         self.points = {i: 0 for i in range(225, 316)}
         self.points[240] = 2
@@ -18,7 +29,6 @@ class MainLD:
         self.rows = 3
         self.radiant_row = 3
         self.actions = []
-
 
         self.step_rows = self.max_range / (self.rows - 1)
         self.ldar = LD06_DRIVER()
@@ -74,5 +84,3 @@ class MainLD:
             if c != 0:
                 x,y = self.calc_cords_point(angle, c)
                 cv2.circle(img, (x, y), 2, (0, 0, 255), thickness=-1, lineType=cv2.LINE_AA)
-                    
-
