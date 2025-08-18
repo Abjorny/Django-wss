@@ -28,17 +28,18 @@ class MainLD:
     def update_points(self):
         while 1:
             data = self.ldar.read_data()
-            for point in data: 
-                dist = point[0]
-                angle = int(round(point[2], 0))
-                if 225 < angle < 315:
-                    if dist > self.max_range:
-                        dist = self.max_range
-                    try:
-                        self.points[angle] = dist
-                    except:
-                        pass
-                
+            if data:
+                for point in data: 
+                    dist = point[0]
+                    angle = int(round(point[2], 0))
+                    if 225 < angle < 315:
+                        if dist > self.max_range:
+                            dist = self.max_range
+                        try:
+                            self.points[angle] = dist
+                        except:
+                            pass
+                    
     def draw_rows(self, img):
         cv2.line(img, (0 , 0), (self.size_window // 2  , self.size_window), (0, 0, 0), 2)
         cv2.line(img, (self.size_window//2 , self.size_window), (self.size_window, 0), (0, 0, 0), 2)
