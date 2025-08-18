@@ -327,7 +327,6 @@ class MainWebUtilis(AsyncWebsocketConsumer):
                     print("Задача была отменена")
             task_action = asyncio.create_task(start_all_missions())
 
-
     async def info_message(self, event):
         await self.send(text_data=json.dumps({
             "message": event["text"]
