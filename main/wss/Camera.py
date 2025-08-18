@@ -48,11 +48,11 @@ class Camera:
         draw.text((x, y), text, font=font, fill='white')
         self.image = np.array(img)
         
-    def addRectangleAction(self, pt1, p2, color, think):
+    def addRectangleAction(self, pt1, pt2, color, think):
         self.actions.clear()
         self.actions.append({
             "func": cv2.rectangle,
-            "params": (pt1, p2, color, think) 
+            "params": (pt1, pt2, color, think) 
         })
 
 

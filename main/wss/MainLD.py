@@ -17,6 +17,7 @@ class MainLD:
         self.tables = 5
         self.rows = 3
         self.radiant_row = 3
+        self.actions = []
 
 
         self.step_rows = self.max_range / (self.rows - 1)
@@ -49,19 +50,28 @@ class MainLD:
                 if d % self.radiant_row == 0:
                     cv2.line(img, ( d * self.radiant_row , y), (self.radiant_row * d + self.radiant_row  , y), (255, 0, 0), 2)
 
-    def draw_point(self, img):
-
+    def calc_cords_point(self, angle, c):
         a_min = self.max_range * math.cos(math.radians(225))
         a_max = self.max_range * math.cos(math.radians(315))
+        c = abs(c)
+        radians = math.radians(angle)
+        a = c * math.cos(radians)
+        x = int((a - a_min) / (a_max - a_min) * self.size_window)
+        y = int((1 - c / self.max_range) * self.size_window)
+        return x, y
+    
+    def addLineAction(self, pt1, pt2, color, think):
+        self.actions.clear()
+        self.actions.append({
+            "func": cv2.line,
+            "params": (pt1, pt2, color, think) 
+        })
 
+
+    def draw_point(self, img):
         for angle, c in self.points.items():
             if c != 0:
-                c = abs(c)
-                radians = math.radians(angle)
-                a = c * math.cos(radians)
-                b = c * math.sin(radians)
-                x = int((a - a_min) / (a_max - a_min) * self.size_window)
-                y = int((1 - c / self.max_range) * self.size_window)
-
+                x,y = self.calc_cords_point(angle, c)
                 cv2.circle(img, (x, y), 2, (0, 0, 255), thickness=-1, lineType=cv2.LINE_AA)
+                    
 

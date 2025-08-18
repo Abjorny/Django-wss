@@ -1,6 +1,6 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
 from .Missions.FirstMission import startFirstMission
-from .Missions import TwoMission
+from .Missions import TwoMission, ThreeMission
 from .Uart.UartController import UartControllerAsync
 from channels.layers import get_channel_layer
 from asgiref.sync import sync_to_async
@@ -227,9 +227,13 @@ async def read_data():
     _, buffer = cv2.imencode('.jpg', frame, [int(cv2.IMWRITE_JPEG_QUALITY), 40])
     image_data = base64.b64encode(buffer).decode('utf-8')
     img = np.full((mainLD.size_window, mainLD.size_window, 3), 255, dtype=np.uint8)
+
     mainLD.draw_rows(img)
     mainLD.draw_point(img)
-
+    for f in mainLD.actions:
+        f["func"](img, *f["params"])
+    mainLD.actions.clear()
+    
     _, buffer = cv2.imencode('.jpg', img, [int(cv2.IMWRITE_JPEG_QUALITY), 40])
     image_data_leadar = base64.b64encode(buffer).decode('utf-8')
     return image_data, image_data_leadar
@@ -309,6 +313,7 @@ class MainWebUtilis(AsyncWebsocketConsumer):
                     print("Задача была отменена")
             task_action = asyncio.create_task(startFirstMission())
             await printLog("Запущена первая миссия")
+        
         elif type_message == "mission-two":
             if task_action is not None and not task_action.done():
                 task_action.cancel()
@@ -318,6 +323,14 @@ class MainWebUtilis(AsyncWebsocketConsumer):
                     print("Задача была отменена")
             task_action = asyncio.create_task(TwoMission.startTwoMission())
         
+        elif type_message == "mission-three":
+            if task_action is not None and not task_action.done():
+                task_action.cancel()
+                try:
+                    await task_action
+                except asyncio.CancelledError:
+                    print("Задача была отменена")
+            task_action = asyncio.create_task(ThreeMission.startThreeMission())
         elif type_message == "mission-all":
             async def start_all_missions():
                 await startFirstMission()
