@@ -1,4 +1,4 @@
-from LD06 import LD06_DRIVER
+from .LD06 import LD06_DRIVER
 import threading
 import math
 import cv2
