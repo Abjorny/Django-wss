@@ -61,7 +61,7 @@ async def goToBlack(frame, sensor_find):
     MA, MB = 15, 15
     MA = max(-15, min(15, MA))
     MB = max(-20, min(20, MB))
-    await printLog(f"Дистанция: {min_dist}, угол: {angle_idx}")
+    await printLog(f"Дистанция: {int(min_dist * 100)}, угол: {angle_idx}")
     return int(MA), int(MB)
 
 
