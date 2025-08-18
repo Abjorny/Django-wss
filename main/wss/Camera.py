@@ -82,7 +82,7 @@ class Camera:
                     self.image = np.array(img)
                     for f in self.actions:
                         f["func"](*f["params"])
-
+                    self.actions.clear()
                     time.sleep(1 / self.fps)
 
             except (ConnectionError, OSError) as e:
