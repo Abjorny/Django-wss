@@ -159,3 +159,4 @@ async def startTwoMission():
                 robotState = False
         
         await uartController.sendCommand(f"6{MA + 200}{MB+200}")
+        await asyncio.sleep(0.05)
