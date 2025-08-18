@@ -40,29 +40,34 @@ def get_settings_data():
 
 
 async def goToBlack(frame, sensor_find):
-    from wss.consumers import search_color_two, KD, KP, LAST_Y, sensor_find, EOLD_X, EOLD_Y
     angles = []
-    for i in range(226, 315):
-        dist = (mainLD.points[i - 1] + mainLD.points[i]  + mainLD.points[i +1] ) / 3
-        angles.append({dist : [i]})
 
-    dist = min(angles)
-    angle = angles[dist]
-    x,y = mainLD.calc_cords_point(angle,  dist)
-    mainLD.addLineAction( (mainLD.size_window // 2  , mainLD.size_window), (x,y), (255, 0, 0), 1)
+    points = mainLD.points
+    n = len(points)
+    for i in range(1, n-1):
+        dist = (points[i - 1] + points[i] + points[i + 1]) / 3
+        angles.append({dist: [i]})
+
+    # Находим минимальное расстояние
+    min_dist_dict = min(angles, key=lambda x: list(x.keys())[0])
+    dist = list(min_dist_dict.keys())[0]
+    angle_idx = min_dist_dict[dist][0]
+
+    x, y = mainLD.calc_cords_point(angle_idx, dist)
+    mainLD.addLineAction(
+        (mainLD.size_window // 2, mainLD.size_window),
+        (x, y),
+        (255, 0, 0),
+        1
+    )
 
     MA, MB = 15, 15
+    # Ограничение диапазона
+    MA = max(-15, min(15, MA))
+    MB = max(-20, min(20, MB))
 
-    if MA > 15: MA = 15
-    if MB > 20: MB = 20
+    return int(MA), int(MB)
 
-    if MA < -15: MA = -15
-    if MB < -20: MB = -20
-
-    MA = int(MA)
-    MB = int(MB)
-
-    return MA, MB
 
 async def startThreeMission():
     from wss.consumers import sensor_find
