@@ -216,8 +216,9 @@ async def read_data():
     
     cv2.rectangle(frame, (sensor_find["x_min"], sensor_find["y_min"]), (sensor_find["x_max"], sensor_find["y_max"]), (0, 0, 255), 2)
     for f in camera.actions:
-         f["func"](*f["params"])
+         f["func"](frame, *f["params"])
     camera.actions.clear()
+
     lower = np.array([latest_hsv["h_min"], latest_hsv["s_min"], latest_hsv["v_min"]])
     upper = np.array([latest_hsv["h_max"], latest_hsv["s_max"], latest_hsv["v_max"]])
     mask = cv2.inRange(hsv, lower, upper)

@@ -51,12 +51,10 @@ class Camera:
     def addRectangleAction(self, pt1, p2, color, think):
         self.actions.clear()
         self.actions.append({
-            "func": self.__drawRectangle,
+            "func": cv2.rectangle,
             "params": (pt1, p2, color, think) 
         })
 
-    def __drawRectangle(self, pt1, p2, color, think):
-        cv2.rectangle(self.image, pt1, p2, color, think)
 
     def __receive_images(self):
         while True:
