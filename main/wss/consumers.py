@@ -250,6 +250,7 @@ async def send_periodic_messages():
             }
         )
 
+        await asyncio.sleep(1 / camera.fps)
         gc.collect()
 
 class MainWebUtilis(AsyncWebsocketConsumer):
