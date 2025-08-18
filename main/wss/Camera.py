@@ -23,6 +23,7 @@ class Camera:
         self.image = None
         self.FIXED_WIDTH = FIXED_WIDTH
         self.FIXED_HEIGHT = FIXED_HEIGHT
+        self.actions = []
 
         self.__createEmptyEmage()
         self.thread = threading.Thread(target=self.__receive_images, daemon=True).start()
@@ -46,9 +47,9 @@ class Camera:
         y = (self.FIXED_HEIGHT - text_height) / 2
         draw.text((x, y), text, font=font, fill='white')
         self.image = np.array(img)
-        self.actions = []
         
     def addRectangleAction(self, pt1, p2, color, think):
+        self.actions = []
         self.actions.append({
             "func": self.__drawRectangle,
             "params": (pt1, p2, color, think) 
