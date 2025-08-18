@@ -17,7 +17,7 @@ class UartController:
         self.uartBody = serial.Serial(
             port='/dev/ttyAMA0', 
             baudrate=9600, 
-            timeout=1
+            timeout=4
         )
     
     def sendCommand(self, command) -> bool:
