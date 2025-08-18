@@ -147,14 +147,14 @@ async def startTwoMission():
     
     while robotState:
         if not TWO_STATE_RED:
-            MA, MB, smart = goToRed(camera.image, sensor_find)
+            MA, MB, smart = await goToRed(camera.image, sensor_find)
             if smart:
                 TIMER = time.time()
                 TWO_STATE_RED = True
                 await uartController.sendCommand("12")
 
         else:
-            MA, MB = goControllRed(camera.image, sensor_find)
+            MA, MB = await goControllRed(camera.image, sensor_find)
             if time.time() - TIMER > 6:
                 robotState = False
         
