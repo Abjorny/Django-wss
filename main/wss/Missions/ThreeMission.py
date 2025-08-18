@@ -45,7 +45,8 @@ async def goToBlack(frame, sensor_find):
 
     for i in range(226, 315):
         dist = (points[i - 1] + points[i] + points[i + 1]) / 3
-        angles.append((dist, i))  
+        if dist > 0.15:
+            angles.append((dist, i))  
     min_dist, angle_idx = min(angles, key=lambda x: x[0])
 
     x, y = mainLD.calc_cords_point(angle_idx, min_dist)
