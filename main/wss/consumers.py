@@ -1,6 +1,6 @@
 from channels.generic.websocket import AsyncWebsocketConsumer
 from .Missions.FirstMission import startFirstMission
-from .Missions import TwoMission, ThreeMission
+from .Missions import TwoMission, ThreeMission, FourMission
 from .Uart.UartController import UartControllerAsync
 from channels.layers import get_channel_layer
 from asgiref.sync import sync_to_async
@@ -331,6 +331,15 @@ class MainWebUtilis(AsyncWebsocketConsumer):
                 except asyncio.CancelledError:
                     print("Задача была отменена")
             task_action = asyncio.create_task(ThreeMission.startThreeMission())
+        elif type_message == "mission-four":
+            if task_action is not None and not task_action.done():
+                task_action.cancel()
+                try:
+                    await task_action
+                except asyncio.CancelledError:
+                    print("Задача была отменена")
+            task_action = asyncio.create_task(FourMission.startFourMission())
+            
         elif type_message == "mission-all":
             async def start_all_missions():
                 await startFirstMission()
@@ -342,6 +351,8 @@ class MainWebUtilis(AsyncWebsocketConsumer):
                 except asyncio.CancelledError:
                     print("Задача была отменена")
             task_action = asyncio.create_task(start_all_missions())
+
+        
 
     async def info_message(self, event):
         await self.send(text_data=json.dumps({

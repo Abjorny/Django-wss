@@ -233,6 +233,8 @@ const Camera = () => {
                         onClick={() => camera?.send(JSON.stringify({ type: 'mission-two' }))}>Старт 2я</button>
                 <button className="btn btn-success"
                         onClick={() => camera?.send(JSON.stringify({ type: 'mission-three' }))}>Старт 3я</button>
+                <button className="btn btn-danger"
+                        onClick={() => camera?.send(JSON.stringify({ type: 'mission-four' }))}>Старт 4я</button>
 
                 <button className="btn btn-info" onClick={() => {
                     navigator.clipboard.writeText(JSON.stringify(points)).then(() => alert('Скопировано!'));
