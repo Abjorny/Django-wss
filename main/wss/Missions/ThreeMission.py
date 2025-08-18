@@ -40,6 +40,7 @@ def get_settings_data():
 
 
 async def goToBlack(frame, sensor_find):
+    from wss.consumers import printLog
     angles = []
     points = mainLD.points
 
@@ -60,7 +61,7 @@ async def goToBlack(frame, sensor_find):
     MA, MB = 15, 15
     MA = max(-15, min(15, MA))
     MB = max(-20, min(20, MB))
-
+    asyncio.run(printLog(f"Дистанция: {min_dist}, угол: {angle_idx}"))
     return int(MA), int(MB)
 
 
