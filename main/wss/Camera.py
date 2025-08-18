@@ -1,4 +1,6 @@
 from PIL import ImageDraw, ImageFont, Image
+from wss.consumers import printLog
+import asyncio
 from io import BytesIO
 import numpy as np
 import socket
@@ -81,7 +83,7 @@ class Camera:
                     img = Image.open(BytesIO(img_data)).convert("RGB")
                     self.image = np.array(img)
                     for f in self.actions:
-                        print("go")
+                        asyncio.run(printLog("ok"))
                         f["func"](*f["params"])
 
                     time.sleep(1 / self.fps)

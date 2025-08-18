@@ -70,7 +70,7 @@ async def goToRed(frame, sensor_find):
         MA, MB = 0, 0
         two_state = True
     
-    await printLog(f"go to red, e: {int(e)}, U: {int(U)}, MA: {int(MA)}, MB: {int(MB)}, twoState: {two_state}")
+    # await printLog(f"go to red, e: {int(e)}, U: {int(U)}, MA: {int(MA)}, MB: {int(MB)}, twoState: {two_state}")
     if MA > 20: MA = 20
     if MB > 20: MB = 20
 
