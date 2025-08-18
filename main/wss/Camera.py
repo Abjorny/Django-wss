@@ -49,7 +49,6 @@ class Camera:
         self.image = np.array(img)
         
     def addRectangleAction(self, pt1, p2, color, think):
-        self.actions = []
         self.actions.append({
             "func": self.__drawRectangle,
             "params": (pt1, p2, color, think) 
