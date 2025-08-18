@@ -78,7 +78,6 @@ class MainLD:
             "params": (pt1, pt2, color, think) 
         })
 
-
     def draw_point(self, img):
         for angle, c in self.points.items():
             if c != 0:

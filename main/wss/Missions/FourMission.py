@@ -57,7 +57,9 @@ async def goToBlack(frame, sensor_find):
         min_id_index = np.argmin(ids)
         min_id = ids[min_id_index][0]
         x1, y1, w1, h1 = cv2.boundingRect(corners[min_id_index])
+        camera.actions.clear()
         camera.addRectangleAction((x1, y1), (x1 + w1, y1 + h1), (0, 255, 0), 2)
+        camera.addLineAction((640 // 2, 480), (x1 + w1 // 2, y1 + h1 // 2), (0, 255, 0), 2)
         await printLog(f"Арука: {min_id}")
 
     MA, MB = 15, 15

@@ -49,12 +49,16 @@ class Camera:
         self.image = np.array(img)
         
     def addRectangleAction(self, pt1, pt2, color, think):
-        self.actions.clear()
         self.actions.append({
             "func": cv2.rectangle,
             "params": (pt1, pt2, color, think) 
         })
 
+    def addLineAction(self, pt1, pt2, color, think):
+        self.actions.append({
+            "func": cv2.line,
+            "params": (pt1, pt2, color, think) 
+        })
 
     def __receive_images(self):
         while True:
