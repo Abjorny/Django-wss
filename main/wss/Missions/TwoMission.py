@@ -4,7 +4,6 @@ from wss.Uart.UartController import UartControllerAsync
 from wss.Camera import Camera
 import asyncio
 import time
-from wss.consumers import search_color_two, KD, KP, printLog, LAST_Y, sensor_find
 import cv2
 import numpy as np
 
@@ -37,6 +36,8 @@ def get_settings_data():
     }
 
 async def goToRed(frame, sensor_find):
+    from wss.consumers import search_color_two, KD, KP, printLog, sensor_find
+
     two_state = False
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
     data = await get_settings_data()
@@ -82,6 +83,8 @@ async def goToRed(frame, sensor_find):
 
 
 async def goControllRed(frame, sensor_find):
+    from wss.consumers import search_color_two, KD, KP, LAST_Y, sensor_find
+
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
     data = await get_settings_data()
     x1, y1, w, h, area, mask = search_color_two(
@@ -136,6 +139,8 @@ async def goControllRed(frame, sensor_find):
     return MA, MB
 
 async def startTwoMission():
+    from wss.consumers import sensor_find
+
     TWO_STATE_RED = False
     robotState = True
     TIMER  = time.time()
