@@ -100,7 +100,7 @@ async def goControllRed(frame, sensor_find):
     y = y1 + sensor_find["y_min"]
     x = x1 + sensor_find["x_min"]
 
-    cv2.rectangle(camera.image, (x, y), (x + w, y + h), (0, 0, 255), 2)
+    camera.addRectangleAction((x, y), (x + w, y + h), (0, 0, 255), 2)
     e = camera.FIXED_WIDTH // 2 + 20 - (x + w // 2)
 
     Up = KP * e 

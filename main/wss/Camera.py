@@ -5,6 +5,7 @@ import socket
 import struct
 import threading
 import time
+import cv2
 
 class Camera:
     _instance = None  
@@ -44,9 +45,18 @@ class Camera:
         x = (self.FIXED_WIDTH - text_width) / 2
         y = (self.FIXED_HEIGHT - text_height) / 2
         draw.text((x, y), text, font=font, fill='white')
-
         self.image = np.array(img)
+        self.actions = []
         
+    def addRectangleAction(self, pt1, p2, color, think):
+        self.actions.append({
+            "func": self.__drawRectangle,
+            "params": (pt1, p2, color, think) 
+        })
+
+    def __drawRectangle(self, pt1, p2, color, think):
+        cv2.rectangle(self.image, pt1, p2, color, think)
+
     def __receive_images(self):
         while True:
             try:
@@ -70,8 +80,10 @@ class Camera:
 
                     img = Image.open(BytesIO(img_data)).convert("RGB")
                     self.image = np.array(img)
+                    for f in self.actions:
+                        f["func"](*f["params"])
 
-                    time.sleep(1)
+                    time.sleep(1 / self.fps)
 
             except (ConnectionError, OSError) as e:
                 self.__createEmptyEmage()
