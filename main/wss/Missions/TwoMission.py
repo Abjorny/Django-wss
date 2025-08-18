@@ -54,7 +54,7 @@ async def goToRed(frame, sensor_find):
     y = y1 + sensor_find["y_min"]
     x = x1 + sensor_find["x_min"]
 
-    cv2.rectangle(camera.image, (x, y), (x + w, y + h), (0, 0, 255), 2)
+    camera.addRectangleAction((x, y), (x + w, y + h), (0, 0, 255), 2)
     e = camera.FIXED_WIDTH // 2 - (x + w // 2)
 
     Up = KP * e 
@@ -70,7 +70,6 @@ async def goToRed(frame, sensor_find):
         MA, MB = 0, 0
         two_state = True
     
-    # await printLog(f"go to red, e: {int(e)}, U: {int(U)}, MA: {int(MA)}, MB: {int(MB)}, twoState: {two_state}")
     if MA > 20: MA = 20
     if MB > 20: MB = 20
 
