@@ -37,8 +37,8 @@ def get_settings_data():
 
 async def goToRed(frame, sensor_find):
     from wss.consumers import search_color_two, KD, KP, printLog, sensor_find, EOLD
-
     two_state = False
+    frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
     data = await get_settings_data()
     x1, y1, w, h, area, mask = search_color_two(
@@ -84,7 +84,7 @@ async def goToRed(frame, sensor_find):
 
 async def goControllRed(frame, sensor_find):
     from wss.consumers import search_color_two, KD, KP, LAST_Y, sensor_find, EOLD_X, EOLD_Y
-
+    frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
     data = await get_settings_data()
     x1, y1, w, h, area, mask = search_color_two(
