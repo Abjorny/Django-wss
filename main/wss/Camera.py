@@ -81,6 +81,7 @@ class Camera:
                     img = Image.open(BytesIO(img_data)).convert("RGB")
                     self.image = np.array(img)
                     for f in self.actions:
+                        print("go")
                         f["func"](*f["params"])
 
                     time.sleep(1 / self.fps)
