@@ -10,7 +10,7 @@ class MainLD:
         self.points = {i: 0 for i in range(225, 316)}
         self.points[240] = 2
 
-        self.max_range = 2
+        self.max_range = 3
         self.mashtab = (self.size_window / 2)
 
         self.font = cv2.FONT_HERSHEY_COMPLEX
