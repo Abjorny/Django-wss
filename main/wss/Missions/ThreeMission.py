@@ -45,9 +45,7 @@ async def goToBlack(frame, sensor_find):
 
     for i in range(226, 315):
         dist = (points[i - 1] + points[i] + points[i + 1]) / 3
-        angles.append({dist: [i]})
-
-
+        angles.append((dist, i))  
     min_dist, angle_idx = min(angles, key=lambda x: x[0])
 
     x, y = mainLD.calc_cords_point(angle_idx, min_dist)
@@ -59,11 +57,11 @@ async def goToBlack(frame, sensor_find):
     )
 
     MA, MB = 15, 15
-    # Ограничение диапазона
     MA = max(-15, min(15, MA))
     MB = max(-20, min(20, MB))
 
     return int(MA), int(MB)
+
 
 
 async def startThreeMission():
