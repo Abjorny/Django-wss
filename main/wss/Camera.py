@@ -71,7 +71,7 @@ class Camera:
                     img = Image.open(BytesIO(img_data)).convert("RGB")
                     self.image = np.array(img)
 
-                    time.sleep(1 / self.fps)
+                    time.sleep(1)
 
             except (ConnectionError, OSError) as e:
                 self.__createEmptyEmage()
