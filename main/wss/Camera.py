@@ -20,11 +20,10 @@ class Camera:
 
         self.fps = fps
         self.image = None
-        self.__createEmptyEmage()
-
         self.FIXED_WIDTH = FIXED_WIDTH
         self.FIXED_HEIGHT = FIXED_HEIGHT
 
+        self.__createEmptyEmage()
         self.thread = threading.Thread(target=self.__receive_images, daemon=True).start()
 
     def __createEmptyEmage(self):
