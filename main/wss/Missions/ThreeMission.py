@@ -41,15 +41,13 @@ def get_settings_data():
 
 async def goToBlack(frame, sensor_find):
     angles = []
-
     points = mainLD.points
 
     for i in range(226, 315):
         dist = (points[i - 1] + points[i] + points[i + 1]) / 3
         angles.append({dist: [i]})
 
-    # Находим минимальное расстояние
-    min_dist_dict = min(angles, key=lambda x: list(x.keys())[0])
+    min_dist_dict = min(angles)
     dist = list(min_dist_dict.keys())[0]
     angle_idx = min_dist_dict[dist][0]
 
