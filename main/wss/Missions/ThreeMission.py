@@ -46,7 +46,7 @@ async def goToBlack(frame, sensor_find):
 
     for i in range(226, 315):
         dist = (points[i - 1] + points[i] + points[i + 1]) / 3
-        if dist > 0.15:
+        if dist > 0.15 and abs(points[i] - points[i-1] ) < 0.05 and abs(points[i] - points[i+1] ) < 0.05 :
             angles.append((dist, i))  
     min_dist, angle_idx = min(angles, key=lambda x: x[0])
 
