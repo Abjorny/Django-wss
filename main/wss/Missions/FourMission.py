@@ -44,7 +44,7 @@ def get_settings_data():
 
 async def goToBlack(frame, sensor_find):
     from wss.consumers import printLog, EOLD
-  
+    omni = False
     aruco_dict = aruco.getPredefinedDictionary(aruco.DICT_4X4_50)
     parameters = aruco.DetectorParameters()
     detector = aruco.ArucoDetector(aruco_dict, parameters)
@@ -56,6 +56,7 @@ async def goToBlack(frame, sensor_find):
     MA, MB = 0, 0
 
     if ids is not None:
+        omni = True
         min_id_index = np.argmin(ids)
         min_id = ids[min_id_index][0]
         x1, y1, w1, h1 = cv2.boundingRect(corners[min_id_index])
@@ -70,11 +71,13 @@ async def goToBlack(frame, sensor_find):
 
         U = utilis.u_colcultor(e, EOLD)
 
-        MA = 10 - U
-        MB = 10 + U
+        MA = 20 - U
+        MB = 20 + U
 
-
-    return utilis.constrain(MA, MB)
+    else:
+        MA = 10
+        MB = -10 
+    return utilis.constrain(MA, MB), omni
 
 
 
@@ -83,8 +86,11 @@ async def startFourMission():
 
   
     while robotState:
-        MA, MB = await goToBlack(camera.image, sensor_find)
-        await uartController.sendCommand(f"7{ugol + 200}{MA + 200}{MB+200}")
+        MA, MB, omni = await goToBlack(camera.image, sensor_find)
+        if omni:
+            await uartController.sendCommand(f"7{ugol + 200}{MA + 200}{MB+200}")
+        else:
+            await uartController.sendCommand(f"6{MA + 200}{MB + 200}")
         await asyncio.sleep(1 / camera.fps)
 
     await uartController.sendCommand(f"6{200}{200}")
