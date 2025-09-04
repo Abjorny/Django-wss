@@ -93,14 +93,23 @@ async def goControllRed(frame, sensor_find):
 
     camera.addRectangleAction((x, y), (x + w, y + h), (0, 0, 255), 2)
     e = camera.FIXED_WIDTH // 2 - (x + w // 2)
-    U1 = utilis.u_colcultor(e, EOLD_X)
+    U1 = utilis.u_colcultor(e, EOLD_X, 0.7)
     e = 50000 - w * h
 
-    U2 = utilis.u_colcultor(e, EOLD_Y)
+    U2 = utilis.u_colcultor(e, EOLD_Y, 0.1)
         
     MA = U1 * -1
     MB = U2 
-    return utilis.constrain(MA, MB)
+    MA = int(MA)
+    MB = int(MB)
+    
+    if MA > 15: MA = 15
+    if MB > 15: MB = 15
+
+    if MA < -15: MA = -15
+    if MB < -15: MB = -15
+
+    return MA, MB
 
 async def startTwoMission():
     from wss.consumers import sensor_find, printLog
