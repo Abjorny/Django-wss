@@ -11,7 +11,7 @@ import cv2.aruco as aruco
 import numpy as np
 import time
 
-ugol = 200
+ugol = 220
 robotState = True
 area = 20000
 
