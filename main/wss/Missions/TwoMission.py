@@ -62,7 +62,7 @@ async def goToRed(frame, sensor_find):
     MA = 10 - U
     MB = 10 + U
 
-    if y1 > (sensor_find["y_max"] - sensor_find["y_min"]) // 5 :
+    if y1 > (sensor_find["y_max"] - sensor_find["y_min"]) // 6 :
         MA, MB = 0, 0
         two_state = True
     
@@ -102,11 +102,11 @@ async def goControllRed(frame, sensor_find):
 
     y1 = sum(LAST_Y)  // 10
 
-    e = (sensor_find["y_max"] - sensor_find["y_min"]) // 5 - y1
-    U2 = utilis.u_colcultor(e, EOLD_Y, 3)
+    e = (sensor_find["y_max"] - sensor_find["y_min"]) // 6 - y1
+    U2 = utilis.u_colcultor(e, EOLD_Y, 4)
         
     MA = U1 * -1
-    MB = 0
+    MB = U2
 
     return utilis.constrain(MA, MB)
 
@@ -126,7 +126,7 @@ async def startTwoMission():
                 await uartController.sendCommand("12")
 
         else:
-            # MA, MB = await goControllRed(camera.image, sensor_find)
+            MA, MB = await goControllRed(camera.image, sensor_find)
             if time.time() - TIMER > 6:
                 robotState = False
         
