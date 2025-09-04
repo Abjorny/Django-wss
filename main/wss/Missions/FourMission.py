@@ -69,7 +69,7 @@ async def goToBlack(frame, sensor_find):
             await printLog("Робот сдох")
         e = camera.FIXED_WIDTH // 2  - (x1 + w1 // 2)
 
-        U = utilis.u_colcultor(e, EOLD, 0.5)
+        U = utilis.u_colcultor(e, EOLD, 1)
 
         MA = 20 - U
         MB = 20 + U
