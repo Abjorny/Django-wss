@@ -322,7 +322,7 @@ class MainWebUtilis(AsyncWebsocketConsumer):
                 except asyncio.CancelledError:
                     print("Задача была отменена")
             task_action = asyncio.create_task(TwoMission.startTwoMission())
-        
+            await printLog("Запущена вторая миссия")
         elif type_message == "mission-three":
             if task_action is not None and not task_action.done():
                 task_action.cancel()
