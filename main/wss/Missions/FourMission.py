@@ -9,6 +9,7 @@ import numpy as np
 import cv2
 import cv2.aruco as aruco
 import numpy as np
+import time
 
 ugol = 200
 robotState = True
@@ -63,9 +64,7 @@ async def goToBlack(frame, sensor_find):
         camera.actions.clear()
         camera.addRectangleAction((x1, y1), (x1 + w1, y1 + h1), (0, 255, 0), 2)
         camera.addLineAction((640 // 2, 480), (x1 + w1 // 2, y1 + h1 // 2), (0, 255, 0), 2)
-        if h1 * w1 > area:
-            robotState = False
-            await printLog("Робот сдох")
+
         e = camera.FIXED_WIDTH // 2  - (x1 + w1 // 2)
 
         U = utilis.u_colcultor(e, EOLD, 0.5)
@@ -73,6 +72,9 @@ async def goToBlack(frame, sensor_find):
         MA = 20 - U
         MB = 20 + U
         await printLog(f"Арука: {min_id}, {w1 * h1}, {MA}, {MB}")
+        if h1 * w1 > area:
+            robotState = False
+            await printLog("Робот сдох")
 
 
     else:
@@ -85,7 +87,10 @@ async def goToBlack(frame, sensor_find):
 
 async def startFourMission():
     from wss.consumers import sensor_find
-
+    timer = time.time()
+    while time.time() - timer < 15:
+        await uartController.sendCommand(f"3{50 + 200}{ugol + 200}")
+        await asyncio.sleep(0.05)  
   
     while robotState:
         MA, MB, omni = await goToBlack(camera.image, sensor_find)
