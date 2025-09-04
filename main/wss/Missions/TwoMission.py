@@ -92,7 +92,7 @@ async def goControllRed(frame, sensor_find):
     x = x1 + sensor_find["x_min"]
 
     camera.addRectangleAction((x, y), (x + w, y + h), (0, 0, 255), 2)
-    e = camera.FIXED_WIDTH // 2 + 20 - (x + w // 2)
+    e = camera.FIXED_WIDTH // 2 - (x + w // 2)
     U1 = utilis.u_colcultor(e, EOLD_X)
 
     for i in range(9):
