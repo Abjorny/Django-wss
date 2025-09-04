@@ -119,9 +119,9 @@ async def startTwoMission():
 
         else:
             MA, MB = await goControllRed(camera.image, sensor_find)
-            await printLog("bbbbbbbbbbbbbb")
-            # if time.time() - TIMER > 6:
-            #     robotState = False
+            await printLog(f"{MA}, {MB}")
+            if time.time() - TIMER > 60:
+                robotState = False
         
         await uartController.sendCommand(f"6{MA + 200}{MB+200}")
         await asyncio.sleep(1 / camera.fps)
