@@ -59,8 +59,8 @@ async def goToRed(frame, sensor_find):
     e = camera.FIXED_WIDTH // 2 - (x + w // 2)
     U = utilis.u_colcultor(e, EOLD)
 
-    MA = 10 + U
-    MB = 10 - U
+    MA = 10 - U
+    MB = 10 + U
 
     if y1 > (sensor_find["y_max"] - sensor_find["y_min"]) // 4 :
         MA, MB = 0, 0
@@ -105,19 +105,10 @@ async def goControllRed(frame, sensor_find):
     e = (sensor_find["y_max"] - sensor_find["y_min"]) // 4 - y1
     U2 = utilis.u_colcultor(e, EOLD_Y, 3)
         
-    MA = U1 
+    MA = U1 * -1
     MB = U2
 
-    MA = int(MA)
-    MB = int(MB)
-    
-    if MA > 15: MA = 15
-    if MB > 20: MB = 20
-
-    if MA < -15: MA = -15
-    if MB < -20: MB = -20
-
-    return  MA, MB
+    return utilis.constrain(MA, MB)
 
 async def startTwoMission():
     from wss.consumers import sensor_find

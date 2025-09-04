@@ -97,7 +97,7 @@ async def startFourMission():
         if omni:
             await uartController.sendCommand(f"7{ugol + 200}{MA + 200}{MB+200}")
         else:
-            await uartController.sendCommand(f"6{MA + 200}{MB + 200}")
+            await uartController.sendCommand(f"2{MA + 200}{MB + 200}")
         await asyncio.sleep(1 / camera.fps)
 
     await uartController.sendCommand(f"6{200}{200}")
