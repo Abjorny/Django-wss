@@ -10,9 +10,8 @@ import cv2
 import cv2.aruco as aruco
 import numpy as np
 
-
+ugol = 290
 camera = Camera()
-
 uartController = UartControllerAsync()
 
 @sync_to_async
@@ -80,5 +79,5 @@ async def startFourMission():
   
     while robotState:
         MA, MB = await goToBlack(camera.image, sensor_find)
-        await uartController.sendCommand(f"6{MA + 200}{MB+200}")
+        await uartController.sendCommand(f"7{ugol + 200}{MA + 200}{MB+200}")
         await asyncio.sleep(1 / camera.fps)
