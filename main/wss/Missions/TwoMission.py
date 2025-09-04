@@ -100,7 +100,8 @@ async def goControllRed(frame, sensor_find):
         
     MA = U1 * -1
     MB = U2 
-    await printLog(f"{W * h}")
+    await printLog(f"go to red, e: {int(e)}, U: {int(U)}, MA: {int(MA)}, MB: {int(MB)}, {w * h}")
+    
     return utilis.constrain(MA, MB)
 
 async def startTwoMission():
