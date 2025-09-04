@@ -90,7 +90,7 @@ async def startFourMission():
     timer = time.time()
     while time.time() - timer < 15:
         await uartController.sendCommand(f"3{50 + 200}{ugol + 200}")
-        await asyncio.sleep(0.05)  
+        await asyncio.sleep(1 / camera.fps)
   
     while robotState:
         MA, MB, omni = await goToBlack(camera.image, sensor_find)
