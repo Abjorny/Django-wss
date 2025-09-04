@@ -99,7 +99,7 @@ async def goControllRed(frame, sensor_find):
     U2 = utilis.u_colcultor(e, EOLD_Y)
         
     MA = U1 * -1
-    MB = U2
+    MB = U2 * -1
     await printLog(f"{W * h}")
     return utilis.constrain(MA, MB)
 
