@@ -66,7 +66,7 @@ async def goToRed(frame, sensor_find):
         MA, MB = 0, 0
         two_state = True
     
-    await printLog(f"go to red, e: {int(e)}, U: {int(U)}, MA: {int(MA)}, MB: {int(MB)}, twoState: {two_state}")
+    await printLog(f"go to red, e: {int(e)}, U: {int(U)}, MA: {int(MA)}, MB: {int(MB)}, twoState: {two_state}, {w * h}")
     MA, MB = utilis.constrain(MA, MB)
 
 
@@ -74,7 +74,7 @@ async def goToRed(frame, sensor_find):
 
 
 async def goControllRed(frame, sensor_find):
-    from wss.consumers import search_color_two, LAST_Y, sensor_find, EOLD_X, EOLD_Y
+    from wss.consumers import search_color_two, LAST_Y, sensor_find, EOLD_X, EOLD_Y, printLog
     frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
     data = await get_settings_data()
@@ -107,7 +107,7 @@ async def goControllRed(frame, sensor_find):
         
     MA = U1 * -1
     MB = U2
-
+    await printLog(f"{W * h}")
     return utilis.constrain(MA, MB)
 
 async def startTwoMission():
