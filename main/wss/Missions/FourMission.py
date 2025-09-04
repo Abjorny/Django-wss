@@ -51,7 +51,7 @@ async def goToBlack(frame, sensor_find):
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
     corners, ids, rejected = detector.detectMarkers(gray)
-    MA, MB = 15, 15
+    MA, MB = 0, 0
 
     if ids is not None:
         min_id_index = np.argmin(ids)
