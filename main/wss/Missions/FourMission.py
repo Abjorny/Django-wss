@@ -77,7 +77,8 @@ async def goToBlack(frame, sensor_find):
     else:
         MA = 10
         MB = -10 
-    return utilis.constrain(MA, MB), omni
+    MA, MB = utilis.constrain(MA, MB)
+    return MA, MB , omni
 
 
 
