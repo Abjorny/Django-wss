@@ -105,7 +105,7 @@ async def goControllRed(frame, sensor_find):
     e = (sensor_find["y_max"] - sensor_find["y_min"]) // 4 - y1
     U2 = utilis.u_colcultor(e, EOLD_Y, 3)
         
-    MA = U1 * -1
+    MA = U1 
     MB = U2
 
     MA = int(MA)
