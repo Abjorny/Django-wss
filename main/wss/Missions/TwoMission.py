@@ -108,7 +108,16 @@ async def goControllRed(frame, sensor_find):
     MA = U1 * -1
     MB = U2
 
-    return utilis.constrain(MA, MB)
+    MA = int(MA)
+    MB = int(MB)
+    
+    if MA > 15: MA = 15
+    if MB > 20: MB = 20
+
+    if MA < -15: MA = -15
+    if MB < -20: MB = -20
+
+    return  MA, MB
 
 async def startTwoMission():
     from wss.consumers import sensor_find

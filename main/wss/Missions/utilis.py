@@ -1,6 +1,7 @@
 def constrain(MA, MB):
     MA = int(MA)
     MB = int(MB)
+    
     if MA > 30: MA = 30
     if MB > 30: MB = 30
 
