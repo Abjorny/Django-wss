@@ -100,11 +100,10 @@ async def goControllRed(frame, sensor_find):
         
     MA = U1 * -1
     MB = U2 
-    await printLog(f"go to red, e: {int(e)}, U: {int(U)}, MA: {int(MA)}, MB: {int(MB)}, {w * h}")
     return utilis.constrain(MA, MB)
 
 async def startTwoMission():
-    from wss.consumers import sensor_find
+    from wss.consumers import sensor_find, printLog
 
     TWO_STATE_RED = False
     robotState = True
@@ -120,6 +119,7 @@ async def startTwoMission():
 
         else:
             MA, MB = await goControllRed(camera.image, sensor_find)
+            await printLog("bbbbbbbbbbbbbb")
             # if time.time() - TIMER > 6:
             #     robotState = False
         
