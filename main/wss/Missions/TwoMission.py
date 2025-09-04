@@ -94,16 +94,9 @@ async def goControllRed(frame, sensor_find):
     camera.addRectangleAction((x, y), (x + w, y + h), (0, 0, 255), 2)
     e = camera.FIXED_WIDTH // 2 - (x + w // 2)
     U1 = utilis.u_colcultor(e, EOLD_X)
-
-    for i in range(9):
-        LAST_Y[i] = LAST_Y[i + 1] 
-
-    LAST_Y[9] = y1
-
-    y1 = sum(LAST_Y)  // 10
-
     e = 50000 - w * h
-    U2 = utilis.u_colcultor(e, EOLD_Y, 0.4)
+
+    U2 = utilis.u_colcultor(e, EOLD_Y)
         
     MA = U1 * -1
     MB = U2
