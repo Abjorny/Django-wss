@@ -62,7 +62,7 @@ async def goToRed(frame, sensor_find):
     MA = 10 - U
     MB = 10 + U
 
-    if y1 > (sensor_find["y_max"] - sensor_find["y_min"]) // 6 :
+    if w * h > 40000 :
         MA, MB = 0, 0
         two_state = True
     
@@ -102,7 +102,7 @@ async def goControllRed(frame, sensor_find):
 
     y1 = sum(LAST_Y)  // 10
 
-    e = (sensor_find["y_max"] - sensor_find["y_min"]) // 6 - y1
+    e = 50000 - w * h
     U2 = utilis.u_colcultor(e, EOLD_Y, 4)
         
     MA = U1 * -1
