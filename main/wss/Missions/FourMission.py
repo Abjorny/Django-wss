@@ -63,7 +63,6 @@ async def goToBlack(frame, sensor_find):
         camera.actions.clear()
         camera.addRectangleAction((x1, y1), (x1 + w1, y1 + h1), (0, 255, 0), 2)
         camera.addLineAction((640 // 2, 480), (x1 + w1 // 2, y1 + h1 // 2), (0, 255, 0), 2)
-        await printLog(f"Арука: {min_id}, {w1 * h1}")
         if h1 * w1 > area:
             robotState = False
             await printLog("Робот сдох")
@@ -73,6 +72,8 @@ async def goToBlack(frame, sensor_find):
 
         MA = 20 - U
         MB = 20 + U
+        await printLog(f"Арука: {min_id}, {w1 * h1}, {MA}, {MB}")
+
 
     else:
         MA = 10
