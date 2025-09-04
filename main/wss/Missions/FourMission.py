@@ -10,7 +10,7 @@ import cv2
 import cv2.aruco as aruco
 import numpy as np
 
-ugol = 290
+ugol = 200
 camera = Camera()
 uartController = UartControllerAsync()
 
