@@ -65,8 +65,8 @@ async def goToBlack(frame, sensor_find):
 
         U = utilis.u_colcultor(e, EOLD)
 
-        MA = 10 + U
-        MB = 10 - U
+        MA = 10 - U
+        MB = 10 + U
 
 
     return utilis.constrain(MA, MB)
