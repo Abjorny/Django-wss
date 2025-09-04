@@ -5,6 +5,7 @@ from wss.Camera import Camera
 import asyncio
 import time
 import cv2
+from wss.Missions import utilis
 import numpy as np
 
 
@@ -36,7 +37,7 @@ def get_settings_data():
     }
 
 async def goToRed(frame, sensor_find):
-    from wss.consumers import search_color_two, KD, KP, printLog, sensor_find, EOLD
+    from wss.consumers import search_color_two, printLog, sensor_find, EOLD
     two_state = False
     frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
@@ -56,12 +57,7 @@ async def goToRed(frame, sensor_find):
 
     camera.addRectangleAction((x, y), (x + w, y + h), (0, 0, 255), 2)
     e = camera.FIXED_WIDTH // 2 - (x + w // 2)
-
-    Up = KP * e 
-    Ud = KD * (e - EOLD) 
-    EOLD = e
-    U = Up + Ud
-
+    U = utilis.u_colcultor(e, EOLD)
 
     MA = 10 + U
     MB = 10 - U
@@ -71,19 +67,14 @@ async def goToRed(frame, sensor_find):
         two_state = True
     
     await printLog(f"go to red, e: {int(e)}, U: {int(U)}, MA: {int(MA)}, MB: {int(MB)}, twoState: {two_state}")
-    if MA > 20: MA = 20
-    if MB > 20: MB = 20
+    MA, MB = utilis.constrain(MA, MB)
 
-    if MA < -10: MA = -10
-    if MB < -10: MB = -10
 
-    MA = int(MA)
-    MB = int(MB)
     return MA, MB, two_state
 
 
 async def goControllRed(frame, sensor_find):
-    from wss.consumers import search_color_two, KD, KP, LAST_Y, sensor_find, EOLD_X, EOLD_Y
+    from wss.consumers import search_color_two, LAST_Y, sensor_find, EOLD_X, EOLD_Y
     frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
     data = await get_settings_data()
@@ -102,12 +93,7 @@ async def goControllRed(frame, sensor_find):
 
     camera.addRectangleAction((x, y), (x + w, y + h), (0, 0, 255), 2)
     e = camera.FIXED_WIDTH // 2 + 20 - (x + w // 2)
-
-    Up = KP * e 
-    Ud = KD * (e - EOLD_X)  
-    EOLD_X = e
-    U1 = Up + Ud
-    
+    U1 = utilis.u_colcultor(e, EOLD_X)
 
     for i in range(9):
         LAST_Y[i] = LAST_Y[i + 1] 
@@ -117,26 +103,12 @@ async def goControllRed(frame, sensor_find):
     y1 = sum(LAST_Y)  // 10
 
     e = (sensor_find["y_max"] - sensor_find["y_min"]) // 4 - y1
-
-    Up = KP * e * 3
-    Ud = 3 * KD * (e - EOLD_Y)
-    EOLD_Y = e
-    U2 = Up + Ud    
-
+    U2 = utilis.u_colcultor(e, EOLD_Y, 3)
         
     MA = U1 * -1
     MB = U2
 
-    if MA > 15: MA = 15
-    if MB > 20: MB = 20
-
-    if MA < -15: MA = -15
-    if MB < -20: MB = -20
-
-    MA = int(MA)
-    MB = int(MB)
-
-    return MA, MB
+    return utilis.constrain(MA, MB)
 
 async def startTwoMission():
     from wss.consumers import sensor_find
