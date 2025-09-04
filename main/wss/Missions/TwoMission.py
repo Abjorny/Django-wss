@@ -103,7 +103,7 @@ async def goControllRed(frame, sensor_find):
     y1 = sum(LAST_Y)  // 10
 
     e = 50000 - w * h
-    U2 = utilis.u_colcultor(e, EOLD_Y, 4)
+    U2 = utilis.u_colcultor(e, EOLD_Y, 0.4)
         
     MA = U1 * -1
     MB = U2
